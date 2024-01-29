@@ -68,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void checkDocumentExistence() async {
+    //database test
     String schoolName =
         "your_school_name"; // Replace with actual school name or dynamic variable
     try {

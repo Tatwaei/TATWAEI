@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -57,13 +61,33 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    checkDocumentExistence();
+  }
+
+  void checkDocumentExistence() async {
+    String schoolName =
+        "your_school_name"; // Replace with actual school name or dynamic variable
+    try {
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('school')
+          .doc('qSBfBWeCFUkl79ncsgaU')
+          .get();
+
+      if (documentSnapshot.exists) {
+        print('Document exists on the database');
+      } else {
+        print('Document does not exist in the database');
+      }
+    } catch (e) {
+      print('Error checking document: $e');
+    }
+  }
+
   void _incrementCounter() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
       _counter++;
     });
   }

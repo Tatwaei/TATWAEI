@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-
-
+//import 'AdminInoppDetails.dart';
+import 'AdminExoppDetails.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,18 +10,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
-  String searchValue  = '';
-  
+  String searchValue = '';
+
   List<String> items = List<String>.generate(100, (index) => 'Item $index');
   List<String> filteredItems = [];
 
   void _performSearch() {
     // Perform the search logic here
     print('Searching for: $searchValue ');
-    
-     setState(() {
+
+    setState(() {
       filteredItems = items
-          .where((item) =>item.toLowerCase().contains(searchValue.toLowerCase()))
+          .where(
+              (item) => item.toLowerCase().contains(searchValue.toLowerCase()))
           .toList();
     });
     // Update the UI or perform any other operations based on the filter text
@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-endDrawer: Directionality(
+      endDrawer: Directionality(
         textDirection: TextDirection.rtl,
         child: Drawer(
           backgroundColor: Color(0xFFece793),
@@ -177,7 +177,7 @@ endDrawer: Directionality(
                     Row(
                       children: [
                         Icon(
-                         FontAwesomeIcons.x, // Change this to the desired icon
+                          FontAwesomeIcons.x, // Change this to the desired icon
                           color: Color(0xFF0A2F5A),
                           size: 24,
                         ),
@@ -198,7 +198,8 @@ endDrawer: Directionality(
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 8, bottom: 8.0, left: 30, right: 30),
+        padding:
+            const EdgeInsets.only(top: 8, bottom: 8.0, left: 30, right: 30),
         child: Column(
           children: [
             Container(
@@ -224,7 +225,7 @@ endDrawer: Directionality(
                       controller: _searchController,
                       onChanged: (value) {
                         setState(() {
-                          searchValue  = value;
+                          searchValue = value;
                         });
                       },
                       onSubmitted: (value) {
@@ -232,8 +233,8 @@ endDrawer: Directionality(
                       },
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        borderSide: BorderSide(color:Color(0xFFf7f6d4))),
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: Color(0xFFf7f6d4))),
                         border: InputBorder.none,
                         filled: true,
                         fillColor: Color(0xFFf7f6d4),
@@ -250,86 +251,87 @@ endDrawer: Directionality(
               ),
             ),
             SizedBox(height: 20),
-        Expanded(
-  child: ListView.builder(
-    itemCount: filteredItems.length,
-    itemBuilder: (context, index) {
-      return Container(
-        width: 70.0,
-        height: 90.0,
-        margin: EdgeInsets.only(bottom: 20),
-        color: Color(0xFFf7f6d4),
-        child: ListTile(
-          title: Stack(
-            children: [
-              Positioned(
-                top: 12,
-                left: 140,
-                child: Text(
-                  filteredItems[index],
-                  style: TextStyle(
-                    backgroundColor: Color.fromARGB(115, 127, 179, 71),
-                  ),
-                ),
-              ),
-
-               Positioned(
-                top: 50,
-                left: 140,
-                child: Text(
-                  'Subtitle 1',
-                  style: TextStyle(
-                    fontSize: 12,
-                    backgroundColor: Color.fromARGB(115, 127, 179, 71),
-                  ),
-                ),
-              ),
-
-               Positioned(
-                top: 50,
-                left: 40,
-                child: Text(
-                  'Subtitle 2',
-                  style: TextStyle(
-                    fontSize: 12,
-                    backgroundColor: Color.fromARGB(115, 127, 179, 71),
-                  ),
-                ),
-              ),
-
-              Positioned(
-                right: 0,
-                child: Container(
-                  width: 70.0,
-                  height: 70.0,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white,
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3), // changes position of shadow
+            Expanded(
+              child: ListView.builder(
+                itemCount: filteredItems.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: 70.0,
+                    height: 90.0,
+                    margin: EdgeInsets.only(bottom: 20),
+                    color: Color(0xFFf7f6d4),
+                    child: ListTile(
+                      title: Stack(
+                        children: [
+                          Positioned(
+                            top: 12,
+                            left: 140,
+                            child: Text(
+                              filteredItems[index],
+                              style: TextStyle(
+                                backgroundColor:
+                                    Color.fromARGB(115, 127, 179, 71),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 50,
+                            left: 140,
+                            child: Text(
+                              'Subtitle 1',
+                              style: TextStyle(
+                                fontSize: 12,
+                                backgroundColor:
+                                    Color.fromARGB(115, 127, 179, 71),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 50,
+                            left: 40,
+                            child: Text(
+                              'Subtitle 2',
+                              style: TextStyle(
+                                fontSize: 12,
+                                backgroundColor:
+                                    Color.fromARGB(115, 127, 179, 71),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            child: Container(
+                              width: 70.0,
+                              height: 70.0,
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(
+                                        0, 3), // changes position of shadow
+                                  ),
+                                ],
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: AssetImage('images/logo1.png'),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.fill,
-                      image: AssetImage('images/logo1.png'),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => OpportunityDetails()));
+                      },
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
-            ],
-          ),
-          
-          onTap: () {
-            print('hello');
-                    },
-        ),
-      );
-    },
-  ),
-),
+            ),
           ],
         ),
       ),

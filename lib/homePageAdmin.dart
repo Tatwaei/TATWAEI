@@ -256,10 +256,12 @@ class _HomePageState extends State<HomePage> {
                 itemCount: filteredItems.length,
                 itemBuilder: (context, index) {
                   return Container(
+                    decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Color(0xFFf7f6d4),),
                     width: 70.0,
                     height: 90.0,
                     margin: EdgeInsets.only(bottom: 20),
-                    color: Color(0xFFf7f6d4),
                     child: ListTile(
                       title: Stack(
                         children: [

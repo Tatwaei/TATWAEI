@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 //import 'CoordinatorInoppDetails.dart';
 import 'CoordinatorExoppDetails.dart';
+import 'coordinatorAccount.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -116,8 +117,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   onTap: () {
-                    // Handle drawer item tap for home
-                  },
+              Navigator.of(context).pop();
+              Navigator.of(context).push(MaterialPageRoute(builder: (context)=> coordinatorAccount()));            
+                    },
+                  
                 ),
               ),
               Container(
@@ -307,10 +310,12 @@ class _HomePageState extends State<HomePage> {
                 itemCount: filteredItems.length,
                 itemBuilder: (context, index) {
                   return Container(
+                    decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Color(0xFFf7f6d4),),
                     width: 70.0,
                     height: 90.0,
                     margin: EdgeInsets.only(bottom: 20),
-                    color: Color(0xFFf7f6d4),
                     child: ListTile(
                       title: Stack(
                         children: [

@@ -28,10 +28,11 @@ class _StudentMyhours extends State<StudentMyhours> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset(
-                    'images/certificate.jpg'), // Replace 'your_image.png' with the actual image path
+                Image.asset('images/certificate.jpg'),
                 SizedBox(height: 16),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 187, 213, 159)),
                   onPressed: () {
                     Navigator.of(context).pop(); // Close the pop-up
                   },

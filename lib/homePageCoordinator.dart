@@ -117,10 +117,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   onTap: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).push(MaterialPageRoute(builder: (context)=> coordinatorAccount()));            
-                    },
-                  
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => coordinatorAccount()));
+                  },
                 ),
               ),
               Container(
@@ -311,8 +311,9 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   return Container(
                     decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Color(0xFFf7f6d4),),
+                      borderRadius: BorderRadius.circular(15),
+                      color: Color(0xFFf7f6d4),
+                    ),
                     width: 70.0,
                     height: 90.0,
                     margin: EdgeInsets.only(bottom: 20),
@@ -325,6 +326,7 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               filteredItems[index],
                               style: TextStyle(
+                                color:Color(0xFF0A2F5A),
                                 backgroundColor:
                                     Color.fromARGB(115, 127, 179, 71),
                               ),
@@ -336,6 +338,7 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               'Subtitle 1',
                               style: TextStyle(
+                                color:  Color(0xFF0A2F5A),
                                 fontSize: 12,
                                 backgroundColor:
                                     Color.fromARGB(115, 127, 179, 71),
@@ -348,6 +351,7 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               'Subtitle 2',
                               style: TextStyle(
+                                color:  Color(0xFF0A2F5A),
                                 fontSize: 12,
                                 backgroundColor:
                                     Color.fromARGB(115, 127, 179, 71),

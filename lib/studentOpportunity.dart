@@ -24,7 +24,8 @@ class _studentOpportunity extends State<studentOpportunity> {
   bool showList1 = false;
   bool showList2 = false;
 
-  List<String> currentList = List<String>.generate(30, (index) => 'Item $index');
+  List<String> currentList =
+      List<String>.generate(30, (index) => 'Item $index');
   List<String> compList = List<String>.generate(30, (index) => 'Item $index');
 
   @override
@@ -67,343 +68,373 @@ class _studentOpportunity extends State<studentOpportunity> {
                 onPressed: () {},
                 icon: Icon(Icons.handshake_rounded))),
       ),
-
       body: SingleChildScrollView(
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 40),
-        height: MediaQuery.of(context).size.height - 50,
-        width: double.infinity,
-        child: Column(
-          children: [
-            SizedBox(height: 20.0),
-            Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                color: Color(0xFFD3CA25),
-                padding: EdgeInsets.only(bottom: 10, left: 310),
-                icon: Transform(
-                  alignment: Alignment.topRight,
-                  transform: Matrix4.rotationY(pi),
-                  child: Icon(Icons.arrow_back),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-               Container(
-                padding: EdgeInsets.only(left: 30),
-                child: ElevatedButton(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 40),
+          height: MediaQuery.of(context).size.height - 50,
+          width: double.infinity,
+          child: Column(
+            children: [
+              SizedBox(height: 20.0),
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  color: Color(0xFFD3CA25),
+                  padding: EdgeInsets.only(bottom: 10, left: 310),
+                  icon: Transform(
+                    alignment: Alignment.topRight,
+                    transform: Matrix4.rotationY(pi),
+                    child: Icon(Icons.arrow_back),
+                  ),
                   onPressed: () {
-                    setState(() {
-                      showList2 = !showList2;
-                    });
+                    Navigator.pop(context);
                   },
-                  child: Text(
-                    "المكتملة",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, color: Color(0xFF0A2F5A)),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                        side: BorderSide(
-                          color: Color(0xFFb4d392),
+                ),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(left: 30),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          showList2 = !showList2;
+                        });
+                      },
+                      child: Text(
+                        "المكتملة",
+                        textAlign: TextAlign.center,
+                        style:
+                            TextStyle(fontSize: 20, color: Color(0xFF0A2F5A)),
+                      ),
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            side: BorderSide(
+                              color: Color(0xFFb4d392),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            
-            Container(
-              padding: EdgeInsets.only(right: 30),
-              child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    showList1 = !showList1;
-                  });
-                },
-                child: Text(
-                  "الحالية",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, color: Color(0xFF0A2F5A)),
-                ),
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      side: BorderSide(
-                        color: Color(0xFFb4d392),
+                  Container(
+                    padding: EdgeInsets.only(right: 30),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          showList1 = !showList1;
+                        });
+                      },
+                      child: Text(
+                        "الحالية",
+                        textAlign: TextAlign.center,
+                        style:
+                            TextStyle(fontSize: 20, color: Color(0xFF0A2F5A)),
+                      ),
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            side: BorderSide(
+                              color: Color(0xFFb4d392),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ),
-          ],
-        ),
-
-           SizedBox(height: 20.0),
-
-            if (showList1) ...[
-              Expanded(
-                child: ListView.builder(
-                  itemCount: currentList.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color(0xFFf7f6d4),
-                      ),
-                      width: 70.0,
-                      height: 90.0,
-                      margin: EdgeInsets.only(bottom: 20),
-                      child: ListTile(
-                        title: Stack(
-                          children: [
-                            Positioned(
-                              top: 12,
-                              left: 140,
-                              child: Text(
-                                currentList[index],
-                                style: TextStyle(
-                                  color:  Color(0xFF0A2F5A),
-                                  backgroundColor:
-                                      Color.fromARGB(115, 127, 179, 71),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              top: 50,
-                              left: 140,
-                              child: Text(
-                                'Subtitle 1',
-                                style: TextStyle(
-                                  color:  Color(0xFF0A2F5A),
-                                  fontSize: 12,
-                                  backgroundColor:
-                                      Color.fromARGB(115, 127, 179, 71),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              top: 50,
-                              left: 40,
-                              child: Text(
-                                'Subtitle 2',
-                                style: TextStyle(
-                                  color:  Color(0xFF0A2F5A),
-                                  fontSize: 12,
-                                  backgroundColor:
-                                      Color.fromARGB(115, 127, 179, 71),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              right: 0,
-                              child: Container(
-                                width: 70.0,
-                                height: 70.0,
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.white,
-                                      spreadRadius: 5,
-                                      blurRadius: 7,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: AssetImage('images/logo1.png'),
+              SizedBox(height: 20.0),
+              if (showList1) ...[
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: currentList.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Color(0xFFf7f6d4),
+                        ),
+                        width: 70.0,
+                        height: 90.0,
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: ListTile(
+                          title: Stack(
+                            children: [
+                              Positioned(
+                                top: 12,
+                                left: 140,
+                                child: Text(
+                                  currentList[index],
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
+                                    backgroundColor:
+                                        Color.fromARGB(115, 127, 179, 71),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => OpportunityDetails(),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          
-            if (showList2) ...[
-              Expanded(
-                child: ListView.builder(
-                  itemCount: compList.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color(0xFFf7f6d4),
-                      ),
-                      width: 70.0,
-                      height: 90.0,
-                      margin: EdgeInsets.only(bottom: 20),
-                      child: ListTile(
-                        title: Stack(
-                          children: [
-                            Positioned(
-                              top: 12,
-                              left: 140,
-                              child: Text(
-                                compList[index],
-                                style: TextStyle(
-                                  color: Color(0xFF0A2F5A),
-                                  backgroundColor:
-                                      Color.fromARGB(115, 127, 179, 71),
+                              Positioned(
+                                top: 50,
+                                left: 140,
+                                child: Text(
+                                  'Subtitle 1',
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
+                                    fontSize: 12,
+                                    backgroundColor:
+                                        Color.fromARGB(115, 127, 179, 71),
+                                  ),
                                 ),
                               ),
-                            ),
-                            Stack(
-  children: [
-    Stack(
-  children: [
-    Positioned(
-      top: 40,
-      left: 80,
-      child: Column(
-        children: [
-          ElevatedButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    title: Text('Please choose media to select'),
-                    content: Container(
-                      height: MediaQuery.of(context).size.height / 6,
-                      child: Column(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              getImage(ImageSource.gallery);
-                            },
-                            child: Row(
-                              children: [
-                                Icon(Icons.image),
-                                Text('From Gallery'),
-                              ],
-                            ),
+                              Positioned(
+                                top: 50,
+                                left: 40,
+                                child: Text(
+                                  'Subtitle 2',
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
+                                    fontSize: 12,
+                                    backgroundColor:
+                                        Color.fromARGB(115, 127, 179, 71),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                right: 0,
+                                child: Container(
+                                  width: 70.0,
+                                  height: 70.0,
+                                  decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.white,
+                                        spreadRadius: 5,
+                                        blurRadius: 7,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: AssetImage('images/logo1.png'),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              getImage(ImageSource.camera);
-                            },
-                            child: Row(
-                              children: [
-                                Icon(Icons.camera),
-                                Text('From Camera'),
-                              ],
-                            ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => OpportunityDetails(),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+              if (showList2) ...[
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: compList.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Color(0xFFf7f6d4),
+                        ),
+                        width: 70.0,
+                        height: 90.0,
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: ListTile(
+                          title: Stack(
+                            children: [
+                              Positioned(
+                                top: 12,
+                                left: 140,
+                                child: Text(
+                                  compList[index],
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
+                                    backgroundColor:
+                                        Color.fromARGB(115, 127, 179, 71),
+                                  ),
+                                ),
+                              ),
+                              Stack(
+                                children: [
+                                  Stack(
+                                    children: [
+                                      Positioned(
+                                        top: 40,
+                                        left: 80,
+                                        child: Column(
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                      title: Text(
+                                                          'Please choose media to select'),
+                                                      content: Container(
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height /
+                                                            6,
+                                                        child: Column(
+                                                          children: [
+                                                            ElevatedButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                getImage(
+                                                                    ImageSource
+                                                                        .gallery);
+                                                              },
+                                                              child: Row(
+                                                                children: [
+                                                                  Icon(Icons
+                                                                      .image),
+                                                                  Text(
+                                                                      'From Gallery'),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            ElevatedButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                                getImage(
+                                                                    ImageSource
+                                                                        .camera);
+                                                              },
+                                                              child: Row(
+                                                                children: [
+                                                                  Icon(Icons
+                                                                      .camera),
+                                                                  Text(
+                                                                      'From Camera'),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: Text(
+                                                'رفع الشهادة',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Color(0xFF0A2F5A)),
+                                              ),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Color.fromARGB(
+                                                    255, 187, 213, 159),
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 30,
+                                                    vertical: 0.5),
+                                              ),
+                                            ),
+                                            SizedBox(height: 20),
+                                            if (image != null)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 20),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  child: Image.file(
+                                                    File(image!.path),
+                                                    fit: BoxFit.cover,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    height: 300,
+                                                  ),
+                                                ),
+                                              )
+                                            else
+                                              Text(
+                                                "No Image",
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Positioned(
+                                right: 0,
+                                child: Container(
+                                  width: 70.0,
+                                  height: 70.0,
+                                  decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.white,
+                                        spreadRadius: 5,
+                                        blurRadius: 7,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: AssetImage('images/logo1.png'),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-            child: Text(
-              'رفع الشهادة',
-              style: TextStyle(fontSize: 12,color: Color(0xFF0A2F5A)),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Color.fromARGB(255, 187, 213, 159),
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 0.5),
-            ),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => OpportunityDetails(),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ],
           ),
-          SizedBox(height: 20),
-          if (image != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.file(
-                  File(image!.path),
-                  fit: BoxFit.cover,
-                  width: MediaQuery.of(context).size.width,
-                  height: 300,
-                ),
-              ),
-            )
-          else
-            Text(
-              "No Image",
-              style: TextStyle(fontSize: 20),
-            ),
-        ],
-      ),
-    ),
-  ],
-),
-  ],
-),
-                            Positioned(
-                              right: 0,
-                              child: Container(
-                                width: 70.0,
-                                height: 70.0,
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.white,
-                                      spreadRadius: 5,
-                                      blurRadius: 7,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: AssetImage('images/logo1.png'),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => OpportunityDetails(),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ],
         ),
       ),
-     ), );
+    );
   }
 }

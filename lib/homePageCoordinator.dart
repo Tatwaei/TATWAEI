@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 //import 'CoordinatorInoppDetails.dart';
 import 'CoordinatorExoppDetails.dart';
 import 'coordinatorAccount.dart';
+import 'CordinatorMyStudent.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -136,7 +137,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   onTap: () {
-                    // Handle drawer item tap for settings
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            CordinatorMyStudent())); // Handle drawer item tap for settings
                   },
                 ),
               ),
@@ -326,7 +329,7 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               filteredItems[index],
                               style: TextStyle(
-                                color:Color(0xFF0A2F5A),
+                                color: Color(0xFF0A2F5A),
                                 backgroundColor:
                                     Color.fromARGB(115, 127, 179, 71),
                               ),
@@ -338,7 +341,7 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               'Subtitle 1',
                               style: TextStyle(
-                                color:  Color(0xFF0A2F5A),
+                                color: Color(0xFF0A2F5A),
                                 fontSize: 12,
                                 backgroundColor:
                                     Color.fromARGB(115, 127, 179, 71),
@@ -351,7 +354,7 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               'Subtitle 2',
                               style: TextStyle(
-                                color:  Color(0xFF0A2F5A),
+                                color: Color(0xFF0A2F5A),
                                 fontSize: 12,
                                 backgroundColor:
                                     Color.fromARGB(115, 127, 179, 71),

@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'CoordinatorExoppDetails.dart';
 import 'coordinatorAccount.dart';
 import 'CordinatorMyStudent.dart';
+import 'confirm_student_signup.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -156,7 +157,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   onTap: () {
-                    // Handle drawer item tap for logout
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ConfirmStudentPage()));
                   },
                 ),
               ),

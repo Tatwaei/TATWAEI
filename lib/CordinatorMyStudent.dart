@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'coordinatorOneStudent.dart';
 
 class CordinatorMyStudent extends StatefulWidget {
   @override
@@ -100,6 +101,7 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                                 child: Text(
                                   filteredItems[index],
                                   style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
                                     backgroundColor:
                                         Color.fromARGB(115, 127, 179, 71),
                                   ),
@@ -112,6 +114,7 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                                   'رقم الطالب',
                                   style: TextStyle(
                                     fontSize: 12,
+                                    color: Color(0xFF0A2F5A),
                                     backgroundColor:
                                         Color.fromARGB(115, 127, 179, 71),
                                   ),
@@ -124,6 +127,7 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                                   'الساعات',
                                   style: TextStyle(
                                     fontSize: 12,
+                                    color: Color(0xFF0A2F5A),
                                     backgroundColor:
                                         Color.fromARGB(115, 127, 179, 71),
                                   ),
@@ -131,7 +135,10 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                               ),
                             ],
                           ),
-                          onTap: () {}, //going to the student info page
+                          onTap: () {
+                           Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => coordinatorOneStudent()));
+                          }, //going to the student info page
                         ),
                       );
                     },

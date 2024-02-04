@@ -1,5 +1,5 @@
 // ignore_for_file: prefer_const_constructors
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SchoolSignUpPage extends StatefulWidget {
@@ -10,8 +10,25 @@ class SchoolSignUpPage extends StatefulWidget {
 }
 
 class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
-  String? selectedSchool; // Variable to track the selected school
-  List<String> schools = ['School 1', 'School 2', 'School 3'];
+  String? selectedSchool;
+  List<String> schools = [];
+
+  final CollectionReference schoolCollection =
+      FirebaseFirestore.instance.collection('new_schools');
+
+  void initState() {
+    super.initState();
+    fetchSchools();
+  }
+
+  void fetchSchools() async {
+    final QuerySnapshot snapshot = await schoolCollection.get();
+    final List<String> fetchedSchools =
+        snapshot.docs.map((doc) => doc['name'].toString()).toList();
+    setState(() {
+      schools = fetchedSchools;
+    });
+  }
 
   // Controllers for the TextFormFields
   final TextEditingController _emailController = TextEditingController();
@@ -95,7 +112,7 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              // Dropdown for selecting schools
+              // Dropdown for selecting schools name
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -130,7 +147,7 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
                   'لم أجد مدرستي؟',
                   textAlign: TextAlign.right,
                   style: TextStyle(
-                    color: Color(0xFF0A2F5A), // Make it look clickable
+                    color: Color(0xFF0A2F5A),
                     decoration: TextDecoration.underline,
                   ),
                 ),

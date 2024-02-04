@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StudentSignUpPage extends StatefulWidget {
   const StudentSignUpPage({Key? key}) : super(key: key);
@@ -11,10 +12,29 @@ class StudentSignUpPage extends StatefulWidget {
 }
 
 class _StudentSignUpPageState extends State<StudentSignUpPage> {
-  String? selectedSchool; // Variable to track the selected school
-  List<String> schools = ['School 1', 'School 2', 'School 3'];
-  int? selectedGrade; // Variable to track the selected
+  String? selectedSchool;
+  List<String> schools = [];
+
+  final CollectionReference schoolCollection =
+      FirebaseFirestore.instance.collection('school');
+
+  void initState() {
+    super.initState();
+    fetchSchools();
+  }
+
+  void fetchSchools() async {
+    final QuerySnapshot snapshot = await schoolCollection.get();
+    final List<String> fetchedSchools =
+        snapshot.docs.map((doc) => doc['schoolName'].toString()).toList();
+    setState(() {
+      schools = fetchedSchools;
+    });
+  }
+
+  int? selectedGrade;
   List<int> grades = [10, 11, 12];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

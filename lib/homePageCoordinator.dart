@@ -8,8 +8,10 @@ import 'CordinatorMyStudent.dart';
 import 'confirm_student_signup.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-CollectionReference internalOpportunity = FirebaseFirestore.instance.collection('internalOpportunity');
-CollectionReference externalOpportunity = FirebaseFirestore.instance.collection('externalOpportunity');
+CollectionReference internalOpportunity =
+    FirebaseFirestore.instance.collection('internalOpportunity');
+CollectionReference externalOpportunity =
+    FirebaseFirestore.instance.collection('externalOpportunity');
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,33 +22,30 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
 
-Future<List<DocumentSnapshot>> getIngredients() async {
-  CollectionReference internalOpportunity =
-      _firestore.collection('internalOpportunity');
-  CollectionReference externalOpportunity =
-      _firestore.collection('externalOpportunity');
+  Future<List<DocumentSnapshot>> getIngredients() async {
+    CollectionReference internalOpportunity =
+        _firestore.collection('internalOpportunity');
+    CollectionReference externalOpportunity =
+        _firestore.collection('externalOpportunity');
 
-  QuerySnapshot internalSnapshot = await internalOpportunity.get();
-  QuerySnapshot externalSnapshot = await externalOpportunity.get();
+    QuerySnapshot internalSnapshot = await internalOpportunity.get();
+    QuerySnapshot externalSnapshot = await externalOpportunity.get();
 
-  List<DocumentSnapshot> internal = internalSnapshot.docs;
-  List<DocumentSnapshot> external = externalSnapshot.docs;
+    List<DocumentSnapshot> internal = internalSnapshot.docs;
+    List<DocumentSnapshot> external = externalSnapshot.docs;
 
-  List<DocumentSnapshot> opp = [
-    ...internal,
-    ...external
-  ];
+    List<DocumentSnapshot> opp = [...internal, ...external];
 
-  return opp;
-}
+    return opp;
+  }
 
-List<DocumentSnapshot> opp = [];
-List<DocumentSnapshot<Object?>> filteredItems = [];
+  List<DocumentSnapshot> opp = [];
+  List<DocumentSnapshot<Object?>> filteredItems = [];
 
-late CollectionReference internalOpportunity;
-late CollectionReference externalOpportunity;
+  late CollectionReference internalOpportunity;
+  late CollectionReference externalOpportunity;
 
-void _performSearch() {
+  void _performSearch() {
     print('Searching for: $searchValue ');
 
     // Perform the search logic here
@@ -60,41 +59,295 @@ void _performSearch() {
     });
   }
 
+  bool filservice = false;
+  bool filbusns = false;
+  bool filsocial = false;
+  bool filhealth = false;
+  bool filother = false;
+  bool filinternal = false;
+  bool filexternal = false;
+  bool filmale = false;
+  bool filfemale = false;
+
+  void _filterPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Color(0xFFf7f6d4),
+          child: Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(left: 180, bottom: 10),
+                  padding: EdgeInsets.only(left: 30),
+                  child: Text(
+                    'المجال',
+                    style: TextStyle(fontSize: 25, color: Color(0xFF0A2F5A)),
+                  ),
+                  decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 187, 213, 159),
+                      borderRadius: BorderRadius.circular(5)),
+                ),
+                SizedBox(height: 16),
+                Container(
+                  margin: EdgeInsets.only(left: 100, bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text("خدمية"),
+                          Checkbox(
+                            value: filservice,
+                            onChanged: (bool? val) {
+                              setState(() {
+                                print("work");
+                                filservice = val!;
+                              });
+                            },
+                          ),
+                          SizedBox(width: 10),
+                          Text("ادارية"),
+                          Checkbox(
+                            value: filbusns,
+                            onChanged: (bool? val) {
+                              setState(() {
+                                print("work2");
+                                filbusns = val!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 85, bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text("اجتماعية"),
+                          Checkbox(
+                            value: filsocial,
+                            onChanged: (bool? val) {
+                              setState(() {
+                                print("work3");
+                                filsocial = val!;
+                              });
+                            },
+                          ),
+                          SizedBox(width: 10),
+                          Text("صحية"),
+                          Checkbox(
+                            value: filhealth,
+                            onChanged: (bool? val) {
+                              setState(() {
+                                print("work4");
+                                filhealth = val!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 195, bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text("اخرى"),
+                          Checkbox(
+                            value: filother,
+                            onChanged: (bool? val) {
+                              setState(() {
+                                print("work5");
+                                filother = val!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 180, bottom: 10),
+                  padding: EdgeInsets.only(left: 30),
+                  child: Text(
+                    'المكان',
+                    style: TextStyle(fontSize: 25, color: Color(0xFF0A2F5A)),
+                  ),
+                  decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 187, 213, 159),
+                      borderRadius: BorderRadius.circular(5)),
+                ),
+                SizedBox(height: 16),
+                Container(
+                  margin: EdgeInsets.only(left: 150, bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text("داخل المدرسة"),
+                          Checkbox(
+                            value: filinternal,
+                            onChanged: (bool? val) {
+                              setState(() {
+                                print("work6");
+                                filinternal = val!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("خارج المدرسة"),
+                          Checkbox(
+                            value: filexternal,
+                            onChanged: (bool? val) {
+                              setState(() {
+                                print("work7");
+                                filexternal = val!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 180, bottom: 10),
+                  padding: EdgeInsets.only(left: 30),
+                  child: Text(
+                    'الجنس',
+                    style: TextStyle(fontSize: 25, color: Color(0xFF0A2F5A)),
+                  ),
+                  decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 187, 213, 159),
+                      borderRadius: BorderRadius.circular(5)),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 195, bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(" ذكر"),
+                          Checkbox(
+                            value: filmale,
+                            onChanged: (bool? val) {
+                              setState(() {
+                                print("work8");
+                                filmale = val!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("انثى"),
+                          Checkbox(
+                            value: filother,
+                            onChanged: (bool? val) {
+                              setState(() {
+                                print("work9");
+                                filfemale = val!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 60),
+                  child: Row(
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Color.fromARGB(255, 187, 213, 159)),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the pop-up
+                        },
+                        child: Text('اغلاق',
+                            style: TextStyle(color: Color(0xFF0A2F5A))),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Color.fromARGB(255, 187, 213, 159)),
+                        onPressed: () {}, //should handle the filtering
+                        child: Text('تطبيق',
+                            style: TextStyle(color: Color(0xFF0A2F5A))),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _applyFilter() {
     // Apply the filter logic here
     print('Applying filter');
     // Update the UI or perform any other operations based on the filter
   }
 
-@override
-void initState() {
-  super.initState();
-   internalOpportunity = _firestore.collection('internalOpportunity');
+  @override
+  void initState() {
+    super.initState();
+    internalOpportunity = _firestore.collection('internalOpportunity');
     externalOpportunity = _firestore.collection('externalOpportunity');
-  getIngredients().then((ingredients) {
-    setState(() {
-      opp = ingredients;
-      filteredItems = opp;
+    getIngredients().then((ingredients) {
+      setState(() {
+        opp = ingredients;
+        filteredItems = opp;
+      });
     });
-  });
-}
-
-Future<String> getSource(DocumentSnapshot<Object?> opportunity) async {
-  String source = '';
-  DocumentReference<Object?> internalRef = internalOpportunity.doc(opportunity.id);
-  DocumentReference<Object?> externalRef = externalOpportunity.doc(opportunity.id);
-
-  DocumentSnapshot<Object?> internalSnapshot = await internalRef.get();
-  DocumentSnapshot<Object?> externalSnapshot = await externalRef.get();
-
-  if (internalSnapshot.exists) {
-    source = 'Internal';
-  } else if (externalSnapshot.exists) {
-    source = 'External';
   }
 
-  return source;
-}
+  Future<String> getSource(DocumentSnapshot<Object?> opportunity) async {
+    String source = '';
+    DocumentReference<Object?> internalRef =
+        internalOpportunity.doc(opportunity.id);
+    DocumentReference<Object?> externalRef =
+        externalOpportunity.doc(opportunity.id);
+
+    DocumentSnapshot<Object?> internalSnapshot = await internalRef.get();
+    DocumentSnapshot<Object?> externalSnapshot = await externalRef.get();
+
+    if (internalSnapshot.exists) {
+      source = 'Internal';
+    } else if (externalSnapshot.exists) {
+      source = 'External';
+    }
+
+    return source;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -325,7 +578,7 @@ Future<String> getSource(DocumentSnapshot<Object?> opportunity) async {
                 children: [
                   IconButton(
                     onPressed: () {
-                      _applyFilter();
+                      _filterPopup(context);
                     },
                     icon: Icon(
                       Icons.filter_list,
@@ -370,106 +623,107 @@ Future<String> getSource(DocumentSnapshot<Object?> opportunity) async {
                 itemCount: filteredItems.length,
                 itemBuilder: (context, index) {
                   return FutureBuilder<String>(
-        future: getSource(filteredItems[index]),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Return a loading indicator if the data is still loading
-            return CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            // Handle the error case
-            return Text('Error loading source');
-          } else {
-            // Data is loaded successfully, display the source
-            String source = snapshot.data!;
-                  return Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Color(0xFFf7f6d4),
-                    ),
-                    width: 70.0,
-                    height: 90.0,
-                    margin: EdgeInsets.only(bottom: 20),
-                    child: ListTile(
-                      title: Stack(
-                        children: [
-                          Positioned(
-                            top: 12,
-                            left: 120,
-                            child: Text(
-                              filteredItems[index]['name'],
-                              textDirection: TextDirection.rtl,
-                              style: TextStyle(
-                                color: Color(0xFF0A2F5A),
-                                backgroundColor:
-                                    Color.fromARGB(115, 127, 179, 71),
-                              ),
-                            ),
+                    future: getSource(filteredItems[index]),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        // Return a loading indicator if the data is still loading
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        // Handle the error case
+                        return Text('Error loading source');
+                      } else {
+                        // Data is loaded successfully, display the source
+                        String source = snapshot.data!;
+                        return Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: Color(0xFFf7f6d4),
                           ),
-                          Positioned(
-                            top: 50,
-                            left: 160,
-                            child: Text(
-                              source,
-                              style: TextStyle(
-                                color: Color(0xFF0A2F5A),
-                                fontSize: 12,
-                                backgroundColor:
-                                    Color.fromARGB(115, 127, 179, 71),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 50,
-                            left: 40,
-                            child: Text(
-                              filteredItems[index]['interest'],
-                              style: TextStyle(
-                                color: Color(0xFF0A2F5A),
-                                fontSize: 12,
-                                backgroundColor:
-                                    Color.fromARGB(115, 127, 179, 71),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            right: 0,
-                            child: Container(
-                              width: 70.0,
-                              height: 70.0,
-                              decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white,
-                                    spreadRadius: 5,
-                                    blurRadius: 7,
-                                    offset: Offset(
-                                        0, 3), // changes position of shadow
+                          width: 70.0,
+                          height: 90.0,
+                          margin: EdgeInsets.only(bottom: 20),
+                          child: ListTile(
+                            title: Stack(
+                              children: [
+                                Positioned(
+                                  top: 12,
+                                  left: 120,
+                                  child: Text(
+                                    filteredItems[index]['name'],
+                                    textDirection: TextDirection.rtl,
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                      backgroundColor:
+                                          Color.fromARGB(115, 127, 179, 71),
+                                    ),
                                   ),
-                                ],
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: AssetImage('images/logo1.png'),
                                 ),
-                              ),
+                                Positioned(
+                                  top: 50,
+                                  left: 160,
+                                  child: Text(
+                                    source,
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                      fontSize: 12,
+                                      backgroundColor:
+                                          Color.fromARGB(115, 127, 179, 71),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 50,
+                                  left: 40,
+                                  child: Text(
+                                    filteredItems[index]['interest'],
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                      fontSize: 12,
+                                      backgroundColor:
+                                          Color.fromARGB(115, 127, 179, 71),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 0,
+                                  child: Container(
+                                    width: 70.0,
+                                    height: 70.0,
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.white,
+                                          spreadRadius: 5,
+                                          blurRadius: 7,
+                                          offset: Offset(0,
+                                              3), // changes position of shadow
+                                        ),
+                                      ],
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: AssetImage('images/logo1.png'),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => OpportunityDetails()));
+                            },
                           ),
-                        ],
-                      ),
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => OpportunityDetails()));
-                      },
-                    ),
+                        );
+                      }
+                    },
                   );
-                }},
-              );
                 },
-            ),),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
-

@@ -11,49 +11,41 @@ class _OpportunityPageState extends State<OpportunityDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70.0),
-        child: AppBar(
-          backgroundColor: Color(0xFFece793),
-          iconTheme: IconThemeData(color: Color(0xFFD3CA25), size: 45.0),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                margin: EdgeInsets.all(3),
-                height: 58,
-                width: 60,
-                child: SizedBox(
-                  child: Image.asset('images/logo1.png', fit: BoxFit.fill),
-                ),
-              ),
-              Row(
+          preferredSize: Size.fromHeight(70.0),
+          child: AppBar(
+              backgroundColor: Color(0xFFece793),
+              iconTheme: IconThemeData(color: Color(0xFFD3CA25), size: 45.0),
+              title: Stack(
+                alignment: Alignment.centerRight,
                 children: [
-                  Container(
-                    padding: EdgeInsets.only(top: 10),
+                  Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.all(0),
+                        height: 58,
+                        width: 60,
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    right: 80,
+                    top: 20,
                     child: Text(
                       "تفاصيل الفرص",
                       style: TextStyle(
                         color: Color(0xFF0A2F5A),
-                        fontSize: 24,
+                        fontSize: 28,
                       ),
-                    ),
-                  ),
-                  Container(
-                    width: 70,
-                    child: IconButton(
-                      padding: EdgeInsets.only(left: 10),
-                      iconSize: 60,
-                      color: Color.fromARGB(115, 127, 179, 71),
-                      onPressed: () {},
-                      icon: Icon(Icons.handshake_rounded),
                     ),
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-      ),
+              leading: IconButton(
+                  iconSize: 70,
+                  padding: EdgeInsets.only(bottom: 6, left: 300),
+                  color: Color.fromARGB(115, 127, 179, 71),
+                  onPressed: () {},
+                  icon: Icon(Icons.handshake_rounded)))),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.all(5),
@@ -65,6 +57,7 @@ class _OpportunityPageState extends State<OpportunityDetails> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
+                      color: Color(0xFFD3CA25),
                       icon: Transform(
                         alignment: Alignment.center,
                         transform: Matrix4.rotationY(pi),

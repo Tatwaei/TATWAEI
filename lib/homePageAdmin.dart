@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'AdminInoppDetails.dart';
 import 'AdminExoppDetails.dart';
+
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+CollectionReference internalOpportunity = FirebaseFirestore.instance.collection('internalOpportunity');
+CollectionReference externalOpportunity = FirebaseFirestore.instance.collection('externalOpportunity');
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,20 +17,44 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
 
-  List<String> items = List<String>.generate(100, (index) => 'Item $index');
-  List<String> filteredItems = [];
+Future<List<DocumentSnapshot>> getIngredients() async {
+  CollectionReference internalOpportunity =
+      _firestore.collection('internalOpportunity');
+  CollectionReference externalOpportunity =
+      _firestore.collection('externalOpportunity');
 
-  void _performSearch() {
-    // Perform the search logic here
+  QuerySnapshot internalSnapshot = await internalOpportunity.get();
+  QuerySnapshot externalSnapshot = await externalOpportunity.get();
+
+  List<DocumentSnapshot> internal = internalSnapshot.docs;
+  List<DocumentSnapshot> external = externalSnapshot.docs;
+
+  List<DocumentSnapshot> opp = [
+    ...internal,
+    ...external
+  ];
+
+  return opp;
+}
+
+List<DocumentSnapshot> opp = [];
+List<DocumentSnapshot<Object?>> filteredItems = [];
+
+late CollectionReference internalOpportunity;
+late CollectionReference externalOpportunity;
+
+void _performSearch() {
     print('Searching for: $searchValue ');
 
+    // Perform the search logic here
+    List<DocumentSnapshot> searchResults = opp
+        .where((opportunity) =>
+            opportunity['name'].toString().contains(searchValue))
+        .toList();
+
     setState(() {
-      filteredItems = items
-          .where(
-              (item) => item.toLowerCase().contains(searchValue.toLowerCase()))
-          .toList();
+      filteredItems = searchResults;
     });
-    // Update the UI or perform any other operations based on the filter text
   }
 
   void _applyFilter() {
@@ -34,11 +63,35 @@ class _HomePageState extends State<HomePage> {
     // Update the UI or perform any other operations based on the filter
   }
 
-  @override
-  void initState() {
-    super.initState();
-    filteredItems = items;
+@override
+void initState() {
+  super.initState();
+   internalOpportunity = _firestore.collection('internalOpportunity');
+    externalOpportunity = _firestore.collection('externalOpportunity');
+  getIngredients().then((ingredients) {
+    setState(() {
+      opp = ingredients;
+      filteredItems = opp;
+    });
+  });
+}
+
+Future<String> getSource(DocumentSnapshot<Object?> opportunity) async {
+  String source = '';
+  DocumentReference<Object?> internalRef = internalOpportunity.doc(opportunity.id);
+  DocumentReference<Object?> externalRef = externalOpportunity.doc(opportunity.id);
+
+  DocumentSnapshot<Object?> internalSnapshot = await internalRef.get();
+  DocumentSnapshot<Object?> externalSnapshot = await externalRef.get();
+
+  if (internalSnapshot.exists) {
+    source = 'Internal';
+  } else if (externalSnapshot.exists) {
+    source = 'External';
   }
+
+  return source;
+}
 
   @override
   Widget build(BuildContext context) {
@@ -255,6 +308,19 @@ class _HomePageState extends State<HomePage> {
               child: ListView.builder(
                 itemCount: filteredItems.length,
                 itemBuilder: (context, index) {
+
+      return FutureBuilder<String>(
+        future: getSource(filteredItems[index]),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Return a loading indicator if the data is still loading
+            return CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            // Handle the error case
+            return Text('Error loading source');
+          } else {
+            // Data is loaded successfully, display the source
+            String source = snapshot.data!;
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
@@ -268,9 +334,10 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Positioned(
                             top: 12,
-                            left: 140,
+                            left: 120,
                             child: Text(
-                              filteredItems[index],
+                              filteredItems[index]['name'],
+                              textDirection: TextDirection.rtl,
                               style: TextStyle(
                                 color: Color(0xFF0A2F5A),
                                 backgroundColor:
@@ -280,9 +347,9 @@ class _HomePageState extends State<HomePage> {
                           ),
                           Positioned(
                             top: 50,
-                            left: 140,
+                            left: 160,
                             child: Text(
-                              'Subtitle 1',
+                              source,
                               style: TextStyle(
                                 color: Color(0xFF0A2F5A),
                                 fontSize: 12,
@@ -295,7 +362,7 @@ class _HomePageState extends State<HomePage> {
                             top: 50,
                             left: 40,
                             child: Text(
-                              'Subtitle 2',
+                              filteredItems[index]['interest'],
                               style: TextStyle(
                                 color: Color(0xFF0A2F5A),
                                 fontSize: 12,
@@ -332,12 +399,13 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => OpportunityDetails()));
-                      },
+                       },
                     ),
                   );
+                }},
+              );
                 },
-              ),
-            ),
+            ),),
           ],
         ),
       ),

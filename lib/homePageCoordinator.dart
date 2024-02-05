@@ -73,279 +73,286 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Color(0xFFf7f6d4),
-          child: Container(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: 180, bottom: 10),
-                  padding: EdgeInsets.only(left: 30),
-                  child: Text(
-                    'المجال',
-                    style: TextStyle(fontSize: 25, color: Color(0xFF0A2F5A)),
-                  ),
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 187, 213, 159),
-                      borderRadius: BorderRadius.circular(5)),
-                ),
-                SizedBox(height: 16),
-                Container(
-                  margin: EdgeInsets.only(left: 100, bottom: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            "خدمية",
-                            style: TextStyle(
-                              color: Color(0xFF0A2F5A),
-                            ),
-                          ),
-                          Checkbox(
-                            activeColor: Color(0xFF0A2F5A),
-                            value: filservice,
-                            onChanged: (bool? val) {
-                              setState(() {
-                                print("work");
-                                filservice = val!;
-                              });
-                            },
-                          ),
-                          SizedBox(width: 10),
-                          Text("ادارية",
-                              style: TextStyle(
-                                color: Color(0xFF0A2F5A),
-                              )),
-                          Checkbox(
-                            activeColor: Color(0xFF0A2F5A),
-                            value: filbusns,
-                            onChanged: (bool? val) {
-                              setState(() {
-                                print("work2");
-                                filbusns = val!;
-                              });
-                            },
-                          ),
-                        ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              backgroundColor: Color(0xFFf7f6d4),
+              child: Container(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left: 180, bottom: 10),
+                      padding: EdgeInsets.only(left: 30),
+                      child: Text(
+                        'المجال',
+                        style:
+                            TextStyle(fontSize: 25, color: Color(0xFF0A2F5A)),
                       ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 85, bottom: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+                      decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 187, 213, 159),
+                          borderRadius: BorderRadius.circular(5)),
+                    ),
+                    SizedBox(height: 16),
+                    Container(
+                      margin: EdgeInsets.only(left: 100, bottom: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("اجتماعية",
-                              style: TextStyle(
-                                color: Color(0xFF0A2F5A),
-                              )),
-                          Checkbox(
-                            activeColor: Color(0xFF0A2F5A),
-                            value: filsocial,
-                            onChanged: (bool? val) {
-                              setState(() {
-                                print("work3");
-                                filsocial = val!;
-                              });
-                            },
-                          ),
-                          SizedBox(width: 10),
-                          Text("صحية",
-                              style: TextStyle(
-                                color: Color(0xFF0A2F5A),
-                              )),
-                          Checkbox(
-                            activeColor: Color(0xFF0A2F5A),
-                            value: filhealth,
-                            onChanged: (bool? val) {
-                              setState(() {
-                                print("work4");
-                                filhealth = val!;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 195, bottom: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text("اخرى",
-                              style: TextStyle(
-                                color: Color(0xFF0A2F5A),
-                              )),
-                          Checkbox(
-                            activeColor: Color(0xFF0A2F5A),
-                            value: filother,
-                            onChanged: (bool? val) {
-                              setState(() {
-                                print("work5");
-                                filother = val!;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 180, bottom: 10),
-                  padding: EdgeInsets.only(left: 30),
-                  child: Text(
-                    'المكان',
-                    style: TextStyle(fontSize: 25, color: Color(0xFF0A2F5A)),
-                  ),
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 187, 213, 159),
-                      borderRadius: BorderRadius.circular(5)),
-                ),
-                SizedBox(height: 16),
-                Container(
-                  margin: EdgeInsets.only(left: 150, bottom: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text("داخل المدرسة",
-                              style: TextStyle(
-                                color: Color(0xFF0A2F5A),
-                              )),
-                          Checkbox(
-                            activeColor: Color(0xFF0A2F5A),
-                            value: filinternal,
-                            onChanged: (bool? val) {
-                              setState(() {
-                                print("work6");
-                                filinternal = val!;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text("خارج المدرسة",
-                              style: TextStyle(
-                                color: Color(0xFF0A2F5A),
-                              )),
-                          Checkbox(
-                            activeColor: Color(0xFF0A2F5A),
-                            value: filexternal,
-                            onChanged: (bool? val) {
-                              setState(() {
-                                print("work7");
-                                filexternal = val!;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 180, bottom: 10),
-                  padding: EdgeInsets.only(left: 30),
-                  child: Text(
-                    'الجنس',
-                    style: TextStyle(fontSize: 25, color: Color(0xFF0A2F5A)),
-                  ),
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 187, 213, 159),
-                      borderRadius: BorderRadius.circular(5)),
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 195, bottom: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(" ذكر",
-                              style: TextStyle(
-                                color: Color(0xFF0A2F5A),
-                              )),
-                          Checkbox(
-                            activeColor: Color(0xFF0A2F5A),
-                            value: filmale,
-                            onChanged: (bool? val) {
-                              setState(
-                                () {
-                                  print("work8");
-                                  filmale = val!;
+                          Row(
+                            children: [
+                              Text(
+                                "خدمية",
+                                style: TextStyle(
+                                  color: Color(0xFF0A2F5A),
+                                ),
+                              ),
+                              Checkbox(
+                                activeColor: Color(0xFF0A2F5A),
+                                value: filservice,
+                                onChanged: (bool? val) {
+                                  setState(() {
+                                    print("work");
+                                    filservice = val!;
+                                  });
                                 },
-                              );
-                            },
+                              ),
+                              SizedBox(width: 10),
+                              Text("ادارية",
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
+                                  )),
+                              Checkbox(
+                                activeColor: Color(0xFF0A2F5A),
+                                value: filbusns,
+                                onChanged: (bool? val) {
+                                  setState(() {
+                                    print("work2");
+                                    filbusns = val!;
+                                  });
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      Row(
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 85, bottom: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("انثى",
-                              style: TextStyle(
-                                color: Color(0xFF0A2F5A),
-                              )),
-                          Checkbox(
-                            activeColor: Color(0xFF0A2F5A),
-                            value: filother,
-                            onChanged: (bool? val) {
-                              setState(() {
-                                print("work9");
-                                filfemale = val!;
-                              });
-                            },
+                          Row(
+                            children: [
+                              Text("اجتماعية",
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
+                                  )),
+                              Checkbox(
+                                activeColor: Color(0xFF0A2F5A),
+                                value: filsocial,
+                                onChanged: (bool? val) {
+                                  setState(() {
+                                    print("work3");
+                                    filsocial = val!;
+                                  });
+                                },
+                              ),
+                              SizedBox(width: 10),
+                              Text("صحية",
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
+                                  )),
+                              Checkbox(
+                                activeColor: Color(0xFF0A2F5A),
+                                value: filhealth,
+                                onChanged: (bool? val) {
+                                  setState(() {
+                                    print("work4");
+                                    filhealth = val!;
+                                  });
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 195, bottom: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text("اخرى",
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
+                                  )),
+                              Checkbox(
+                                activeColor: Color(0xFF0A2F5A),
+                                value: filother,
+                                onChanged: (bool? val) {
+                                  setState(() {
+                                    print("work5");
+                                    filother = val!;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 180, bottom: 10),
+                      padding: EdgeInsets.only(left: 30),
+                      child: Text(
+                        'المكان',
+                        style:
+                            TextStyle(fontSize: 25, color: Color(0xFF0A2F5A)),
+                      ),
+                      decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 187, 213, 159),
+                          borderRadius: BorderRadius.circular(5)),
+                    ),
+                    SizedBox(height: 16),
+                    Container(
+                      margin: EdgeInsets.only(left: 150, bottom: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text("داخل المدرسة",
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
+                                  )),
+                              Checkbox(
+                                activeColor: Color(0xFF0A2F5A),
+                                value: filinternal,
+                                onChanged: (bool? val) {
+                                  setState(() {
+                                    print("work6");
+                                    filinternal = val!;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text("خارج المدرسة",
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
+                                  )),
+                              Checkbox(
+                                activeColor: Color(0xFF0A2F5A),
+                                value: filexternal,
+                                onChanged: (bool? val) {
+                                  setState(() {
+                                    print("work7");
+                                    filexternal = val!;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 180, bottom: 10),
+                      padding: EdgeInsets.only(left: 30),
+                      child: Text(
+                        'الجنس',
+                        style:
+                            TextStyle(fontSize: 25, color: Color(0xFF0A2F5A)),
+                      ),
+                      decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 187, 213, 159),
+                          borderRadius: BorderRadius.circular(5)),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 195, bottom: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(" ذكر",
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
+                                  )),
+                              Checkbox(
+                                activeColor: Color(0xFF0A2F5A),
+                                value: filmale,
+                                onChanged: (bool? val) {
+                                  setState(
+                                    () {
+                                      print("work8");
+                                      filmale = val!;
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text("انثى",
+                                  style: TextStyle(
+                                    color: Color(0xFF0A2F5A),
+                                  )),
+                              Checkbox(
+                                activeColor: Color(0xFF0A2F5A),
+                                value: filfemale,
+                                onChanged: (bool? val) {
+                                  setState(() {
+                                    print("work9");
+                                    filfemale = val!;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 60),
+                      child: Row(
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Color.fromARGB(255, 187, 213, 159)),
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close the pop-up
+                            },
+                            child: Text('اغلاق',
+                                style: TextStyle(color: Color(0xFF0A2F5A))),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Color.fromARGB(255, 187, 213, 159)),
+                            onPressed: () {}, //should handle the filtering
+                            child: Text('تطبيق',
+                                style: TextStyle(color: Color(0xFF0A2F5A))),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                Container(
-                  margin: EdgeInsets.only(left: 60),
-                  child: Row(
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Color.fromARGB(255, 187, 213, 159)),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the pop-up
-                        },
-                        child: Text('اغلاق',
-                            style: TextStyle(color: Color(0xFF0A2F5A))),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Color.fromARGB(255, 187, 213, 159)),
-                        onPressed: () {}, //should handle the filtering
-                        child: Text('تطبيق',
-                            style: TextStyle(color: Color(0xFF0A2F5A))),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );

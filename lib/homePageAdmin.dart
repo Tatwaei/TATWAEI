@@ -65,6 +65,7 @@ class _HomePageState extends State<HomePage> {
   bool filexternal = false;
   bool filmale = false;
   bool filfemale = false;
+  bool no = false;
 
   void _filterPopup(BuildContext context) {
     showDialog(
@@ -96,8 +97,14 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Row(
                         children: [
-                          Text("خدمية"),
+                          Text(
+                            "خدمية",
+                            style: TextStyle(
+                              color: Color(0xFF0A2F5A),
+                            ),
+                          ),
                           Checkbox(
+                            activeColor: Color(0xFF0A2F5A),
                             value: filservice,
                             onChanged: (bool? val) {
                               setState(() {
@@ -107,8 +114,12 @@ class _HomePageState extends State<HomePage> {
                             },
                           ),
                           SizedBox(width: 10),
-                          Text("ادارية"),
+                          Text("ادارية",
+                              style: TextStyle(
+                                color: Color(0xFF0A2F5A),
+                              )),
                           Checkbox(
+                            activeColor: Color(0xFF0A2F5A),
                             value: filbusns,
                             onChanged: (bool? val) {
                               setState(() {
@@ -129,8 +140,12 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Row(
                         children: [
-                          Text("اجتماعية"),
+                          Text("اجتماعية",
+                              style: TextStyle(
+                                color: Color(0xFF0A2F5A),
+                              )),
                           Checkbox(
+                            activeColor: Color(0xFF0A2F5A),
                             value: filsocial,
                             onChanged: (bool? val) {
                               setState(() {
@@ -140,8 +155,12 @@ class _HomePageState extends State<HomePage> {
                             },
                           ),
                           SizedBox(width: 10),
-                          Text("صحية"),
+                          Text("صحية",
+                              style: TextStyle(
+                                color: Color(0xFF0A2F5A),
+                              )),
                           Checkbox(
+                            activeColor: Color(0xFF0A2F5A),
                             value: filhealth,
                             onChanged: (bool? val) {
                               setState(() {
@@ -162,8 +181,12 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Row(
                         children: [
-                          Text("اخرى"),
+                          Text("اخرى",
+                              style: TextStyle(
+                                color: Color(0xFF0A2F5A),
+                              )),
                           Checkbox(
+                            activeColor: Color(0xFF0A2F5A),
                             value: filother,
                             onChanged: (bool? val) {
                               setState(() {
@@ -196,8 +219,12 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Row(
                         children: [
-                          Text("داخل المدرسة"),
+                          Text("داخل المدرسة",
+                              style: TextStyle(
+                                color: Color(0xFF0A2F5A),
+                              )),
                           Checkbox(
+                            activeColor: Color(0xFF0A2F5A),
                             value: filinternal,
                             onChanged: (bool? val) {
                               setState(() {
@@ -210,8 +237,12 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Row(
                         children: [
-                          Text("خارج المدرسة"),
+                          Text("خارج المدرسة",
+                              style: TextStyle(
+                                color: Color(0xFF0A2F5A),
+                              )),
                           Checkbox(
+                            activeColor: Color(0xFF0A2F5A),
                             value: filexternal,
                             onChanged: (bool? val) {
                               setState(() {
@@ -243,22 +274,32 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Row(
                         children: [
-                          Text(" ذكر"),
+                          Text(" ذكر",
+                              style: TextStyle(
+                                color: Color(0xFF0A2F5A),
+                              )),
                           Checkbox(
+                            activeColor: Color(0xFF0A2F5A),
                             value: filmale,
                             onChanged: (bool? val) {
-                              setState(() {
-                                print("work8");
-                                filmale = val!;
-                              });
+                              setState(
+                                () {
+                                  print("work8");
+                                  filmale = val!;
+                                },
+                              );
                             },
                           ),
                         ],
                       ),
                       Row(
                         children: [
-                          Text("انثى"),
+                          Text("انثى",
+                              style: TextStyle(
+                                color: Color(0xFF0A2F5A),
+                              )),
                           Checkbox(
+                            activeColor: Color(0xFF0A2F5A),
                             value: filother,
                             onChanged: (bool? val) {
                               setState(() {

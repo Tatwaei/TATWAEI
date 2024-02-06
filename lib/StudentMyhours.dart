@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:fl_chart/fl_chart.dart';
 
 class StudentMyhours extends StatefulWidget {
   @override
@@ -129,18 +130,42 @@ class _StudentMyhours extends State<StudentMyhours> {
                 padding: EdgeInsets.only(left: 5, bottom: 5, top: 1),
                 child: Container(
                   color: Color(0xFFf7f6d4),
-                  height: 100,
+                  height: 250,
                   width: 400,
                   child: Stack(
                     children: [
                       Positioned(
-                        top: 10,
-                        right: 20,
+                        top: 5,
+                        right: 10,
                         child: Text(
                           'عدد الساعات',
                           style: TextStyle(
                             fontSize: 12,
                             backgroundColor: Color.fromARGB(115, 127, 179, 71),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 30),
+                        color: Color(0xFFf7f6d4),
+                        height: 200,
+                        width: 400,
+                        child: PieChart(
+                          PieChartData(
+                            sections: [
+                              PieChartSectionData(
+                                color: Colors.transparent,
+                                radius: 30,
+                              ),
+                              PieChartSectionData(
+                                color: Color.fromARGB(115, 127, 179, 71),
+                                value:
+                                    50, // Your actual value for the outer part
+                                radius: 30,
+                              ),
+                            ],
+                            borderData: FlBorderData(show: false),
+                            sectionsSpace: 0,
                           ),
                         ),
                       ),

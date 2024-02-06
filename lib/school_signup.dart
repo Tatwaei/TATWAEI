@@ -1,6 +1,10 @@
 // ignore_for_file: prefer_const_constructors
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'homePageStudent.dart';
+//import 'homePageCoordinator.dart';
+import 'homePageAdmin.dart';
 
 class SchoolSignUpPage extends StatefulWidget {
   const SchoolSignUpPage({Key? key}) : super(key: key);
@@ -35,6 +39,92 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+
+  Future<void> signUp() async {
+    try {
+      // Step 1: Create a new school document in 'new_schools' collection
+      final schoolId = await createSchoolDocument();
+
+      // Step 2: Create a new schoolCoordinator document
+      await createCoordinatorDocument(schoolId);
+
+      // Step 3: Sign up the user using FirebaseAuth
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      // Step 4: Navigate to the home page or any other page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } catch (e) {
+      print('Error signing up: $e');
+    }
+  }
+
+  Future<String> createSchoolDocument() async {
+    try {
+      // Create a new document in 'school' collection
+      final DocumentReference schoolDocRef =
+          await FirebaseFirestore.instance.collection('school').add({
+        'address': _addressController.text.trim(),
+        'phoneNumber': _phoneController.text.trim(),
+        'schoolName': selectedSchool,
+      });
+
+      // Get the selected school document reference
+      final QuerySnapshot selectedSchoolSnapshot = await FirebaseFirestore
+          .instance
+          .collection('new_schools')
+          .where('name', isEqualTo: selectedSchool)
+          .get();
+
+      // Delete the selected school document from 'new_schools' collection
+      if (selectedSchoolSnapshot.docs.isNotEmpty) {
+        await FirebaseFirestore.instance
+            .collection('new_schools')
+            .doc(selectedSchoolSnapshot.docs.first.id)
+            .delete();
+      }
+
+      return schoolDocRef.id;
+    } catch (e) {
+      print('Error creating school document: $e');
+      return '';
+    }
+  }
+
+  //maybe try the chatgpt one
+  /*Future<void> createCoordinatorDocument(String schoolId) async {
+  try {
+    // Create a new document in 'schoolCoordinator' collection with auto-generated ID
+    await FirebaseFirestore.instance.collection('schoolCoordinator').add({
+      'email': _emailController.text.trim(),
+      'password': _passwordController.text.trim(),
+      'schoolId': schoolId,
+    });
+  } catch (e) {
+    print('Error creating coordinator document: $e');
+  }
+}
+*/
+  Future<void> createCoordinatorDocument(String schoolId) async {
+    try {
+      // Create a new document in 'schoolCoordinator' collection
+      await FirebaseFirestore.instance
+          .collection('schoolCoordinator')
+          .doc(_emailController.text.trim().toLowerCase())
+          .set({
+        'email': _emailController.text.trim(),
+        'password': _passwordController.text.trim(),
+        'schoolId': schoolId,
+      });
+    } catch (e) {
+      print('Error creating coordinator document: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -183,6 +273,7 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
               ElevatedButton(
                 onPressed: () {
                   //school sign-up logic
+                  signUp();
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Color(0xFF0A2F5A),

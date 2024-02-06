@@ -2,6 +2,11 @@
 import 'school_signup.dart';
 import 'student_signup.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'homePageStudent.dart';
+//import 'homePageCoordinator.dart';
+import 'homePageAdmin.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -11,6 +16,31 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  Future signIn() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } catch (e) {
+      // Handle sign-in errors
+      print('Error signing in: $e');
+    }
+  }
+
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,6 +88,9 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 20),
               // Email TextField
               TextFormField(
+                //autovalidateMode: AutovalidateMode.onUserInteraction,
+                //validator: validationUser,
+                controller: _emailController,
                 textAlign: TextAlign.right,
                 decoration: InputDecoration(
                   hintText: 'البريد الإلكتروني',
@@ -86,6 +119,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 16),
               // Password TextField
               TextFormField(
+                controller: _passwordController,
                 textAlign: TextAlign.right,
                 obscureText: true,
                 decoration: InputDecoration(
@@ -117,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
               // Login Button
               ElevatedButton(
                 onPressed: () {
-                  // Handle login logic
+                  signIn();
                 },
                 style: ElevatedButton.styleFrom(
                   primary:

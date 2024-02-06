@@ -12,5 +12,5 @@ Future main() async {
 
   runApp(MaterialApp(
       theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFfbfae9)),
-      home: HomePage()));
+      home: LoginPage()));
 }

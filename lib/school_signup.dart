@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'homePageStudent.dart';
-//import 'homePageCoordinator.dart';
-import 'homePageAdmin.dart';
+import 'homePageCoordinator.dart';
+//import 'homePageAdmin.dart';
 
 class SchoolSignUpPage extends StatefulWidget {
   const SchoolSignUpPage({Key? key}) : super(key: key);
@@ -198,6 +198,8 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
                   ),
                   filled: true,
                   fillColor: Color.fromARGB(24, 127, 179, 71),
+                  enabledBorder: _inputBorder(),
+                  focusedBorder: _inputBorder(),
                 ),
                 icon: Icon(Icons.arrow_drop_down, color: Color(0xFF7EB347)),
                 value: selectedSchool,

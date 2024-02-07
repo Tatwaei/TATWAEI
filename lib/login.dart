@@ -95,7 +95,26 @@ class _LoginPageState extends State<LoginPage> {
         );
         return;
       }
+      /*whith status validation
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('student')
+          .where('email', isEqualTo: _emailController.text.trim().toLowerCase())
+          .get();
+          
 
+      if (querySnapshot.docs.isNotEmpty) {
+        final DocumentSnapshot userDoc = querySnapshot.docs.first;
+        final accountStatus = userDoc['accountStatus'] as bool? ?? false;
+        if (accountStatus) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => HomePage()));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('لم يتم توثيق حساب، نرجوا الإنتظار')));
+          return;
+        }
+      }
+*/
       // Check for coordinator
       final coordinatorDoc = await FirebaseFirestore.instance
           .collection('schoolCoordinator')
@@ -121,6 +140,7 @@ class _LoginPageState extends State<LoginPage> {
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
+        return;
       }
     } catch (error) {
       print('Error checking user existence: $error');

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
 class studentAccount extends StatefulWidget {
@@ -7,18 +8,45 @@ class studentAccount extends StatefulWidget {
 }
 
 class _studentAccount extends State<studentAccount> {
+  bool changesMade() {
+    return modifiedName != initialName ||
+        int.tryParse(modifiedClass) != initialClass ||
+        modifiedPhone != initialPhoneNumber ||
+        modifiedEmail != initialEmail ||
+        modifiedPass != initialPass;
+  }
+
+  late String initialName = '';
+  late int initialClass = 0;
+  String initialSchool = "الثانوية الرابعة";
+  late String initialPhoneNumber = '';
+  late String initialEmail = '';
+  late String initialPass = '';
+
+  Future<void> getUserData() async {
+    String userId = "ukH4yKi1ks1vvBrICqtH"; // Replace with the actual user ID
+    DocumentSnapshot<Map<String, dynamic>> userDocument =
+        await FirebaseFirestore.instance
+            .collection('student')
+            .doc(userId)
+            .get();
+    if (userDocument.exists) {
+      setState(() {
+        // Update your state with the retrieved data
+        initialName = userDocument.get('name');
+        initialClass = int.tryParse(userDocument.get('grade').toString()) ?? 0;
+        initialPhoneNumber = userDocument.get('phoneNumber').toString();
+        initialEmail = userDocument.get('email');
+        initialPass = userDocument.get('password');
+      });
+    }
+  }
+
   bool showNameForm = false;
   bool showClassForm = false;
   bool showPhoneNumberForm = false;
   bool showEmailForm = false;
   bool showPassForm = false;
-
-  String initialName = "نورة ";
-  String initialClass = "ثالث ثانوي";
-  String initialSchool = "الثانوية الرابعة";
-  String initialPhoneNumber = "0551234567";
-  String initialEmail = "nora@gmail.com";
-  String initialPass = "12345";
 
   String modifiedName = "";
   String modifiedClass = "";
@@ -35,11 +63,14 @@ class _studentAccount extends State<studentAccount> {
   @override
   void initState() {
     super.initState();
+    getUserData();
     _nameController = TextEditingController(text: initialName);
-    _classController = TextEditingController(text: initialClass);
-    _phoneNumberController = TextEditingController(text: initialPhoneNumber);
+    _classController = TextEditingController(text: initialClass.toString());
+    _phoneNumberController = TextEditingController(text: initialPhoneNumber.toString());
     _emailController = TextEditingController(text: initialEmail);
     _passController = TextEditingController(text: initialPass);
+
+    //// modifiedClass = initialClass.toString();
   }
 
   @override
@@ -52,34 +83,92 @@ class _studentAccount extends State<studentAccount> {
     super.dispose();
   }
 
-  void updateName(String value) {
-    setState(() {
-      modifiedName = _nameController.text;
-    });
-  }
+ void updateName(String value) {
+ setState(() {
+    modifiedName = value.isNotEmpty ? value : initialName;
+  });
+}
 
   void updateClass(String value) {
-    setState(() {
-      modifiedClass = _classController.text;
-    });
+  setState(() {
+    modifiedClass = value.isNotEmpty ? value : initialClass.toString();
+  });
   }
 
   void updatePhone(String value) {
-    setState(() {
-      modifiedPhone = _phoneNumberController.text;
-    });
+   setState(() {
+    modifiedPhone = value.isNotEmpty ? value : initialPhoneNumber;
+  });
   }
 
   void updateEmail(String value) {
-    setState(() {
-      modifiedEmail = _emailController.text;
-    });
+   setState(() {
+    modifiedEmail = value.isNotEmpty ? value : initialEmail;
+  });
   }
 
   void updatePass(String value) {
-    setState(() {
-      modifiedPass = _passController.text;
-    });
+  setState(() {
+    modifiedPass = value.isNotEmpty ? value : initialPass;
+  });
+  }
+
+  Future<void> saveUserData() async {
+    String userId = "ukH4yKi1ks1vvBrICqtH"; // Replace with the actual user ID
+
+    try {
+    Map<String, dynamic> updatedData = {};
+
+    if (modifiedName.isNotEmpty && modifiedName != initialName) {
+      updatedData['name'] = modifiedName;
+    }
+
+    if (modifiedClass.isNotEmpty && modifiedClass != initialClass.toString()) {
+      updatedData['grade'] = modifiedClass;
+      int? modifiedClassInt = int.tryParse(modifiedClass);
+      if (modifiedClassInt != null) {
+        initialClass = modifiedClassInt;
+      }
+    }
+
+      if (modifiedPhone.isNotEmpty && modifiedPhone != initialPhoneNumber) {
+      updatedData['phoneNumber'] = modifiedPhone;
+    }
+
+     if (modifiedEmail.isNotEmpty && modifiedEmail != initialEmail) {
+      updatedData['email'] = modifiedEmail;
+    }
+
+     if (modifiedPass.isNotEmpty && modifiedPass != initialPass) {
+      updatedData['pass'] = modifiedPass;
+    }
+
+      if (updatedData.isNotEmpty) {
+        // Update the state with the modified values before sending to the database
+        setState(() {
+          modifiedName = initialName;
+        modifiedClass = initialClass.toString();
+        modifiedPhone = initialPhoneNumber;
+        modifiedEmail = initialEmail;
+        modifiedPass = initialPass;
+        });
+     
+    // Handle the error if necessary
+  
+
+        // Send the modified data to the database
+        await FirebaseFirestore.instance
+            .collection('student')
+            .doc(userId)
+            .update(updatedData);
+        print('User data saved successfully');
+      } else {
+        print('No changes to save');
+      }
+    } catch (e) {
+      print('Error saving user data: $e');
+      // Handle the error if necessary
+    }
   }
 
   @override
@@ -147,506 +236,520 @@ class _studentAccount extends State<studentAccount> {
               ),
               SizedBox(height: 20.0),
               Expanded(
-                child: Column(
-                  children: <Widget>[
-                    //NAME
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(),
-                          child: Align(
+                child: Column(children: <Widget>[
+                  //NAME
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            "الاسم",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Color(0xFF0A2F5A),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Color(0xFFf7f6d4),
+                        ),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  showNameForm = !showNameForm;
+                                  if (showNameForm) {
+                                    _nameController.text = modifiedName;
+                                  }
+                                });
+                              },
+                              child: Icon(
+                                Icons.edit,
+                                color: Color(0xFFa7cc7f),
+                              ),
+                            ),
+                            SizedBox(width: 8.0),
+                            Expanded(
+                              child: Visibility(
+                                visible: showNameForm,
+                                child: TextFormField(
+                                  textAlign: TextAlign.right,
+                                  //autovalidateMode:
+                                  //AutovalidateMode.onUserInteraction,
+                                  //controller: _firstnameController,
+                                  //validator: validateFirstnam
+                                  //validator: validationPhoneNumber,
+                                  controller: _nameController,
+                                  onChanged: updateName,
+                                  decoration: InputDecoration(
+                                    labelText: 'الرجاء ادخال الاسم',
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Visibility(
+                              visible: !showNameForm,
+                              child: Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 100),
+                                  child: Text(
+                                    modifiedName.isNotEmpty
+                                        ? modifiedName
+                                        : initialName,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      )
+                    ],
+                  ),
+
+                  //EMAIL
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "الصف الدراسي",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Color(0xFF0A2F5A),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Color(0xFFf7f6d4),
+                        ),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  showClassForm = !showClassForm;
+                                  if (showClassForm) {
+                                    _classController.text = modifiedClass;
+                                  }
+                                });
+                              },
+                              child: Icon(
+                                Icons.edit,
+                                color: Color(0xFFa7cc7f),
+                              ),
+                            ),
+                            SizedBox(width: 8.0),
+                            Expanded(
+                              child: Visibility(
+                                visible: showClassForm,
+                                child: TextFormField(
+                                  textAlign: TextAlign.right,
+                                  //autovalidateMode:
+                                  //AutovalidateMode.onUserInteraction,
+                                  //controller: _firstnameController,
+                                  //validator: validateFirstnam
+                                  //validator: validationPhoneNumber,
+                                  controller: _classController,
+                                  onChanged: updateClass,
+                                  decoration: InputDecoration(
+                                    labelText: 'الرجاء ادخال الصف الدراسي',
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Visibility(
+                              visible: !showClassForm,
+                              child: Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 60),
+                                  child: Text(
+                                    modifiedClass.isNotEmpty
+                                        ? modifiedClass
+                                        : initialClass.toString(),
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      )
+                    ],
+                  ),
+                  //PHONE NUMBER
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "اسم المدرسة",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Color(0xFF0A2F5A),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Color(0xFFf7f6d4),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(width: 8.0),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(right: 10),
+                                child: Text(
+                                  initialSchool,
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Align(
                             alignment: Alignment.centerRight,
                             child: Text(
-                              "الاسم",
+                              "رقم الجوال",
                               style: TextStyle(
                                 fontSize: 20,
                                 color: Color(0xFF0A2F5A),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Color(0xFFf7f6d4),
+                          SizedBox(
+                            height: 10,
                           ),
-                          child: Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    showNameForm = !showNameForm;
-                                    if (showNameForm) {
-                                      _nameController.text = modifiedName;
-                                    }
-                                  });
-                                },
-                                child: Icon(
-                                  Icons.edit,
-                                  color: Color(0xFFa7cc7f),
+                          Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Color(0xFFf7f6d4),
+                            ),
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      showPhoneNumberForm =
+                                          !showPhoneNumberForm;
+                                      if (showPhoneNumberForm) {
+                                        _phoneNumberController.text =
+                                            modifiedPhone;
+                                      }
+                                    });
+                                  },
+                                  child: Icon(
+                                    Icons.edit,
+                                    color: Color(0xFFa7cc7f),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 8.0),
-                              Expanded(
-                                child: Visibility(
-                                  visible: showNameForm,
-                                  child: TextFormField(
-                                    textAlign: TextAlign.right,
-                                    //autovalidateMode:
-                                    //AutovalidateMode.onUserInteraction,
-                                    //controller: _firstnameController,
-                                    //validator: validateFirstnam
-                                    //validator: validationPhoneNumber,
-                                    controller: _nameController,
-                                    onChanged: updateName,
-                                    decoration: InputDecoration(
-                                      labelText: 'الرجاء ادخال الاسم',
+                                SizedBox(width: 8.0),
+                                Expanded(
+                                  child: Visibility(
+                                    visible: showPhoneNumberForm,
+                                    child: TextFormField(
+                                      textAlign: TextAlign.right,
+                                      //autovalidateMode:
+                                      //AutovalidateMode.onUserInteraction,
+                                      //controller: _firstnameController,
+                                      //validator: validateFirstnam
+                                      //validator: validationPhoneNumber,
+                                      maxLength: 12,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(
+                                        hintText: ("9665********"),
+                                      ),
+                                      controller: _phoneNumberController,
+                                      onChanged: updatePhone,
                                     ),
                                   ),
                                 ),
-                              ),
-                              Visibility(
-                                visible: !showNameForm,
-                                child: Expanded(
+                                Visibility(
+                                  visible: !showPhoneNumberForm,
                                   child: Padding(
-                                    padding: EdgeInsets.only(left: 100),
+                                    padding:
+                                        EdgeInsets.only(left: 8.0, right: 10),
                                     child: Text(
-                                      modifiedName.isNotEmpty
-                                          ? modifiedName
-                                          : initialName,
+                                      modifiedPhone.isNotEmpty
+                                          ? modifiedPhone
+                                          : initialPhoneNumber.toString(),
                                       style: TextStyle(fontSize: 18),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        )
-                      ],
-                    ),
-
-                    //EMAIL
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            "الصف الدراسي",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Color(0xFF0A2F5A),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Color(0xFFf7f6d4),
-                          ),
-                          child: Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    showClassForm = !showClassForm;
-                                    if (showClassForm) {
-                                      _classController.text = modifiedClass;
-                                    }
-                                  });
-                                },
-                                child: Icon(
-                                  Icons.edit,
-                                  color: Color(0xFFa7cc7f),
-                                ),
-                              ),
-                              SizedBox(width: 8.0),
-                              Expanded(
-                                child: Visibility(
-                                  visible: showClassForm,
-                                  child: TextFormField(
-                                    textAlign: TextAlign.right,
-                                    //autovalidateMode:
-                                    //AutovalidateMode.onUserInteraction,
-                                    //controller: _firstnameController,
-                                    //validator: validateFirstnam
-                                    //validator: validationPhoneNumber,
-                                    controller: _classController,
-                                    onChanged: updateClass,
-                                    decoration: InputDecoration(
-                                      labelText: 'الرجاء ادخال الصف الدراسي',
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: !showClassForm,
-                                child: Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 60),
-                                    child: Text(
-                                      modifiedClass.isNotEmpty
-                                          ? modifiedClass
-                                          : initialClass,
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        )
-                      ],
-                    ),
-                    //PHONE NUMBER
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            "اسم المدرسة",
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Color(0xFF0A2F5A),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Color(0xFFf7f6d4),
-                          ),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 8.0),
-                              Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.only(right: 10),
-                                  child: Text(
-                                    initialSchool,
-                                    textAlign: TextAlign.right,
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                "رقم الجوال",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Color(0xFF0A2F5A),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Color(0xFFf7f6d4),
-                              ),
-                              child: Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        showPhoneNumberForm =
-                                            !showPhoneNumberForm;
-                                        if (showPhoneNumberForm) {
-                                          _phoneNumberController.text =
-                                              modifiedPhone;
-                                        }
-                                      });
-                                    },
-                                    child: Icon(
-                                      Icons.edit,
-                                      color: Color(0xFFa7cc7f),
-                                    ),
-                                  ),
-                                  SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: Visibility(
-                                      visible: showPhoneNumberForm,
-                                      child: TextFormField(
-                                        textAlign: TextAlign.right,
-                                        //autovalidateMode:
-                                        //AutovalidateMode.onUserInteraction,
-                                        //controller: _firstnameController,
-                                        //validator: validateFirstnam
-                                        //validator: validationPhoneNumber,
-                                        maxLength: 12,
-                                        autovalidateMode:
-                                            AutovalidateMode.onUserInteraction,
-                                        keyboardType: TextInputType.number,
-                                        decoration: InputDecoration(
-                                          hintText: ("9665********"),
-                                        ),
-                                        controller: _phoneNumberController,
-                                        onChanged: updatePhone,
-                                      ),
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible: !showPhoneNumberForm,
-                                    child: Padding(
-                                      padding:
-                                          EdgeInsets.only(left: 8.0, right: 10),
-                                      child: Text(
-                                        modifiedPhone.isNotEmpty
-                                            ? modifiedPhone
-                                            : initialPhoneNumber,
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    "البريد الالكتروني",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Color(0xFF0A2F5A),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Container(
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Color(0xFFf7f6d4),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            showEmailForm = !showEmailForm;
-                                            if (showEmailForm) {
-                                              _emailController.text =
-                                                  modifiedEmail;
-                                            }
-                                          });
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          color: Color(0xFFa7cc7f),
-                                        ),
-                                      ),
-                                      SizedBox(width: 8.0),
-                                      Expanded(
-                                        child: Visibility(
-                                          visible: showEmailForm,
-                                          child: TextFormField(
-                                            textAlign: TextAlign.left,
-                                            //autovalidateMode:
-                                            //AutovalidateMode.onUserInteraction,
-                                            //controller: _firstnameController,
-                                            //validator: validateFirstnam
-                                            //validator: validationPhoneNumber,
-                                            controller: _emailController,
-                                            onChanged: updateEmail,
-                                            decoration: InputDecoration(
-                                              labelText:
-                                                  'الرجاء ادخال البريد الالكتروني',
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Visibility(
-                                        visible: !showEmailForm,
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 8.0, right: 10),
-                                          child: Text(
-                                            modifiedEmail.isNotEmpty
-                                                ? modifiedEmail
-                                                : initialEmail,
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    "كلمة المرور",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Color(0xFF0A2F5A),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                Container(
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Color(0xFFf7f6d4),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            showPassForm = !showPassForm;
-                                            if (showPassForm) {
-                                              _passController.text =
-                                                  modifiedPass;
-                                            }
-                                          });
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          color: Color(0xFFa7cc7f),
-                                        ),
-                                      ),
-                                      SizedBox(width: 8.0),
-                                      Expanded(
-                                        child: Visibility(
-                                          visible: showPassForm,
-                                          child: TextFormField(
-                                            textAlign: TextAlign.right,
-                                            //autovalidateMode:
-                                            //AutovalidateMode.onUserInteraction,
-                                            //controller: _firstnameController,
-                                            //validator: validateFirstnam
-                                            //validator: validationPhoneNumber,
-                                            controller: _passController,
-                                            onChanged: updatePass,
-                                            obscureText: true,
-                                            decoration: InputDecoration(
-                                              labelText:
-                                                  'الرجاء ادخال كلمة المرور',
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Visibility(
-                                        visible: !showPassForm,
-                                        child: Expanded(
-                                          child: TextFormField(
-                                            // textAlign: TextAlign.justify,
-                                            decoration: InputDecoration(
-                                                border: InputBorder.none),
-                                            obscureText:
-                                                true, // Hide the text and display as asterisks
-                                            initialValue:
-                                                modifiedPass.isNotEmpty
-                                                    ? modifiedPass
-                                                    : initialPass,
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-                                Container(
-                                  padding: EdgeInsets.only(left: 110),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      // SaveEdit();
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                              title: Icon(
-                                                Icons.check_circle,
-                                                color: Colors.green,
-                                                size: 50,
-                                              ),
-                                              content: Text(
-                                                "تم حفظ المعلومات بنجاح",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Color(0xFF0A2F5A)),
-                                              ));
-                                        },
-                                      );
-                                    },
-                                    child: Text(
-                                      "حفظ",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          color: Color(0xFF0A2F5A)),
-                                    ),
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              Color(0xFFb4d392)),
-                                      shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          side: BorderSide(
-                                            color: Color(0xFFb4d392),
-                                          ),
-                                        ),
-                                      ),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  "البريد الالكتروني",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Color(0xFF0A2F5A),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Color(0xFFf7f6d4),
+                                ),
+                                child: Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          showEmailForm = !showEmailForm;
+                                          if (showEmailForm) {
+                                            _emailController.text =
+                                                modifiedEmail;
+                                          }
+                                        });
+                                      },
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: Color(0xFFa7cc7f),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.0),
+                                    Expanded(
+                                      child: Visibility(
+                                        visible: showEmailForm,
+                                        child: TextFormField(
+                                          textAlign: TextAlign.left,
+                                          //autovalidateMode:
+                                          //AutovalidateMode.onUserInteraction,
+                                          //controller: _firstnameController,
+                                          //validator: validateFirstnam
+                                          //validator: validationPhoneNumber,
+                                          controller: _emailController,
+                                          onChanged: updateEmail,
+                                          decoration: InputDecoration(
+                                            labelText:
+                                                'الرجاء ادخال البريد الالكتروني',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Visibility(
+                                      visible: !showEmailForm,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 8.0, right: 10),
+                                        child: Text(
+                                          modifiedEmail.isNotEmpty
+                                              ? modifiedEmail
+                                              : initialEmail,
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      "كلمة المرور",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Color(0xFF0A2F5A),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color(0xFFf7f6d4),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              showPassForm = !showPassForm;
+                                              if (showPassForm) {
+                                                _passController.text =
+                                                    modifiedPass;
+                                              }
+                                            });
+                                          },
+                                          child: Icon(
+                                            Icons.edit,
+                                            color: Color(0xFFa7cc7f),
+                                          ),
+                                        ),
+                                        SizedBox(width: 8.0),
+                                        Expanded(
+                                          child: Visibility(
+                                            visible: showPassForm,
+                                            child: TextFormField(
+                                              textAlign: TextAlign.left,
+                                              //autovalidateMode:
+                                              //AutovalidateMode.onUserInteraction,
+                                              //controller: _firstnameController,
+                                              //validator: validateFirstnam
+                                              //validator: validationPhoneNumber,
+                                              controller: _passController,
+                                              onChanged: updatePass,
+                                              obscureText: true,
+                                              decoration: InputDecoration(
+                                                labelText:
+                                                    'الرجاء ادخال كلمة المرور',
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Visibility(
+                                          visible: !showPassForm,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 8.0, right: 10),
+                                            child: Text(
+                                              '*' *
+                                                  (modifiedPass.isNotEmpty
+                                                      ? modifiedPass.length
+                                                      : initialPass.length),
+                                              style: TextStyle(fontSize: 18),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  Container(
+                                    padding: EdgeInsets.only(left: 110),
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        if (changesMade()) {
+                                          try {
+                                            await saveUserData();
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: Icon(
+                                                    Icons.check_circle,
+                                                    color: Colors.green,
+                                                    size: 50,
+                                                  ),
+                                                  content: Text(
+                                                    "تم حفظ المعلومات بنجاح",
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Color(0xFF0A2F5A),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          } catch (error) {
+                                            print(
+                                                'Error saving user data: $error');
+                                          }
+                                        } else {
+                                          // No changes made, show a message or handle accordingly
+                                          print('No changes made');
+                                        }
+                                      },
+                                      child: Text(
+                                        "حفظ",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: Color(0xFF0A2F5A)),
+                                      ),
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                Color(0xFFb4d392)),
+                                        shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            side: BorderSide(
+                                              color: Color(0xFFb4d392),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ]),
               ),
             ],
           ),

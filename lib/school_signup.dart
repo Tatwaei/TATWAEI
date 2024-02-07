@@ -482,3 +482,4 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
     );
   }
 }
+*/

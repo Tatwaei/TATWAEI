@@ -18,7 +18,7 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
   List<String> schools = [];
 
   final CollectionReference schoolCollection =
-      FirebaseFirestore.instance.collection('new_schools');
+      FirebaseFirestore.instance.collection('schoolWithNoAccount');
 
   void initState() {
     super.initState();
@@ -42,7 +42,7 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
 
   Future<void> signUp() async {
     try {
-      // Step 1: Create a new school document in 'new_schools' collection
+      // Step 1: Create a new school document in 'school' collection
       final schoolId = await createSchoolDocument();
 
       // Step 2: Create a new schoolCoordinator document
@@ -54,7 +54,7 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
         password: _passwordController.text.trim(),
       );
 
-      // Step 4: Navigate to the home page or any other page
+      // Step 4: Navigate to the home page
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
@@ -76,17 +76,17 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
         'schoolName': selectedSchool,
       });
 
-      // Get the selected new_school document reference
+      // Get the selected schoolWithNoAccount document reference
       final QuerySnapshot selectedSchoolSnapshot = await FirebaseFirestore
           .instance
-          .collection('new_schools')
+          .collection('schoolWithNoAccount')
           .where('name', isEqualTo: selectedSchool)
           .get();
 
-      // Delete the selected school document from 'new_schools' collection
+      // Delete the selected school document from 'schoolWithNoAccount' collection
       if (selectedSchoolSnapshot.docs.isNotEmpty) {
         await FirebaseFirestore.instance
-            .collection('new_schools')
+            .collection('schoolWithNoAccount')
             .doc(selectedSchoolSnapshot.docs.first.id)
             .delete();
       }
@@ -98,20 +98,6 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
     }
   }
 
-  //maybe try the chatgpt one
-  /*Future<void> createCoordinatorDocument(String schoolId) async {
-  try {
-    // Create a new document in 'schoolCoordinator' collection with auto-generated ID
-    await FirebaseFirestore.instance.collection('schoolCoordinator').add({
-      'email': _emailController.text.trim(),
-      'password': _passwordController.text.trim(),
-      'schoolId': schoolId,
-    });
-  } catch (e) {
-    print('Error creating coordinator document: $e');
-  }
-}
-*/
   Future<void> createCoordinatorDocument(String schoolId) async {
     try {
       // Create a new document in 'schoolCoordinator' collection
@@ -130,7 +116,6 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
 
   @override
   void dispose() {
-    // Dispose of the controllers when the widget is removed from the widget tree
     _emailController.dispose();
     _passwordController.dispose();
     _phoneController.dispose();
@@ -179,6 +164,163 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
     );
   }
 
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xFFFFFCEC),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+              Image.asset(
+                'images/Subject.png',
+                height: 200,
+              ),
+              Text(
+                'انشاء حساب مدرسة',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xFF0A2F5A),
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              // Dropdown for selecting schools
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide:
+                        BorderSide(color: Color(0xFF7EB347), width: 2.0),
+                  ),
+                  filled: true,
+                  fillColor: Color.fromARGB(24, 127, 179, 71),
+                ),
+                icon: Icon(Icons.arrow_drop_down, color: Color(0xFF7EB347)),
+                value: selectedSchool,
+                items: schools.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value, textAlign: TextAlign.right),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedSchool = newValue;
+                  });
+                },
+                hint: Text('المدرسة', textAlign: TextAlign.right),
+              ),
+              GestureDetector(
+                onTap: () {
+                  showSchoolInfoDialog(context);
+                },
+                child: Text(
+                  'لم أجد مدرستي؟',
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    color: Color(0xFF0A2F5A),
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              // Email TextFormField
+              TextFormField(
+                controller: _emailController,
+                textAlign: TextAlign.right,
+                decoration: InputDecoration(
+                  hintText: 'البريد الالكتروني',
+                  prefixIcon: Icon(Icons.email, color: Color(0xFF7EB347)),
+                  filled: true,
+                  fillColor: Color.fromARGB(24, 127, 179, 71),
+                  border: _inputBorder(),
+                  enabledBorder: _inputBorder(),
+                  focusedBorder: _inputBorder(),
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              SizedBox(height: 16),
+              // Password TextFormField
+              TextFormField(
+                controller: _passwordController,
+                textAlign: TextAlign.right,
+                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: 'كلمة المرور',
+                  prefixIcon: Icon(Icons.lock, color: Color(0xFF7EB347)),
+                  filled: true,
+                  fillColor: Color.fromARGB(24, 127, 179, 71),
+                  border: _inputBorder(),
+                  enabledBorder: _inputBorder(),
+                  focusedBorder: _inputBorder(),
+                ),
+              ),
+              SizedBox(height: 16),
+              // Phone TextFormField
+              TextFormField(
+                controller: _phoneController,
+                textAlign: TextAlign.right,
+                decoration: InputDecoration(
+                  hintText: 'رقم الهاتف',
+                  prefixIcon: Icon(Icons.phone, color: Color(0xFF7EB347)),
+                  filled: true,
+                  fillColor: Color.fromARGB(24, 127, 179, 71),
+                  border: _inputBorder(),
+                  enabledBorder: _inputBorder(),
+                  focusedBorder: _inputBorder(),
+                ),
+                keyboardType: TextInputType.phone,
+              ),
+              SizedBox(height: 16),
+              // Address TextFormField
+              TextFormField(
+                controller: _addressController,
+                textAlign: TextAlign.right,
+                decoration: InputDecoration(
+                  hintText: 'عنوان المدرسة',
+                  prefixIcon: Icon(Icons.location_on, color: Color(0xFF7EB347)),
+                  filled: true,
+                  fillColor: Color.fromARGB(24, 127, 179, 71),
+                  border: _inputBorder(),
+                  enabledBorder: _inputBorder(),
+                  focusedBorder: _inputBorder(),
+                ),
+              ),
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  signUp();
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xFF0A2F5A),
+                  onPrimary: Colors.white,
+                ),
+                child: Text(
+                  'تسجيل',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  InputBorder _inputBorder() => OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: BorderSide(color: Color(0xFF7EB347), width: 2.0),
+      );
+}
+
+
+//old code, refactored  buildTextField method into TextFormField
+/*
   @override
   Widget build(BuildContext context) {
     return Scaffold(

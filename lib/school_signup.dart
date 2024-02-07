@@ -35,10 +35,10 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
   }
 
   // Controllers for the TextFormFields
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _addressController = TextEditingController();
 
   Future<void> signUp() async {
     try {
@@ -66,6 +66,8 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
 
   Future<String> createSchoolDocument() async {
     try {
+      print(_phoneController.text.trim());
+      print(_addressController.text.trim());
       // Create a new document in 'school' collection
       final DocumentReference schoolDocRef =
           await FirebaseFirestore.instance.collection('school').add({
@@ -74,7 +76,7 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
         'schoolName': selectedSchool,
       });
 
-      // Get the selected school document reference
+      // Get the selected new_school document reference
       final QuerySnapshot selectedSchoolSnapshot = await FirebaseFirestore
           .instance
           .collection('new_schools')

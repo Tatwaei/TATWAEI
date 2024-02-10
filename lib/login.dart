@@ -26,125 +26,62 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordController.text.trim(),
       );
       // after doingthe sign up part, use .then AuthorizeAccess(context)
-      //await AuthorizeAccess(context);
-      Navigator.pushReplacement(
+      await AuthorizeAccess(context);
+      /*Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
-      );
+      );*/
     } catch (e) {
       print('Error signing in: $e');
     }
   }
 
-  /*AuthorizeAccess(BuildContext context) async {
-
-    //if user is student
-    FirebaseFirestore.instance
-        .collection('student')
-        .where('email', isEqualTo: _emailController.text.trim().toLowerCase())
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      if (querySnapshot.docs.isNotEmpty) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
-      }
-    }).catchError((error) {
-      print('Error checking user existence: $error');
-    });
-
-    // if user is coordinator
-    FirebaseFirestore.instance
-        .collection('schoolCoordinator')
-        .where('email', isEqualTo: _emailController.text.trim().toLowerCase())
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      if (querySnapshot.docs.isNotEmpty) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
-      }
-    }).catchError((error) {
-      print('Error checking user existence: $error');
-    });
-
-    //if user is administrator
-    FirebaseFirestore.instance
-        .collection('adminitractor')
-        .where('email', isEqualTo: _emailController.text.trim().toLowerCase())
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      if (querySnapshot.docs.isNotEmpty) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
-      }
-    }).catchError((error) {
-      print('Error checking user existence: $error');
-    });
-  }*/
-
   Future<void> AuthorizeAccess(BuildContext context) async {
-    try {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('student')
-          .doc(_emailController.text.trim().toLowerCase())
-          .get();
+    // Query the 'student' collection for a document with a matching email
+    var querySnapshot = await FirebaseFirestore.instance
+        .collection('student')
+        .where('email', isEqualTo: _emailController.text.trim())
+        .get();
 
-      if (userDoc.exists) {
+    // Check if any documents were found
+    if (querySnapshot.docs.isNotEmpty) {
+      var userDoc = querySnapshot.docs.first;
+      bool accountStatus = userDoc['accountStatus'] ?? false;
+      if (accountStatus) {
         Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-        return;
+            context, MaterialPageRoute(builder: (context) => HomePage()));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("لم يتم توثيق حساب، نرجوا الإنتظار")));
       }
-      /*whith status validation
-      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('student')
-          .where('email', isEqualTo: _emailController.text.trim().toLowerCase())
-          .get();
-          
-
-      if (querySnapshot.docs.isNotEmpty) {
-        final DocumentSnapshot userDoc = querySnapshot.docs.first;
-        final accountStatus = userDoc['accountStatus'] as bool? ?? false;
-        if (accountStatus) {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => HomePage()));
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('لم يتم توثيق حساب، نرجوا الإنتظار')));
-          return;
-        }
-      }
-*/
-      // Check for coordinator
-      final coordinatorDoc = await FirebaseFirestore.instance
-          .collection('schoolCoordinator')
-          .doc(_emailController.text.trim().toLowerCase())
-          .get();
-
-      if (coordinatorDoc.exists) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-        return;
-      }
-
-      // Check for administrator
-      final adminDoc = await FirebaseFirestore.instance
-          .collection('adminitractor')
-          .doc(_emailController.text.trim().toLowerCase())
-          .get();
-
-      if (adminDoc.exists) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-        return;
-      }
-    } catch (error) {
-      print('Error checking user existence: $error');
+      return;
     }
+
+    // Attempt to find the user in the 'schoolCoordinator' collection
+    var userDoc = await FirebaseFirestore.instance
+        .collection('schoolCoordinator')
+        .doc(_emailController.text.trim())
+        .get();
+
+    if (userDoc.exists) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
+      return;
+    }
+
+    // Attempt to find the user in the 'admin' collection
+    userDoc = await FirebaseFirestore.instance
+        .collection('admin')
+        .doc(_emailController.text.trim())
+        .get();
+
+    if (userDoc.exists) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("User not found or not authorized.")));
   }
 
   void dispose() {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'user_state.dart';
 import 'dart:math';
 
 class studentAccount extends StatefulWidget {
@@ -18,13 +20,33 @@ class _studentAccount extends State<studentAccount> {
 
   late String initialName = '';
   late int initialClass = 0;
-  String initialSchool = "الثانوية الرابعة";
+  late String initialSchool = "";
   late String initialPhoneNumber = '';
   late String initialEmail = '';
   late String initialPass = '';
 
+  late TextEditingController _nameController;
+  late TextEditingController _classController;
+  late TextEditingController _phoneNumberController;
+  late TextEditingController _emailController;
+  late TextEditingController _passController;
+
+
+  @override
+  void initState() {
+    super.initState();
+     _nameController = TextEditingController(text: initialName);
+    _classController = TextEditingController(text: initialClass.toString());
+    _phoneNumberController = TextEditingController(text: initialPhoneNumber.toString());
+    _emailController = TextEditingController(text: initialEmail);
+    _passController = TextEditingController(text: initialPass);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+       getUserData();
+    });
+  }
+
   Future<void> getUserData() async {
-    String userId = "ukH4yKi1ks1vvBrICqtH"; // Replace with the actual user ID
+ String userId = Provider.of<UserState>(context, listen: false).userId; 
     DocumentSnapshot<Map<String, dynamic>> userDocument =
         await FirebaseFirestore.instance
             .collection('student')
@@ -38,9 +60,26 @@ class _studentAccount extends State<studentAccount> {
         initialPhoneNumber = userDocument.get('phoneNumber').toString();
         initialEmail = userDocument.get('email');
         initialPass = userDocument.get('password');
+
+        String schoolId = userDocument.get('schoolId');
+      getSchoolData(schoolId);
       });
     }
   }
+  Future<void> getSchoolData(String schoolId) async {
+  DocumentSnapshot<Map<String, dynamic>> schoolDocument =
+      await FirebaseFirestore.instance
+          .collection('school')
+          .doc(schoolId)
+          .get();
+
+  if (schoolDocument.exists) {
+    setState(() {
+      // Update your state with the retrieved data
+      initialSchool = schoolDocument.get('schoolName');
+    });
+  }
+}
 
   bool showNameForm = false;
   bool showClassForm = false;
@@ -54,24 +93,6 @@ class _studentAccount extends State<studentAccount> {
   String modifiedEmail = "";
   String modifiedPass = "";
 
-  late TextEditingController _nameController;
-  late TextEditingController _classController;
-  late TextEditingController _phoneNumberController;
-  late TextEditingController _emailController;
-  late TextEditingController _passController;
-
-  @override
-  void initState() {
-    super.initState();
-    getUserData();
-    _nameController = TextEditingController(text: initialName);
-    _classController = TextEditingController(text: initialClass.toString());
-    _phoneNumberController = TextEditingController(text: initialPhoneNumber.toString());
-    _emailController = TextEditingController(text: initialEmail);
-    _passController = TextEditingController(text: initialPass);
-
-    //// modifiedClass = initialClass.toString();
-  }
 
   @override
   void dispose() {
@@ -114,8 +135,7 @@ class _studentAccount extends State<studentAccount> {
   }
 
   Future<void> saveUserData() async {
-    String userId = "ukH4yKi1ks1vvBrICqtH"; // Replace with the actual user ID
-
+String userId = Provider.of<UserState>(context, listen: false).userId; 
     try {
     Map<String, dynamic> updatedData = {};
 
@@ -146,7 +166,7 @@ class _studentAccount extends State<studentAccount> {
       if (updatedData.isNotEmpty) {
         // Update the state with the modified values before sending to the database
         setState(() {
-          modifiedName = initialName;
+        modifiedName = initialName;
         modifiedClass = initialClass.toString();
         modifiedPhone = initialPhoneNumber;
         modifiedEmail = initialEmail;

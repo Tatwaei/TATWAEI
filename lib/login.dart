@@ -3,10 +3,12 @@ import 'school_signup.dart';
 import 'student_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'user_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'homePageStudent.dart';
+import 'homePageStudent.dart';
 //import 'homePageCoordinator.dart';
-import 'homePageAdmin.dart';
+//import 'homePageAdmin.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -25,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
       // after doingthe sign up part, use .then AuthorizeAccess(context)
       await AuthorizeAccess(context);
       /*Navigator.pushReplacement(
@@ -45,6 +48,8 @@ class _LoginPageState extends State<LoginPage> {
 
     // Check if any documents were found
     if (querySnapshot.docs.isNotEmpty) {
+      String collectionId = querySnapshot.docs.first.reference.id;
+      Provider.of<UserState>(context, listen: false).setUserId(collectionId);
       var userDoc = querySnapshot.docs.first;
       bool accountStatus = userDoc['accountStatus'] ?? false;
       if (accountStatus) {
@@ -64,6 +69,8 @@ class _LoginPageState extends State<LoginPage> {
         .get();
 
     if (userDoc.exists) {
+      var collectionId = userDoc.id;
+      Provider.of<UserState>(context, listen: false).setUserId(collectionId);
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomePage()));
       return;

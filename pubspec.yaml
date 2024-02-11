@@ -30,6 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^5.0.0
+
   font_awesome_flutter: 10.3.0
 
   firebase_core: ^2.24.2

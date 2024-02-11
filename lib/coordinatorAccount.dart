@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'user_state.dart';
 import 'dart:math';
 
 class coordinatorAccount extends StatefulWidget {
@@ -23,13 +25,34 @@ class _coordinatorAccount extends State<coordinatorAccount> {
   late String initialEmail = '';
   late String initialPass = '';
 
- Future<void> getUserData() async {
-  String coorlId = "test@gmail.com"; // Replace with the actual user ID
+  late TextEditingController _schoolController;
+  late TextEditingController _phoneNumberController;
+  late TextEditingController _emailController;
+  late TextEditingController _passController;
+  late TextEditingController _addressController;
 
+    @override
+  void initState() {
+    super.initState();
+    _schoolController = TextEditingController(text: initialSchool);
+    _phoneNumberController = TextEditingController(text: initialPhoneNumber.toString());
+    _emailController = TextEditingController(text: initialEmail);
+    _passController = TextEditingController(text: initialPass);
+    _addressController = TextEditingController(text: initialAddress);
+       WidgetsBinding.instance.addPostFrameCallback((_) {
+       getUserData();
+    });
+    //// modifiedClass = initialClass.toString();
+  }
+
+ Future<void> getUserData() async {
+ String coorId = Provider.of<UserState>(context, listen: false).userId; 
+
+if (coorId != null && coorId.isNotEmpty) {
   DocumentSnapshot<Map<String, dynamic>> coorDocument =
       await FirebaseFirestore.instance
           .collection('schoolCoordinator')
-          .doc(coorlId)
+          .doc(coorId)
           .get();
 
   if (coorDocument.exists) {
@@ -38,10 +61,11 @@ class _coordinatorAccount extends State<coordinatorAccount> {
       initialEmail = coorDocument.get('email');
       initialPass = coorDocument.get('password');
 
-      String schoolId = coorDocument.get('schoolId');
-      getSchoolData(schoolId);
+      String schoolId = coorDocument.get('schoolId');   
+           getSchoolData(schoolId);
+      
     });
-  }
+  }}
 }
 
 Future<void> getSchoolData(String schoolId) async {
@@ -73,25 +97,6 @@ Future<void> getSchoolData(String schoolId) async {
   String modifiedPass = "";
   String modifiedAddress = "";
 
-  late TextEditingController _schoolController;
-  late TextEditingController _phoneNumberController;
-  late TextEditingController _emailController;
-  late TextEditingController _passController;
-  late TextEditingController _addressController;
-
-
-  @override
-  void initState() {
-    super.initState();
-    getUserData();
-    _schoolController = TextEditingController(text: initialSchool);
-    _phoneNumberController = TextEditingController(text: initialPhoneNumber.toString());
-    _emailController = TextEditingController(text: initialEmail);
-    _passController = TextEditingController(text: initialPass);
-    _addressController = TextEditingController(text: initialAddress);
-
-    //// modifiedClass = initialClass.toString();
-  }
 
   @override
   void dispose() {
@@ -134,10 +139,14 @@ Future<void> getSchoolData(String schoolId) async {
   }
 
   Future<void> saveUserData() async {
-    String schoolId = "hRvGuYTlpsiIjh1ks6o9"; // Replace with the actual user ID
-    String coorlId = "test@gmail.com"; // Replace with the actual user ID
-
+   String coorId = Provider.of<UserState>(context, listen: false).userId; 
+  
     try {
+       String schoolId = await FirebaseFirestore.instance
+        .collection('schoolCoordinator')
+        .doc(coorId)
+        .get()
+        .then((doc) => doc.get('schoolId'));
     Map<String, dynamic> updatedData = {};
 
     if (modifiedSchool.isNotEmpty && modifiedSchool != initialSchool) {
@@ -181,7 +190,7 @@ Future<void> getSchoolData(String schoolId) async {
 
         await FirebaseFirestore.instance
             .collection('schoolCoordinator')
-            .doc(coorlId)
+            .doc(coorId)
             .update(updatedData);
 
         print('User data saved successfully');

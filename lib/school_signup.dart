@@ -57,7 +57,7 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
       // Step 4: Navigate to the home page
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => homePageCoordinator()),
       );
     } catch (e) {
       print('Error signing up: $e');

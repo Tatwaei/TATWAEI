@@ -7,8 +7,8 @@ import 'package:provider/provider.dart';
 import 'user_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'homePageStudent.dart';
-//import 'homePageCoordinator.dart';
-//import 'homePageAdmin.dart';
+import 'homePageCoordinator.dart';
+import 'homePageAdmin.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
       bool accountStatus = userDoc['accountStatus'] ?? false;
       if (accountStatus) {
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+            context, MaterialPageRoute(builder: (context) => HomePageStudent()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("لم يتم توثيق حساب، نرجوا الإنتظار")));
@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
       var collectionId = userDoc.id;
       Provider.of<UserState>(context, listen: false).setUserId(collectionId);
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => HomePage()));
+          context, MaterialPageRoute(builder: (context) => homePageCoordinator()));
       return;
     }
 
@@ -84,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (userDoc.exists) {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => HomePage()));
+          context, MaterialPageRoute(builder: (context) => homePageAdmin()));
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(

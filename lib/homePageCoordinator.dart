@@ -388,9 +388,9 @@ class _HomePageState extends State<homePageCoordinator> {
     DocumentSnapshot<Object?> externalSnapshot = await externalRef.get();
 
     if (internalSnapshot.exists) {
-      source = 'Internal';
+      source = 'داخلية';
     } else if (externalSnapshot.exists) {
-      source = 'External';
+      source = 'خارجية';
     }
 
     return source;
@@ -694,7 +694,7 @@ class _HomePageState extends State<homePageCoordinator> {
                               children: [
                                 Positioned(
                                   top: 12,
-                                  left: 120,
+                                 right: 80,
                                   child: Text(
                                     filteredItems[index]['name'],
                                     textDirection: TextDirection.rtl,
@@ -712,7 +712,7 @@ class _HomePageState extends State<homePageCoordinator> {
                                     source,
                                     style: TextStyle(
                                       color: Color(0xFF0A2F5A),
-                                      fontSize: 12,
+                                      fontSize: 14,
                                       backgroundColor:
                                           Color.fromARGB(115, 127, 179, 71),
                                     ),
@@ -725,7 +725,7 @@ class _HomePageState extends State<homePageCoordinator> {
                                     filteredItems[index]['interest'],
                                     style: TextStyle(
                                       color: Color(0xFF0A2F5A),
-                                      fontSize: 12,
+                                      fontSize: 14,
                                       backgroundColor:
                                           Color.fromARGB(115, 127, 179, 71),
                                     ),

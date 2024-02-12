@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'user_state.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:math';
@@ -9,6 +12,15 @@ class studentOpportunity extends StatefulWidget {
   @override
   _studentOpportunity createState() => _studentOpportunity();
 }
+
+class Opportunity {
+  final String name;
+  final String interest;
+  final String source;
+
+  Opportunity(this.name, this.interest,this.source);
+}
+
 
 class _studentOpportunity extends State<studentOpportunity> {
   XFile? image;
@@ -26,9 +38,115 @@ class _studentOpportunity extends State<studentOpportunity> {
   bool showList1 = false;
   bool showList2 = false;
 
-  List<String> currentList =
-      List<String>.generate(30, (index) => 'Item $index');
-  List<String> compList = List<String>.generate(30, (index) => 'Item $index');
+List<Opportunity> currentList =[];
+List<String> compList = [];
+
+
+ @override
+  void initState() {
+    super.initState();
+       WidgetsBinding.instance.addPostFrameCallback((_) {
+       getCurrentOpp();
+       getCompOpp();
+    });
+    //// modifiedClass = initialClass.toString();
+  }
+
+Future<void> getCurrentOpp() async {
+  String studentId = Provider.of<UserState>(context, listen: false).userId;
+  QuerySnapshot<Map<String, dynamic>> seatSnapshot = await FirebaseFirestore.instance
+      .collection('seat')
+      .where('studentId', isEqualTo: studentId)
+      .get();
+
+  if (seatSnapshot.docs.isNotEmpty) {
+    DateTime todayDate = DateTime.now();
+
+    for (var seatDoc in seatSnapshot.docs) {
+      String opportunityId = seatDoc.data()['opportunityId'];
+
+      // Retrieve internal opportunity
+      DocumentSnapshot<Map<String, dynamic>> internalOpportunitySnapshot = await FirebaseFirestore.instance
+          .collection('internalOpportunity')
+          .doc(opportunityId)
+          .get();
+
+      if (internalOpportunitySnapshot.exists) {
+        DateTime endDate = internalOpportunitySnapshot.get('endDate').toDate();
+
+        if (endDate.isAfter(todayDate)) {
+          String name = internalOpportunitySnapshot.get('name');
+          String interest = internalOpportunitySnapshot.get('interest');
+          Opportunity opportunity = Opportunity(name, interest, 'داخلية'); // Set source as internal
+          currentList.add(opportunity);
+        }
+      }
+
+      // Retrieve external opportunity
+      DocumentSnapshot<Map<String, dynamic>> externalOpportunitySnapshot = await FirebaseFirestore.instance
+          .collection('externalOpportunity')
+          .doc(opportunityId)
+          .get();
+
+      if (externalOpportunitySnapshot.exists) {
+        DateTime endDate = externalOpportunitySnapshot.get('endDate').toDate();
+
+        if (endDate.isAfter(todayDate)) {
+          String name = externalOpportunitySnapshot.get('name');
+          String interest = externalOpportunitySnapshot.get('interest');
+          Opportunity opportunity = Opportunity(name, interest, 'خارجية');
+          currentList.add(opportunity);
+        }
+      }
+    }
+  }
+}
+
+ Future<void> getCompOpp() async {
+  String studentId = Provider.of<UserState>(context, listen: false).userId;
+  QuerySnapshot<Map<String, dynamic>> seatSnapshot = await FirebaseFirestore.instance
+      .collection('seat')
+      .where('studentId', isEqualTo: studentId)
+      .get();
+
+  if (seatSnapshot.docs.isNotEmpty) {
+    DateTime todayDate = DateTime.now();
+
+    for (var seatDoc in seatSnapshot.docs) {
+      String opportunityId = seatDoc.data()['opportunityId'];
+
+      // Retrieve internal opportunity
+      DocumentSnapshot<Map<String, dynamic>> internalOpportunitySnapshot = await FirebaseFirestore.instance
+          .collection('internalOpportunity')
+          .doc(opportunityId)
+          .get();
+
+      if (internalOpportunitySnapshot.exists) {
+        DateTime endDate = internalOpportunitySnapshot.get('endDate').toDate();
+
+        if (endDate.isBefore(todayDate)) {
+          String name = internalOpportunitySnapshot.get('name');
+          compList.add(name);
+        }
+      }
+
+      // Retrieve external opportunity
+      DocumentSnapshot<Map<String, dynamic>> externalOpportunitySnapshot = await FirebaseFirestore.instance
+          .collection('externalOpportunity')
+          .doc(opportunityId)
+          .get();
+
+      if (externalOpportunitySnapshot.exists) {
+        DateTime endDate = externalOpportunitySnapshot.get('endDate').toDate();
+
+        if (endDate.isBefore(todayDate)) {
+          String name = externalOpportunitySnapshot.get('name');
+          compList.add(name);
+        }
+      }
+    }
+  }
+}
 
   void myAlert() {
     showDialog(
@@ -275,9 +393,9 @@ class _studentOpportunity extends State<studentOpportunity> {
                             children: [
                               Positioned(
                                 top: 12,
-                                left: 140,
+                                right: 80,
                                 child: Text(
-                                  currentList[index],
+                                  currentList[index].name,
                                   style: TextStyle(
                                     color: Color(0xFF0A2F5A),
                                     backgroundColor:
@@ -289,7 +407,7 @@ class _studentOpportunity extends State<studentOpportunity> {
                                 top: 50,
                                 left: 140,
                                 child: Text(
-                                  'Subtitle 1',
+                                  currentList[index].source == 'داخلية' ? 'داخلية' : 'خارجية',
                                   style: TextStyle(
                                     color: Color(0xFF0A2F5A),
                                     fontSize: 12,
@@ -302,7 +420,7 @@ class _studentOpportunity extends State<studentOpportunity> {
                                 top: 50,
                                 left: 40,
                                 child: Text(
-                                  'Subtitle 2',
+                                  currentList[index].interest,
                                   style: TextStyle(
                                     color: Color(0xFF0A2F5A),
                                     fontSize: 12,
@@ -366,7 +484,7 @@ class _studentOpportunity extends State<studentOpportunity> {
                             children: [
                               Positioned(
                                 top: 16,
-                                left: 140,
+                                right: 80,
                                 child: Text(
                                   compList[index],
                                   style: TextStyle(

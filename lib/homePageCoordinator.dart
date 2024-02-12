@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tatwaei/login.dart';
 //import 'CoordinatorInoppDetails.dart';
 import 'CoordinatorExoppDetails.dart';
 import 'coordinatorAccount.dart';
 import 'CordinatorMyStudent.dart';
 import 'confirm_student_signup.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference internalOpportunity =
@@ -546,8 +548,17 @@ class _HomePageState extends State<homePageCoordinator> {
                       fontSize: 24,
                     ),
                   ),
-                  onTap: () {
-                    // Handle drawer item tap for logout
+                  onTap: () async {
+                    //logout logic
+                    try {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        (Route<dynamic> route) => false,
+                      );
+                    } catch (error) {
+                      print("Sign out error: $error");
+                    }
                   },
                 ),
               ),

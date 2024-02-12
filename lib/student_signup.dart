@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tatwaei/login.dart';
 import 'homePageStudent.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -88,7 +89,7 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
       // Navigate to HomePage if successful (ONLY FOR TESTING, SHOULD NAVIGATE TO LOG IN!)
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePageStudent()),
+        MaterialPageRoute(builder: (context) => LoginPage()),
       );
     } on FirebaseAuthException catch (e) {
       // Handle errors, e.g., email already in use, weak password

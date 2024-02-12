@@ -88,7 +88,7 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
       // Navigate to HomePage if successful (ONLY FOR TESTING, SHOULD NAVIGATE TO LOG IN!)
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => HomePageStudent()),
       );
     } on FirebaseAuthException catch (e) {
       // Handle errors, e.g., email already in use, weak password

@@ -10,12 +10,12 @@ CollectionReference internalOpportunity =
 CollectionReference externalOpportunity =
     FirebaseFirestore.instance.collection('externalOpportunity');
 
-class HomePage extends StatefulWidget {
+class homePageAdmin extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<homePageAdmin> {
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
 

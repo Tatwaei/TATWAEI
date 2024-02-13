@@ -7,6 +7,8 @@ import 'studentOpportunity.dart';
 import 'StudentMyhours.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tatwaei/login.dart';
+import 'package:provider/provider.dart';
+import 'user_state.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference internalOpportunity =
@@ -22,6 +24,7 @@ class HomePageStudent extends StatefulWidget {
 class _HomePageState extends State<HomePageStudent> {
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
+  late String initialName = '';
 
   Future<List<DocumentSnapshot>> getIngredients() async {
     CollectionReference internalOpportunity =
@@ -376,6 +379,24 @@ class _HomePageState extends State<HomePageStudent> {
         filteredItems = opp;
       });
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getUserName();
+    });
+  }
+
+  Future<void> getUserName() async {
+    String userId = Provider.of<UserState>(context, listen: false).userId;
+    DocumentSnapshot<Map<String, dynamic>> userDocument =
+        await FirebaseFirestore.instance
+            .collection('student')
+            .doc(userId)
+            .get();
+    if (userDocument.exists) {
+      setState(() {
+        // Update your state with the retrieved data
+        initialName = userDocument.get('name');
+      });
+    }
   }
 
   Future<String> getSource(DocumentSnapshot<Object?> opportunity) async {
@@ -446,7 +467,7 @@ class _HomePageState extends State<HomePageStudent> {
                               ),
                             ),
                             Text(
-                              'نورة',
+                              initialName,
                               style: TextStyle(
                                 color: Color.fromARGB(115, 127, 179, 71),
                                 fontSize: 24,
@@ -692,7 +713,7 @@ class _HomePageState extends State<HomePageStudent> {
                                   right: 80,
                                   child: Text(
                                     filteredItems[index]['name'],
-                                   // textDirection: TextDirection.rtl,
+                                    // textDirection: TextDirection.rtl,
                                     style: TextStyle(
                                       color: Color(0xFF0A2F5A),
                                       backgroundColor:

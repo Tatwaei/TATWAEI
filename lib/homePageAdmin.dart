@@ -20,7 +20,6 @@ class homePageAdmin extends StatefulWidget {
 class _HomePageState extends State<homePageAdmin> {
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
-
   Future<List<DocumentSnapshot>> getIngredients() async {
     CollectionReference internalOpportunity =
         _firestore.collection('internalOpportunity');

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:provider/provider.dart';
 import 'user_state.dart';
 import 'dart:io';
@@ -18,135 +19,231 @@ class Opportunity {
   final String interest;
   final String source;
 
-  Opportunity(this.name, this.interest,this.source);
+  Opportunity(this.name, this.interest, this.source);
 }
-
 
 class _studentOpportunity extends State<studentOpportunity> {
   XFile? image;
   final ImagePicker picker = ImagePicker();
+  String? imageUrl;
 
   Future getImage(ImageSource media) async {
     var img = await picker.pickImage(source: media);
 
+    if (img != null) {
+      File imageFile = File(img.path);
+      await uploadImageToFirebase(imageFile);
+    }
     setState(() {
       image = img;
     });
     myAlert();
   }
 
+  Future<void> uploadImageToFirebase(File imageFile) async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      firebase_storage.Reference ref =
+          firebase_storage.FirebaseStorage.instance.ref().child(fileName);
+      await ref.putFile(imageFile);
+      imageUrl = await ref.getDownloadURL();
+    } catch (e) {
+      print('Error uploading image to Firebase Storage: $e');
+    }
+  }
+
+  void saveImageUrlToFirestore(String imageUrl, BuildContext context) {
+    String studentId = Provider.of<UserState>(context, listen: false).userId;
+    FirebaseFirestore.instance
+        .collection('seat')
+        .where('studentId', isEqualTo: studentId)
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((documentSnapshot) {
+        FirebaseFirestore.instance
+            .collection('seat')
+            .doc(documentSnapshot.id)
+            .update({'certificate': imageUrl}).then((value) {
+          print('Image URL saved to Firestore successfully.');
+        }).catchError((error) {
+          print('Error saving image URL to Firestore: $error');
+          showErrorMessage(context);
+        });
+      });
+    }).catchError((error) {
+      print('Error retrieving document from Firestore: $error');
+      showErrorMessage(context);
+    });
+  }
+
+  void showSuccessMessage(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Icon(
+            Icons.check_circle,
+            color: Colors.green,
+            size: 50,
+          ),
+          content: Text(
+            "تم رفع الشهادة بنجاح",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20,
+              color: Color(0xFF0A2F5A),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showErrorMessage(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Icon(
+            Icons.error,
+            color: Colors.green,
+            size: 50,
+          ),
+          content: Text(
+            "حدث خطأ الرجاء المحاولة مرة أخرى",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20,
+              color: Color(0xFF0A2F5A),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   bool showList1 = false;
   bool showList2 = false;
 
-List<Opportunity> currentList =[];
-List<String> compList = [];
+  List<Opportunity> currentList = [];
+  List<String> compList = [];
 
-
- @override
+  @override
   void initState() {
     super.initState();
-       WidgetsBinding.instance.addPostFrameCallback((_) {
-       getCurrentOpp();
-       getCompOpp();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getCurrentOpp();
+      getCompOpp();
     });
     //// modifiedClass = initialClass.toString();
   }
 
-Future<void> getCurrentOpp() async {
-  String studentId = Provider.of<UserState>(context, listen: false).userId;
-  QuerySnapshot<Map<String, dynamic>> seatSnapshot = await FirebaseFirestore.instance
-      .collection('seat')
-      .where('studentId', isEqualTo: studentId)
-      .get();
+  Future<void> getCurrentOpp() async {
+    String studentId = Provider.of<UserState>(context, listen: false).userId;
+    QuerySnapshot<Map<String, dynamic>> seatSnapshot = await FirebaseFirestore
+        .instance
+        .collection('seat')
+        .where('studentId', isEqualTo: studentId)
+        .get();
 
-  if (seatSnapshot.docs.isNotEmpty) {
-    DateTime todayDate = DateTime.now();
+    if (seatSnapshot.docs.isNotEmpty) {
+      DateTime todayDate = DateTime.now();
 
-    for (var seatDoc in seatSnapshot.docs) {
-      String opportunityId = seatDoc.data()['opportunityId'];
+      for (var seatDoc in seatSnapshot.docs) {
+        String opportunityId = seatDoc.data()['opportunityId'];
 
-      // Retrieve internal opportunity
-      DocumentSnapshot<Map<String, dynamic>> internalOpportunitySnapshot = await FirebaseFirestore.instance
-          .collection('internalOpportunity')
-          .doc(opportunityId)
-          .get();
+        // Retrieve internal opportunity
+        DocumentSnapshot<Map<String, dynamic>> internalOpportunitySnapshot =
+            await FirebaseFirestore.instance
+                .collection('internalOpportunity')
+                .doc(opportunityId)
+                .get();
 
-      if (internalOpportunitySnapshot.exists) {
-        DateTime endDate = internalOpportunitySnapshot.get('endDate').toDate();
+        if (internalOpportunitySnapshot.exists) {
+          DateTime endDate =
+              internalOpportunitySnapshot.get('endDate').toDate();
 
-        if (endDate.isAfter(todayDate)) {
-          String name = internalOpportunitySnapshot.get('name');
-          String interest = internalOpportunitySnapshot.get('interest');
-          Opportunity opportunity = Opportunity(name, interest, 'داخلية'); // Set source as internal
-          currentList.add(opportunity);
+          if (endDate.isAfter(todayDate)) {
+            String name = internalOpportunitySnapshot.get('name');
+            String interest = internalOpportunitySnapshot.get('interest');
+            Opportunity opportunity =
+                Opportunity(name, interest, 'داخلية'); // Set source as internal
+            currentList.add(opportunity);
+          }
         }
-      }
 
-      // Retrieve external opportunity
-      DocumentSnapshot<Map<String, dynamic>> externalOpportunitySnapshot = await FirebaseFirestore.instance
-          .collection('externalOpportunity')
-          .doc(opportunityId)
-          .get();
+        // Retrieve external opportunity
+        DocumentSnapshot<Map<String, dynamic>> externalOpportunitySnapshot =
+            await FirebaseFirestore.instance
+                .collection('externalOpportunity')
+                .doc(opportunityId)
+                .get();
 
-      if (externalOpportunitySnapshot.exists) {
-        DateTime endDate = externalOpportunitySnapshot.get('endDate').toDate();
+        if (externalOpportunitySnapshot.exists) {
+          DateTime endDate =
+              externalOpportunitySnapshot.get('endDate').toDate();
 
-        if (endDate.isAfter(todayDate)) {
-          String name = externalOpportunitySnapshot.get('name');
-          String interest = externalOpportunitySnapshot.get('interest');
-          Opportunity opportunity = Opportunity(name, interest, 'خارجية');
-          currentList.add(opportunity);
-        }
-      }
-    }
-  }
-}
-
- Future<void> getCompOpp() async {
-  String studentId = Provider.of<UserState>(context, listen: false).userId;
-  QuerySnapshot<Map<String, dynamic>> seatSnapshot = await FirebaseFirestore.instance
-      .collection('seat')
-      .where('studentId', isEqualTo: studentId)
-      .get();
-
-  if (seatSnapshot.docs.isNotEmpty) {
-    DateTime todayDate = DateTime.now();
-
-    for (var seatDoc in seatSnapshot.docs) {
-      String opportunityId = seatDoc.data()['opportunityId'];
-
-      // Retrieve internal opportunity
-      DocumentSnapshot<Map<String, dynamic>> internalOpportunitySnapshot = await FirebaseFirestore.instance
-          .collection('internalOpportunity')
-          .doc(opportunityId)
-          .get();
-
-      if (internalOpportunitySnapshot.exists) {
-        DateTime endDate = internalOpportunitySnapshot.get('endDate').toDate();
-
-        if (endDate.isBefore(todayDate)) {
-          String name = internalOpportunitySnapshot.get('name');
-          compList.add(name);
-        }
-      }
-
-      // Retrieve external opportunity
-      DocumentSnapshot<Map<String, dynamic>> externalOpportunitySnapshot = await FirebaseFirestore.instance
-          .collection('externalOpportunity')
-          .doc(opportunityId)
-          .get();
-
-      if (externalOpportunitySnapshot.exists) {
-        DateTime endDate = externalOpportunitySnapshot.get('endDate').toDate();
-
-        if (endDate.isBefore(todayDate)) {
-          String name = externalOpportunitySnapshot.get('name');
-          compList.add(name);
+          if (endDate.isAfter(todayDate)) {
+            String name = externalOpportunitySnapshot.get('name');
+            String interest = externalOpportunitySnapshot.get('interest');
+            Opportunity opportunity = Opportunity(name, interest, 'خارجية');
+            currentList.add(opportunity);
+          }
         }
       }
     }
   }
-}
+
+  Future<void> getCompOpp() async {
+    String studentId = Provider.of<UserState>(context, listen: false).userId;
+    QuerySnapshot<Map<String, dynamic>> seatSnapshot = await FirebaseFirestore
+        .instance
+        .collection('seat')
+        .where('studentId', isEqualTo: studentId)
+        .get();
+
+    if (seatSnapshot.docs.isNotEmpty) {
+      DateTime todayDate = DateTime.now();
+
+      for (var seatDoc in seatSnapshot.docs) {
+        String opportunityId = seatDoc.data()['opportunityId'];
+
+        // Retrieve internal opportunity
+        DocumentSnapshot<Map<String, dynamic>> internalOpportunitySnapshot =
+            await FirebaseFirestore.instance
+                .collection('internalOpportunity')
+                .doc(opportunityId)
+                .get();
+
+        if (internalOpportunitySnapshot.exists) {
+          DateTime endDate =
+              internalOpportunitySnapshot.get('endDate').toDate();
+
+          if (endDate.isBefore(todayDate)) {
+            String name = internalOpportunitySnapshot.get('name');
+            compList.add(name);
+          }
+        }
+
+        // Retrieve external opportunity
+        DocumentSnapshot<Map<String, dynamic>> externalOpportunitySnapshot =
+            await FirebaseFirestore.instance
+                .collection('externalOpportunity')
+                .doc(opportunityId)
+                .get();
+
+        if (externalOpportunitySnapshot.exists) {
+          DateTime endDate =
+              externalOpportunitySnapshot.get('endDate').toDate();
+
+          if (endDate.isBefore(todayDate)) {
+            String name = externalOpportunitySnapshot.get('name');
+            compList.add(name);
+          }
+        }
+      }
+    }
+  }
 
   void myAlert() {
     showDialog(
@@ -230,8 +327,13 @@ Future<void> getCurrentOpp() async {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      // Perform save operation
-                      // Add your save logic here
+                      Navigator.pop(context);
+                      if (imageUrl != null) {
+                        saveImageUrlToFirestore(imageUrl!, context);
+                        showSuccessMessage(context);
+                      } else {
+                        showErrorMessage(context);
+                      }
                     },
                     style: ButtonStyle(
                       backgroundColor:
@@ -391,43 +493,63 @@ Future<void> getCurrentOpp() async {
                         child: ListTile(
                           title: Stack(
                             children: [
-                              Positioned(
-                                top: 12,
-                                right: 80,
+                                 Positioned(
+                                  top: 12,
+                                  left: 50,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
                                 child: Text(
                                   currentList[index].name,
                                   style: TextStyle(
                                     color: Color(0xFF0A2F5A),
-                                    backgroundColor:
-                                        Color.fromARGB(115, 127, 179, 71),
+                                   
                                   ),
-                                ),
+                                ),),
                               ),
                               Positioned(
                                 top: 50,
-                                left: 140,
+                                  left: 120,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
                                 child: Text(
-                                  currentList[index].source == 'داخلية' ? 'داخلية' : 'خارجية',
+                                  currentList[index].source == 'داخلية'
+                                      ? 'داخلية'
+                                      : 'خارجية',
                                   style: TextStyle(
                                     color: Color(0xFF0A2F5A),
                                     fontSize: 12,
-                                    backgroundColor:
-                                        Color.fromARGB(115, 127, 179, 71),
+                                   
                                   ),
-                                ),
+                                ),),
                               ),
                               Positioned(
                                 top: 50,
-                                left: 40,
+                                  left: 20,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
                                 child: Text(
                                   currentList[index].interest,
                                   style: TextStyle(
                                     color: Color(0xFF0A2F5A),
                                     fontSize: 12,
-                                    backgroundColor:
-                                        Color.fromARGB(115, 127, 179, 71),
+                                    
                                   ),
-                                ),
+                                ),),
                               ),
                               Positioned(
                                 right: 0,
@@ -485,20 +607,26 @@ Future<void> getCurrentOpp() async {
                               Positioned(
                                 top: 16,
                                 right: 80,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
                                 child: Text(
                                   compList[index],
                                   style: TextStyle(
                                     color: Color(0xFF0A2F5A),
-                                    backgroundColor:
-                                        Color.fromARGB(115, 127, 179, 71),
+                                  
                                   ),
-                                ),
+                                ),),
                               ),
                               Stack(
                                 children: [
                                   Positioned(
                                     top: 38,
-                                    right: 190,
+                                    right: 195,
                                     child: Column(
                                       children: [
                                         ElevatedButton(
@@ -508,14 +636,15 @@ Future<void> getCurrentOpp() async {
                                           child: Text(
                                             'رفع الشهادة',
                                             style: TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 11,
                                                 color: Color(0xFF0A2F5A)),
                                           ),
                                           style: ElevatedButton.styleFrom(
+                      
                                             backgroundColor: Color.fromARGB(
                                                 255, 187, 213, 159),
                                             padding: EdgeInsets.symmetric(
-                                                horizontal: 9),
+                                                horizontal: 6),
                                           ),
                                         ),
                                         SizedBox(height: 20),

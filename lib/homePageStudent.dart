@@ -5,10 +5,6 @@ import 'StudentOppDetails.dart';
 import 'studentAccount.dart';
 import 'studentOpportunity.dart';
 import 'StudentMyhours.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:tatwaei/login.dart';
-import 'package:provider/provider.dart';
-import 'user_state.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference internalOpportunity =
@@ -24,7 +20,6 @@ class HomePageStudent extends StatefulWidget {
 class _HomePageState extends State<HomePageStudent> {
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
-  late String initialName = '';
 
   Future<List<DocumentSnapshot>> getIngredients() async {
     CollectionReference internalOpportunity =
@@ -379,24 +374,6 @@ class _HomePageState extends State<HomePageStudent> {
         filteredItems = opp;
       });
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getUserName();
-    });
-  }
-
-  Future<void> getUserName() async {
-    String userId = Provider.of<UserState>(context, listen: false).userId;
-    DocumentSnapshot<Map<String, dynamic>> userDocument =
-        await FirebaseFirestore.instance
-            .collection('student')
-            .doc(userId)
-            .get();
-    if (userDocument.exists) {
-      setState(() {
-        // Update your state with the retrieved data
-        initialName = userDocument.get('name');
-      });
-    }
   }
 
   Future<String> getSource(DocumentSnapshot<Object?> opportunity) async {
@@ -467,7 +444,7 @@ class _HomePageState extends State<HomePageStudent> {
                               ),
                             ),
                             Text(
-                              initialName,
+                              'نورة',
                               style: TextStyle(
                                 color: Color.fromARGB(115, 127, 179, 71),
                                 fontSize: 24,
@@ -552,17 +529,8 @@ class _HomePageState extends State<HomePageStudent> {
                       fontSize: 24,
                     ),
                   ),
-                  onTap: () async {
-                    //logout logic
-                    try {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                        (Route<dynamic> route) => false,
-                      );
-                    } catch (error) {
-                      print("Sign out error: $error");
-                    }
+                  onTap: () {
+                    // Handle drawer item tap for logout
                   },
                 ),
               ),
@@ -711,41 +679,63 @@ class _HomePageState extends State<HomePageStudent> {
                                 Positioned(
                                   top: 12,
                                   right: 80,
-                                  child: Text(
-                                    filteredItems[index]['name'],
-                                    // textDirection: TextDirection.rtl,
-                                    style: TextStyle(
-                                      color: Color(0xFF0A2F5A),
-                                      backgroundColor:
-                                          Color.fromARGB(115, 127, 179, 71),
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
+                                   
+                                    child: Text(
+                                      filteredItems[index]['name'],
+                                      textDirection: TextDirection.rtl,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Color(0xFF0A2F5A),
+                                        //    backgroundColor:
+                                        //     Color.fromARGB(115, 127, 179, 71),
+                                      ),
                                     ),
                                   ),
                                 ),
                                 Positioned(
                                   top: 50,
-                                  left: 160,
+                                  left: 130,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
                                   child: Text(
                                     source,
                                     style: TextStyle(
                                       color: Color(0xFF0A2F5A),
                                       fontSize: 14,
-                                      backgroundColor:
-                                          Color.fromARGB(115, 127, 179, 71),
+                                     
                                     ),
-                                  ),
+                                  ),),
                                 ),
                                 Positioned(
                                   top: 50,
-                                  left: 40,
+                                  left: 20,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
                                   child: Text(
                                     filteredItems[index]['interest'],
                                     style: TextStyle(
                                       color: Color(0xFF0A2F5A),
                                       fontSize: 14,
-                                      backgroundColor:
-                                          Color.fromARGB(115, 127, 179, 71),
+                                     
                                     ),
-                                  ),
+                                  ),),
                                 ),
                                 Positioned(
                                   right: 0,

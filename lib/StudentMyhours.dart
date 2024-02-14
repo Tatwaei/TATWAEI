@@ -1,19 +1,33 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
+import 'user_state.dart';
+import 'dart:async';
+import 'dart:io';
 
 class StudentMyhours extends StatefulWidget {
   @override
   _StudentMyhours createState() => _StudentMyhours();
 }
 
+class Student {
+  final String name;
+  final String studentid;
+  final String verihours;
+
+  Student(this.name, this.studentid, this.verihours);
+}
+
 class _StudentMyhours extends State<StudentMyhours> {
   List<String> items = List<String>.generate(2, (index) => 'Item $index');
   List<String> filteredItems = [];
+  List<Student> StudentList = [];
   @override
   void initState() {
     super.initState();
     filteredItems = items;
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
 
     // _loadProfileData();
   }

@@ -1,22 +1,74 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'coordinatorOneStudent.dart';
+import 'package:provider/provider.dart';
+import 'user_state.dart';
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
 
 class CordinatorMyStudent extends StatefulWidget {
   @override
   _CordinatorMyStudent createState() => _CordinatorMyStudent();
 }
 
+class Student {
+  final String name;
+  final String castedid;
+  final String castedhours;
+
+  Student(this.name, this.castedid, this.castedhours);
+}
+
 class _CordinatorMyStudent extends State<CordinatorMyStudent> {
-  List<String> items = List<String>.generate(100, (index) => 'Item $index');
-  List<String> filteredItems = [];
+  //List<String> items = List<String>.generate(100, (index) => 'Item $index');
+  //List<String> filteredItems = [];
+  List<Student> studentList = [];
+  List<Student> fetchedStudentList = [];
 
   @override
   void initState() {
     super.initState();
-    filteredItems = items;
+    //filteredItems = items;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getStudentList();
+    });
 
     // _loadProfileData();
+  }
+
+  Future<void> getStudentList() async {
+    String studentId = Provider.of<UserState>(context, listen: false).userId;
+    DocumentSnapshot<Map<String, dynamic>> coordSnapshot =
+        await FirebaseFirestore.instance
+            .collection('schoolCoordinator')
+            .doc(studentId)
+            .get();
+
+    String schoolId = coordSnapshot.get('schoolId');
+    //String schhol = studentId.get('schoolId');
+    QuerySnapshot<Map<String, dynamic>> studentSnapshot =
+        await FirebaseFirestore.instance
+            .collection('student')
+            .where('schoolId', isEqualTo: schoolId)
+            .get();
+    if (studentSnapshot.size > 0) {
+      // List<Student> studentList = [];
+      for (QueryDocumentSnapshot<Map<String, dynamic>> documentSnapshot
+          in studentSnapshot.docs) {
+        String name = documentSnapshot.get('name');
+        int studentId = documentSnapshot.get('StudentId');
+        String castedid = studentId.toString();
+        int hours = documentSnapshot.get('verifiedHours');
+        String castedhours = hours.toString();
+
+        Student student = Student(name, castedid, castedhours);
+        fetchedStudentList.add(student);
+      }
+      setState(() {
+        studentList = fetchedStudentList; // Update the studentList
+      });
+    }
   }
 
   @override
@@ -85,7 +137,7 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                 SizedBox(height: 5),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: filteredItems.length,
+                    itemCount: studentList.length,
                     itemBuilder: (context, index) {
                       return Container(
                         width: 70.0,
@@ -99,7 +151,7 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                                 top: 12,
                                 left: 205,
                                 child: Text(
-                                  filteredItems[index],
+                                  studentList[index].name,
                                   style: TextStyle(
                                     color: Color(0xFF0A2F5A),
                                     backgroundColor:
@@ -111,7 +163,7 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                                 top: 50,
                                 left: 205,
                                 child: Text(
-                                  'رقم الطالب',
+                                  studentList[index].castedid,
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Color(0xFF0A2F5A),
@@ -124,7 +176,8 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                                 top: 30,
                                 left: 20,
                                 child: Text(
-                                  'الساعات',
+                                  studentList[index].castedhours,
+                                  //studentList[index].verihours,
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Color(0xFF0A2F5A),
@@ -136,8 +189,8 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                             ],
                           ),
                           onTap: () {
-                           Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => coordinatorOneStudent()));
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => coordinatorOneStudent()));
                           }, //going to the student info page
                         ),
                       );

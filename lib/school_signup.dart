@@ -2,9 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'homePageStudent.dart';
-import 'homePageCoordinator.dart';
-//import 'homePageAdmin.dart';
+import 'package:tatwaei/login.dart';
 
 class SchoolSignUpPage extends StatefulWidget {
   const SchoolSignUpPage({Key? key}) : super(key: key);
@@ -57,7 +55,7 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
       // Step 4: Navigate to the home page
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => homePageCoordinator()),
+        MaterialPageRoute(builder: (context) => LoginPage()),
       );
     } catch (e) {
       print('Error signing up: $e');

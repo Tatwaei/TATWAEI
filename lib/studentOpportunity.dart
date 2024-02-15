@@ -493,63 +493,60 @@ class _studentOpportunity extends State<studentOpportunity> {
                         child: ListTile(
                           title: Stack(
                             children: [
-                                 Positioned(
-                                  top: 12,
-                                  left: 50,
-                                  child: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Color.fromARGB(115, 127, 179, 71),
-                                    ),
-                                child: Text(
-                                  currentList[index].name,
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                   
+                              Positioned(
+                                top: 12,
+                                left: 50,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Color.fromARGB(115, 127, 179, 71),
                                   ),
-                                ),),
+                                  child: Text(
+                                    currentList[index].name,
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                    ),
+                                  ),
+                                ),
                               ),
                               Positioned(
                                 top: 50,
-                                  left: 120,
-                                  child: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Color.fromARGB(115, 127, 179, 71),
-                                    ),
-                                child: Text(
-                                  currentList[index].source == 'داخلية'
-                                      ? 'داخلية'
-                                      : 'خارجية',
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                    fontSize: 12,
-                                   
+                                left: 120,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Color.fromARGB(115, 127, 179, 71),
                                   ),
-                                ),),
+                                  child: Text(
+                                    currentList[index].source == 'داخلية'
+                                        ? 'داخلية'
+                                        : 'خارجية',
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
                               ),
                               Positioned(
                                 top: 50,
-                                  left: 20,
-                                  child: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Color.fromARGB(115, 127, 179, 71),
-                                    ),
-                                child: Text(
-                                  currentList[index].interest,
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                    fontSize: 12,
-                                    
+                                left: 20,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Color.fromARGB(115, 127, 179, 71),
                                   ),
-                                ),),
+                                  child: Text(
+                                    currentList[index].interest,
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
                               ),
                               Positioned(
                                 right: 0,
@@ -607,44 +604,45 @@ class _studentOpportunity extends State<studentOpportunity> {
                               Positioned(
                                 top: 16,
                                 right: 80,
-                                  child: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Color.fromARGB(115, 127, 179, 71),
-                                    ),
-                                child: Text(
-                                  compList[index],
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                  
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Color.fromARGB(115, 127, 179, 71),
                                   ),
-                                ),),
+                                  child: Text(
+                                    compList[index],
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                    ),
+                                  ),
+                                ),
                               ),
                               Stack(
                                 children: [
                                   Positioned(
-                                    top: 38,
+                                    top: 55,
                                     right: 195,
                                     child: Column(
                                       children: [
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            myAlert();
-                                          },
-                                          child: Text(
-                                            'رفع الشهادة',
-                                            style: TextStyle(
-                                                fontSize: 11,
-                                                color: Color(0xFF0A2F5A)),
-                                          ),
-                                          style: ElevatedButton.styleFrom(
-                      
-                                            backgroundColor: Color.fromARGB(
-                                                255, 187, 213, 159),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 6),
+                                        SizedBox(
+                                          height: 20,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              myAlert();
+                                            },
+                                            child: Text(
+                                              'رفع الشهادة',
+                                              style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: Color(0xFF0A2F5A)),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Color.fromARGB(
+                                                  255, 187, 213, 159),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 6),
+                                            ),
                                           ),
                                         ),
                                         SizedBox(height: 20),

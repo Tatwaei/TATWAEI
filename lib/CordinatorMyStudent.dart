@@ -16,8 +16,8 @@ class Student {
   final String name;
   final String castedid;
   final String castedhours;
-
-  Student(this.name, this.castedid, this.castedhours);
+  final String documentId;
+  Student(this.name, this.castedid, this.castedhours, this.documentId);
 }
 
 class _CordinatorMyStudent extends State<CordinatorMyStudent> {
@@ -37,6 +37,8 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
     // _loadProfileData();
   }
 
+String documentId='';
+
   Future<void> getStudentList() async {
     String studentId = Provider.of<UserState>(context, listen: false).userId;
     DocumentSnapshot<Map<String, dynamic>> coordSnapshot =
@@ -52,17 +54,20 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
             .collection('student')
             .where('schoolId', isEqualTo: schoolId)
             .get();
+            
     if (studentSnapshot.size > 0) {
       // List<Student> studentList = [];
       for (QueryDocumentSnapshot<Map<String, dynamic>> documentSnapshot
           in studentSnapshot.docs) {
+        documentId = documentSnapshot.id;
+
         String name = documentSnapshot.get('name');
         int studentId = documentSnapshot.get('StudentId');
         String castedid = studentId.toString();
         int hours = documentSnapshot.get('verifiedHours');
         String castedhours = hours.toString();
 
-        Student student = Student(name, castedid, castedhours);
+        Student student = Student(name, castedid, castedhours,documentId);
         fetchedStudentList.add(student);
       }
       setState(() {
@@ -190,7 +195,7 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                           ),
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => coordinatorOneStudent()));
+                                builder: (context) => coordinatorOneStudent(studentId: studentList[index].documentId)));
                           }, //going to the student info page
                         ),
                       );

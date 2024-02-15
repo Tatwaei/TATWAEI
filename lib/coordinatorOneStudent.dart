@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:async';
@@ -8,98 +9,298 @@ import 'StudentOppDetails.dart';
 class coordinatorOneStudent extends StatefulWidget {
   @override
   _coordinatorOneStudent createState() => _coordinatorOneStudent();
+
+  final String studentId;
+  coordinatorOneStudent({required this.studentId});
+}
+
+class Opportunity {
+  final String name;
+  final String interest;
+  final String source;
+
+  Opportunity(this.name, this.interest, this.source);
 }
 
 class _coordinatorOneStudent extends State<coordinatorOneStudent> {
+  String initialName = "";
+  String initialID = "";
 
-String initialName = "رغد بنت محمد ال ناصر المحمدي";
-String initialID = "0000000";
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getUserData();
+      getCurrentOpp();
+      getCompOpp();
+    });
+  }
 
-Future getImageFromDatabase() async {
-  // Execute a query to retrieve the image data from the database
-  //var imageData = await executeQuery('SELECT image_data FROM images WHERE id = 1');
-
-  // Convert the image data to a suitable format (e.g., Uint8List)
-  //var imageBytes = convertImageData(imageData);
-
-  setState(() {
-  //  image = imageBytes;
-  });
-
-  myAlert();
-}
+  Future<void> getUserData() async {
+    DocumentSnapshot<Map<String, dynamic>> userDocument =
+        await FirebaseFirestore.instance
+            .collection('student')
+            .doc(widget.studentId)
+            .get();
+    if (userDocument.exists) {
+      setState(() {
+        // Update your state with the retrieved data
+        initialName = userDocument.get('name');
+        initialID = userDocument.get('StudentId').toString();
+      });
+    }
+  }
 
   bool showList1 = false;
   bool showList2 = false;
 
-  List<String> currentList =List<String>.generate(30, (index) => 'Item $index');
-  List<String> compList = List<String>.generate(30, (index) => 'Item $index');
+  List<Opportunity> currentList = [];
+  List<String> compList = [];
+
+  Future<void> getCurrentOpp() async {
+    QuerySnapshot<Map<String, dynamic>> seatSnapshot = await FirebaseFirestore
+        .instance
+        .collection('seat')
+        .where('studentId', isEqualTo: widget.studentId)
+        .get();
+
+    if (seatSnapshot.docs.isNotEmpty) {
+      DateTime todayDate = DateTime.now();
+
+      for (var seatDoc in seatSnapshot.docs) {
+        String opportunityId = seatDoc.data()['opportunityId'];
+
+        // Retrieve internal opportunity
+        DocumentSnapshot<Map<String, dynamic>> internalOpportunitySnapshot =
+            await FirebaseFirestore.instance
+                .collection('internalOpportunity')
+                .doc(opportunityId)
+                .get();
+
+        if (internalOpportunitySnapshot.exists) {
+          DateTime endDate =
+              internalOpportunitySnapshot.get('endDate').toDate();
+
+          if (endDate.isAfter(todayDate)) {
+            String name = internalOpportunitySnapshot.get('name');
+            String interest = internalOpportunitySnapshot.get('interest');
+            Opportunity opportunity =
+                Opportunity(name, interest, 'داخلية'); // Set source as internal
+            currentList.add(opportunity);
+          }
+        }
+
+        // Retrieve external opportunity
+        DocumentSnapshot<Map<String, dynamic>> externalOpportunitySnapshot =
+            await FirebaseFirestore.instance
+                .collection('externalOpportunity')
+                .doc(opportunityId)
+                .get();
+
+        if (externalOpportunitySnapshot.exists) {
+          DateTime endDate =
+              externalOpportunitySnapshot.get('endDate').toDate();
+
+          if (endDate.isAfter(todayDate)) {
+            String name = externalOpportunitySnapshot.get('name');
+            String interest = externalOpportunitySnapshot.get('interest');
+            Opportunity opportunity = Opportunity(name, interest, 'خارجية');
+            currentList.add(opportunity);
+          }
+        }
+      }
+    }
+  }
+
+  Future<void> getCompOpp() async {
+    QuerySnapshot<Map<String, dynamic>> seatSnapshot = await FirebaseFirestore
+        .instance
+        .collection('seat')
+        .where('studentId', isEqualTo: widget.studentId)
+        .get();
+
+    if (seatSnapshot.docs.isNotEmpty) {
+      DateTime todayDate = DateTime.now();
+
+      for (var seatDoc in seatSnapshot.docs) {
+        String opportunityId = seatDoc.data()['opportunityId'];
+
+        // Retrieve internal opportunity
+        DocumentSnapshot<Map<String, dynamic>> internalOpportunitySnapshot =
+            await FirebaseFirestore.instance
+                .collection('internalOpportunity')
+                .doc(opportunityId)
+                .get();
+
+        if (internalOpportunitySnapshot.exists) {
+          DateTime endDate =
+              internalOpportunitySnapshot.get('endDate').toDate();
+
+          if (endDate.isBefore(todayDate)) {
+            String name = internalOpportunitySnapshot.get('name');
+            compList.add(name);
+          }
+        }
+
+        // Retrieve external opportunity
+        DocumentSnapshot<Map<String, dynamic>> externalOpportunitySnapshot =
+            await FirebaseFirestore.instance
+                .collection('externalOpportunity')
+                .doc(opportunityId)
+                .get();
+
+        if (externalOpportunitySnapshot.exists) {
+          DateTime endDate =
+              externalOpportunitySnapshot.get('endDate').toDate();
+
+          if (endDate.isBefore(todayDate)) {
+            String name = externalOpportunitySnapshot.get('name');
+            compList.add(name);
+          }
+        }
+      }
+    }
+  }
 
   void myAlert() {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Color(0xFFf4f1be),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            
-            content: Container(
-              height: MediaQuery.of(context).size.width * 0.8,
-              width: MediaQuery.of(context).size.height * 0.4,
-              child: Column(
-                children: [
-                //  if (image != null)
-                    Container(
-                      width: 200, // Set the desired width of the container
-                      height: 200, // Set the desired height of the container
-                     // child: Image.memory(
-                       // image,
-                      //  fit: BoxFit.cover,
-                     // ),
-                    ),
-                 // if (image == null)
-                   // Text(
-                    //  'No Image Uploaded',
-                    //  style: TextStyle(fontSize: 20),
-                   // ),
-                 
-                 
-                ],
+      context: context,
+      builder: (BuildContext context) {
+        return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          future: FirebaseFirestore.instance
+              .collection('seat')
+              .where('studentId', isEqualTo: widget.studentId)
+              .get(),
+          builder: (BuildContext context,
+              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // While waiting for the data to load, you can show a loading indicator
+              return CircularProgressIndicator();
+            }
+            if (snapshot.hasError) {
+              // If there's an error, you can show an error message
+              return Text('Error: ${snapshot.error}');
+            }
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              // If the document doesn't exist or there's no data, you can show a message
+              return Text('No Data Found');
+            }
+
+            // Assuming there's only one document matching the query
+            DocumentSnapshot<Map<String, dynamic>> document =
+                snapshot.data!.docs[0];
+
+            // Access the image URL from the document snapshot
+            String imageUrl = document.get('certificate');
+            String documentId = document.id;
+
+            return AlertDialog(
+              backgroundColor: Color(0xFFf4f1be),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
-            ),
-            actions: [
-              ButtonBar(
-                buttonPadding: EdgeInsets.only(right: 50),
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
-                    ),
-                    child: Text('رفض',
-                        style: TextStyle(color: Color(0xFF0A2F5A))),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Perform save operation
-                      // Add your save logic here
-                    },
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
-                    ),
-                    child:
-                        Text('توثيق', style: TextStyle(color: Color(0xFF0A2F5A))),
-                  ),
-                ],
+              content: Container(
+                height: MediaQuery.of(context).size.width * 0.8,
+                width: MediaQuery.of(context).size.height * 0.4,
+                child: Column(
+                  children: [
+                    if (imageUrl != null)
+                      Container(
+                        width: 200,
+                        height: 200,
+                        child: Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    if (imageUrl == null)
+                      Text(
+                        'No Image Uploaded',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                  ],
+                ),
               ),
-            ],
-          );
-        });
+              actions: [
+                ButtonBar(
+                  buttonPadding: EdgeInsets.only(right: 50),
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        // Update the certificateStatus to true
+                        FirebaseFirestore.instance
+                            .collection('seat')
+                            .doc(documentId)
+                            .update({'certificateStatus': false}).then((_) {
+                          // Show a success message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('تم رفض الشهادة'),
+                            ),
+                          );
+
+                          // Close the dialog
+                          Navigator.pop(context);
+                        }).catchError((error) {
+                          // Show an error message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('حدث خطأالرجاء المحاولة مرة أخرى'),
+                            ),
+                          );
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
+                      ),
+                      child: Text(
+                        'رفض',
+                        style: TextStyle(color: Color(0xFF0A2F5A)),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Update the certificateStatus to true
+                        FirebaseFirestore.instance
+                            .collection('seat')
+                            .doc(documentId)
+                            .update({'certificateStatus': true}).then((_) {
+                          // Show a success message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('تم التوثيق بنجاح'),
+                            ),
+                          );
+
+                          // Close the dialog
+                          Navigator.pop(context);
+                        }).catchError((error) {
+                          // Show an error message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('حدث خطأ أثناء التوثيق'),
+                            ),
+                          );
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
+                      ),
+                      child: Text(
+                        'توثيق',
+                        style: TextStyle(color: Color(0xFF0A2F5A)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -166,42 +367,30 @@ Future getImageFromDatabase() async {
                 ),
               ),
               SizedBox(height: 10),
-
               Container(
                 alignment: Alignment.center,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Color(0xFFb4d392)
-                          ),
-                        
-                                    child: Text(
-                                      initialName,
-                                      style: TextStyle(fontSize: 18,
-                                      color: Color(0xFF0A2F5A)),
-                                    
-                                ),),
-
+                height: 30,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Color(0xFFb4d392)),
+                child: Text(
+                  initialName,
+                  style: TextStyle(fontSize: 18, color: Color(0xFF0A2F5A)),
+                ),
+              ),
               SizedBox(height: 10),
-
               Container(
-                         alignment: Alignment.center,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Color(0xFFb4d392)
-                          ),
-                         
-                                    child: Text(
-                                      initialID,
-                                      style: TextStyle(fontSize: 18,
-                                      color: Color(0xFF0A2F5A)),
-                                    ),
-                                ),
-
+                alignment: Alignment.center,
+                height: 30,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Color(0xFFb4d392)),
+                child: Text(
+                  initialID,
+                  style: TextStyle(fontSize: 18, color: Color(0xFF0A2F5A)),
+                ),
+              ),
               SizedBox(height: 10),
-              
-              
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -284,39 +473,56 @@ Future getImageFromDatabase() async {
                             children: [
                               Positioned(
                                 top: 12,
-                                left: 140,
-                                child: Text(
-                                  currentList[index],
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                    backgroundColor:
-                                        Color.fromARGB(115, 127, 179, 71),
+                                left: 50,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Color.fromARGB(115, 127, 179, 71),
+                                  ),
+                                  child: Text(
+                                    currentList[index].name,
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                    ),
                                   ),
                                 ),
                               ),
                               Positioned(
                                 top: 50,
-                                left: 140,
-                                child: Text(
-                                  'Subtitle 1',
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                    fontSize: 12,
-                                    backgroundColor:
-                                        Color.fromARGB(115, 127, 179, 71),
+                                left: 120,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Color.fromARGB(115, 127, 179, 71),
+                                  ),
+                                  child: Text(
+                                    currentList[index].source == 'داخلية'
+                                        ? 'داخلية'
+                                        : 'خارجية',
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
                               ),
                               Positioned(
                                 top: 50,
-                                left: 40,
-                                child: Text(
-                                  'Subtitle 2',
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                    fontSize: 12,
-                                    backgroundColor:
-                                        Color.fromARGB(115, 127, 179, 71),
+                                left: 20,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Color.fromARGB(115, 127, 179, 71),
+                                  ),
+                                  child: Text(
+                                    currentList[index].interest,
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -375,65 +581,61 @@ Future getImageFromDatabase() async {
                             children: [
                               Positioned(
                                 top: 16,
-                                left: 140,
-                                child: Text(
-                                  compList[index],
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                    backgroundColor:
-                                        Color.fromARGB(115, 127, 179, 71),
+                                right: 80,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Color.fromARGB(115, 127, 179, 71),
+                                  ),
+                                  child: Text(
+                                    compList[index],
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                    ),
                                   ),
                                 ),
                               ),
                               Stack(
                                 children: [
                                   Positioned(
-                                    top: 38,
-                                    right: 180,
+                                    top: 55,
+                                    right: 190,
                                     child: Column(
                                       children: [
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            myAlert();
-                                          },
-                                          child: Text(
-                                            'عرض الشهادة',
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Color(0xFF0A2F5A)),
-                                          ),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Color.fromARGB(
-                                                255, 187, 213, 159),
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 9),
+                                        SizedBox(
+                                          height: 20,
+                                          child: ElevatedButton.icon(
+                                            onPressed: () {
+                                              myAlert();
+                                            },
+                                            icon: IconTheme(
+                                              data: IconThemeData(
+                                                  size: 10,
+                                                  color: Color(
+                                                      0xFF0A2F5A)), // Set your desired icon size
+                                              child: Icon(
+                                                  Icons.remove_red_eye_rounded),
+                                            ),
+                                            label: Text(
+                                              'عرض الشهادة',
+                                              style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: Color(0xFF0A2F5A)),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Color.fromARGB(
+                                                  255, 187, 213, 159),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 2, vertical: 2),
+                                            ),
                                           ),
                                         ),
                                         SizedBox(height: 20),
-                                       // image != null
-                                         //   ? Padding(
-                                          //      padding:
-                                           //         const EdgeInsets.symmetric(horizontal: 20),
-                                            //    child: ClipRRect(
-                                             //     borderRadius:
-                                              //        BorderRadius.circular(8),
-                                               //   child: Image.file(
-                                                    //to show image, you type like this.
-                                                  //  File(image!.memory),
-                                                  //  fit: BoxFit.cover,
-                                                  //  width:
-                                                  //      MediaQuery.of(context)
-                                                  //          .size
-                                                   //         .width,
-                                                  //  height: 300,
-                                                 // ),
-                                               // ),
-                                             // )
-                                           // :
-                                             Text(
-                                                "No Image",
-                                                style: TextStyle(fontSize: 20),
-                                              ),
+                                        Text(
+                                          "No Image",
+                                          style: TextStyle(fontSize: 20),
+                                        ),
                                       ],
                                     ),
                                   ),

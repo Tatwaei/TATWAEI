@@ -3,8 +3,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'AdminInoppDetails.dart';
 import 'AdminExoppDetails.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:tatwaei/login.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference internalOpportunity =
@@ -20,6 +18,7 @@ class homePageAdmin extends StatefulWidget {
 class _HomePageState extends State<homePageAdmin> {
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
+
   Future<List<DocumentSnapshot>> getIngredients() async {
     CollectionReference internalOpportunity =
         _firestore.collection('internalOpportunity');
@@ -487,17 +486,8 @@ class _HomePageState extends State<homePageAdmin> {
                       fontSize: 24,
                     ),
                   ),
-                  onTap: () async {
-                    //logout logic
-                    try {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                        (Route<dynamic> route) => false,
-                      );
-                    } catch (error) {
-                      print("Sign out error: $error");
-                    }
+                  onTap: () {
+                    // Handle drawer item tap for logout
                   },
                 ),
               ),
@@ -645,41 +635,63 @@ class _HomePageState extends State<homePageAdmin> {
                                 Positioned(
                                   top: 12,
                                   right: 80,
-                                  child: Text(
-                                    filteredItems[index]['name'],
-                                    textDirection: TextDirection.rtl,
-                                    style: TextStyle(
-                                      color: Color(0xFF0A2F5A),
-                                      backgroundColor:
-                                          Color.fromARGB(115, 127, 179, 71),
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
+                                   
+                                    child: Text(
+                                      filteredItems[index]['name'],
+                                      textDirection: TextDirection.rtl,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Color(0xFF0A2F5A),
+                                        //    backgroundColor:
+                                        //     Color.fromARGB(115, 127, 179, 71),
+                                      ),
                                     ),
                                   ),
                                 ),
                                 Positioned(
                                   top: 50,
-                                  left: 160,
+                                  left: 130,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
                                   child: Text(
                                     source,
                                     style: TextStyle(
                                       color: Color(0xFF0A2F5A),
                                       fontSize: 14,
-                                      backgroundColor:
-                                          Color.fromARGB(115, 127, 179, 71),
+                                     
                                     ),
-                                  ),
+                                  ),),
                                 ),
                                 Positioned(
                                   top: 50,
-                                  left: 40,
+                                  left: 20,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
                                   child: Text(
                                     filteredItems[index]['interest'],
                                     style: TextStyle(
                                       color: Color(0xFF0A2F5A),
                                       fontSize: 14,
-                                      backgroundColor:
-                                          Color.fromARGB(115, 127, 179, 71),
+                                     
                                     ),
-                                  ),
+                                  ),),
                                 ),
                                 Positioned(
                                   right: 0,

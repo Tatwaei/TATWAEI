@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tatwaei/login.dart';
 //import 'CoordinatorInoppDetails.dart';
 import 'CoordinatorExoppDetails.dart';
 import 'coordinatorAccount.dart';
 import 'CordinatorMyStudent.dart';
 import 'confirm_student_signup.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:provider/provider.dart';
-import 'user_state.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference internalOpportunity =
@@ -25,7 +21,6 @@ class homePageCoordinator extends StatefulWidget {
 class _HomePageState extends State<homePageCoordinator> {
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
-  late String initialSchool = "";
 
   Future<List<DocumentSnapshot>> getIngredients() async {
     CollectionReference internalOpportunity =
@@ -380,46 +375,7 @@ class _HomePageState extends State<homePageCoordinator> {
         filteredItems = opp;
       });
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getSchoolName();
-    });
   }
-
-  Future<void> getSchoolName() async {
-    String coorId = Provider.of<UserState>(context, listen: false).userId; 
-
-if (coorId != null && coorId.isNotEmpty) {
-  DocumentSnapshot<Map<String, dynamic>> coorDocument =
-      await FirebaseFirestore.instance
-          .collection('schoolCoordinator')
-          .doc(coorId)
-          .get();
-
-  if (coorDocument.exists) {
-    setState(() {
-      // Update your state with the retrieved data;
-
-      String schoolId = coorDocument.get('schoolId');   
-           getSchoolData(schoolId);
-      
-    });
-  }}
-}
-Future<void> getSchoolData(String schoolId) async {
-  DocumentSnapshot<Map<String, dynamic>> schoolDocument =
-      await FirebaseFirestore.instance
-          .collection('school')
-          .doc(schoolId)
-          .get();
-
-  if (schoolDocument.exists) {
-    setState(() {
-      // Update your state with the retrieved data
-      initialSchool = schoolDocument.get('schoolName');
-     
-    });
-  }
-}
 
   Future<String> getSource(DocumentSnapshot<Object?> opportunity) async {
     String source = '';
@@ -489,7 +445,7 @@ Future<void> getSchoolData(String schoolId) async {
                               ),
                             ),
                             Text(
-                              initialSchool,
+                              ' الثانوية الرابعة',
                               style: TextStyle(
                                 color: Color.fromARGB(115, 127, 179, 71),
                                 fontSize: 24,
@@ -590,17 +546,8 @@ Future<void> getSchoolData(String schoolId) async {
                       fontSize: 24,
                     ),
                   ),
-                  onTap: () async {
-                    //logout logic
-                    try {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                        (Route<dynamic> route) => false,
-                      );
-                    } catch (error) {
-                      print("Sign out error: $error");
-                    }
+                  onTap: () {
+                    // Handle drawer item tap for logout
                   },
                 ),
               ),
@@ -745,44 +692,66 @@ Future<void> getSchoolData(String schoolId) async {
                           child: ListTile(
                             title: Stack(
                               children: [
-                                Positioned(
+                               Positioned(
                                   top: 12,
                                   right: 80,
-                                  child: Text(
-                                    filteredItems[index]['name'],
-                                    textDirection: TextDirection.rtl,
-                                    style: TextStyle(
-                                      color: Color(0xFF0A2F5A),
-                                      backgroundColor:
-                                          Color.fromARGB(115, 127, 179, 71),
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
+                                   
+                                    child: Text(
+                                      filteredItems[index]['name'],
+                                      textDirection: TextDirection.rtl,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Color(0xFF0A2F5A),
+                                        //    backgroundColor:
+                                        //     Color.fromARGB(115, 127, 179, 71),
+                                      ),
                                     ),
                                   ),
                                 ),
                                 Positioned(
                                   top: 50,
-                                  left: 160,
+                                  left: 130,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
                                   child: Text(
                                     source,
                                     style: TextStyle(
                                       color: Color(0xFF0A2F5A),
                                       fontSize: 14,
-                                      backgroundColor:
-                                          Color.fromARGB(115, 127, 179, 71),
+                                     
                                     ),
-                                  ),
+                                  ),),
                                 ),
                                 Positioned(
                                   top: 50,
-                                  left: 40,
+                                  left: 20,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
                                   child: Text(
                                     filteredItems[index]['interest'],
                                     style: TextStyle(
                                       color: Color(0xFF0A2F5A),
                                       fontSize: 14,
-                                      backgroundColor:
-                                          Color.fromARGB(115, 127, 179, 71),
+                                     
                                     ),
-                                  ),
+                                  ),),
                                 ),
                                 Positioned(
                                   right: 0,

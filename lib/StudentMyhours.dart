@@ -1,21 +1,83 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
+import 'user_state.dart';
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
 
 class StudentMyhours extends StatefulWidget {
   @override
   _StudentMyhours createState() => _StudentMyhours();
 }
 
+class Opportunity {
+  final String name;
+
+  Opportunity(this.name);
+}
+
 class _StudentMyhours extends State<StudentMyhours> {
   List<String> items = List<String>.generate(2, (index) => 'Item $index');
   List<String> filteredItems = [];
+  //List<Student> StudentList = [];
   @override
   void initState() {
     super.initState();
     filteredItems = items;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getVerifiedOpp();
+    });
 
     // _loadProfileData();
+  }
+
+  List<Opportunity> verifiedOpp = [];
+  List<Opportunity> verifiedOpp2 = [];
+
+  Future<void> getVerifiedOpp() async {
+    String studentId = Provider.of<UserState>(context, listen: false).userId;
+    QuerySnapshot<Map<String, dynamic>> seatSnapshot = await FirebaseFirestore
+        .instance
+        .collection('seat')
+        .where('studentId', isEqualTo: studentId)
+        .where('certificateStatus', isEqualTo: true)
+        .get();
+    if (seatSnapshot.docs.isNotEmpty) {
+      for (var seatDoc in seatSnapshot.docs) {
+        String opportunityId = seatDoc.data()['opportunityId'];
+
+        // Retrieve internal opportunity
+        DocumentSnapshot<Map<String, dynamic>> internalOpportunitySnapshot =
+            await FirebaseFirestore.instance
+                .collection('internalOpportunity')
+                .doc(opportunityId)
+                .get();
+
+        if (internalOpportunitySnapshot.exists) {
+          String name = internalOpportunitySnapshot.get('name');
+          Opportunity opportunity = Opportunity(name); // Set source as internal
+          verifiedOpp.add(opportunity);
+        }
+
+        // Retrieve external opportunity
+        DocumentSnapshot<Map<String, dynamic>> externalOpportunitySnapshot =
+            await FirebaseFirestore.instance
+                .collection('externalOpportunity')
+                .doc(opportunityId)
+                .get();
+
+        if (externalOpportunitySnapshot.exists) {
+          String name = externalOpportunitySnapshot.get('name');
+          Opportunity opportunity = Opportunity(name); // Set source as internal
+          verifiedOpp.add(opportunity);
+        }
+      }
+      setState(() {
+        verifiedOpp2 = verifiedOpp; // Update the studentList
+      });
+    }
   }
 
   void _showCertificatePopup(BuildContext context) {
@@ -191,7 +253,7 @@ class _StudentMyhours extends State<StudentMyhours> {
               SizedBox(height: 5.0),
               Expanded(
                 child: ListView.builder(
-                  itemCount: filteredItems.length,
+                  itemCount: verifiedOpp.length,
                   itemBuilder: (context, index) {
                     return Container(
                       width: 70.0,
@@ -203,9 +265,9 @@ class _StudentMyhours extends State<StudentMyhours> {
                           children: [
                             Positioned(
                               top: 12,
-                              left: 140,
+                              left: 80,
                               child: Text(
-                                filteredItems[index],
+                                verifiedOpp[index].name,
                                 style: TextStyle(
                                   backgroundColor:
                                       Color.fromARGB(115, 127, 179, 71),

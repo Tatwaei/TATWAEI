@@ -39,6 +39,50 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
   final _addressController = TextEditingController();
 
   Future<void> signUp() async {
+    if (_addressController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _phoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fill in all fields')),
+      );
+      return;
+    }
+    if (selectedSchool == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select your school.')),
+      );
+      return;
+    }
+
+    if (_emailController.text.trim().isEmpty ||
+        !_emailController.text.trim().contains('@') ||
+        !_emailController.text.trim().contains('.com')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid email address.')),
+      );
+      return;
+    }
+    if (_passwordController.text.isEmpty ||
+        _passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Password must be at least 6 characters long.')),
+      );
+      return;
+    }
+    if (_phoneController.text.trim().isEmpty ||
+        _phoneController.text.length < 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid phone number.')),
+      );
+      return;
+    }
+    if (_addressController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter an address.')),
+      );
+      return;
+    }
     try {
       // Step 1: Create a new school document in 'school' collection
       final schoolId = await createSchoolDocument();

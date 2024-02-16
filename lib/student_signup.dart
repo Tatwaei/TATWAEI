@@ -54,16 +54,53 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
     if (_emailController.text.isEmpty ||
         _passwordController.text.isEmpty ||
         _nameController.text.isEmpty ||
-        _phoneController.text.isEmpty ||
-        selectedSchool == null ||
-        selectedGrade == null) {
-      // Show an error message if any field is empty
+        _phoneController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please fill in all fields')),
       );
       return;
     }
+    if (selectedSchool == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select your school.')),
+      );
+      return;
+    }
+    if (_nameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter your name.')),
+      );
+      return;
+    }
 
+    if (_emailController.text.trim().isEmpty ||
+        !_emailController.text.trim().contains('@') ||
+        !_emailController.text.trim().contains('.com')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid email address.')),
+      );
+      return;
+    }
+    if (_passwordController.text.isEmpty ||
+        _passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Password must be at least 6 characters long.')),
+      );
+      return;
+    }
+    if (_phoneController.text.trim().isEmpty ||
+        _phoneController.text.length < 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid phone number.')),
+      );
+      return;
+    }
+    if (selectedGrade == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select your grade.')),
+      );
+      return;
+    }
     try {
       // Create user with FirebaseAuth
       await FirebaseAuth.instance.createUserWithEmailAndPassword(

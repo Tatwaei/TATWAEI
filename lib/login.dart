@@ -22,10 +22,30 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
 
   Future signIn() async {
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+
+    if (email.isEmpty || !email.contains('@') || !email.contains('.com')) {
+      // Display a SnackBar for invalid email
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a valid email address.')),
+      );
+      return; // Stop the sign-in process
+    }
+
+    if (password.isEmpty || password.length < 6) {
+      // Display a SnackBar for invalid password
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Password must be at least 6 characters.')),
+      );
+      return; // Stop the sign-in process
+    }
+
+    // Proceed with Firebase sign-in if inputs are valid
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+        email: email,
+        password: password,
       );
 
       // after doingthe sign up part, use .then AuthorizeAccess(context)
@@ -53,8 +73,8 @@ class _LoginPageState extends State<LoginPage> {
       var userDoc = querySnapshot.docs.first;
       bool accountStatus = userDoc['accountStatus'] ?? false;
       if (accountStatus) {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomePageStudent()));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => HomePageStudent()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("لم يتم توثيق حساب، نرجوا الإنتظار")));
@@ -71,8 +91,8 @@ class _LoginPageState extends State<LoginPage> {
     if (userDoc.exists) {
       var collectionId = userDoc.id;
       Provider.of<UserState>(context, listen: false).setUserId(collectionId);
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => homePageCoordinator()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => homePageCoordinator()));
       return;
     }
 

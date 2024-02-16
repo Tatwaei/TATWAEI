@@ -18,8 +18,9 @@ class Opportunity {
   final String name;
   final String interest;
   final String source;
+  final String opportunityId;
 
-  Opportunity(this.name, this.interest, this.source);
+  Opportunity(this.name, this.interest, this.source, this.opportunityId);
 }
 
 class _studentOpportunity extends State<studentOpportunity> {
@@ -27,7 +28,7 @@ class _studentOpportunity extends State<studentOpportunity> {
   final ImagePicker picker = ImagePicker();
   String? imageUrl;
 
-  Future getImage(ImageSource media) async {
+  Future getImage(ImageSource media, int index) async {
     var img = await picker.pickImage(source: media);
 
     if (img != null) {
@@ -37,7 +38,7 @@ class _studentOpportunity extends State<studentOpportunity> {
     setState(() {
       image = img;
     });
-    myAlert();
+    myAlert(index);
   }
 
   Future<void> uploadImageToFirebase(File imageFile) async {
@@ -52,11 +53,14 @@ class _studentOpportunity extends State<studentOpportunity> {
     }
   }
 
-  void saveImageUrlToFirestore(String imageUrl, BuildContext context) {
+  void saveImageUrlToFirestore(
+      String imageUrl, BuildContext context, int index) {
     String studentId = Provider.of<UserState>(context, listen: false).userId;
+    String opportunityId = compList[index].opportunityId;
     FirebaseFirestore.instance
         .collection('seat')
         .where('studentId', isEqualTo: studentId)
+        .where('opportunityId', isEqualTo: opportunityId)
         .get()
         .then((querySnapshot) {
       querySnapshot.docs.forEach((documentSnapshot) {
@@ -126,7 +130,7 @@ class _studentOpportunity extends State<studentOpportunity> {
   bool showList2 = false;
 
   List<Opportunity> currentList = [];
-  List<String> compList = [];
+  List<Opportunity> compList = [];
 
   @override
   void initState() {
@@ -166,8 +170,8 @@ class _studentOpportunity extends State<studentOpportunity> {
           if (endDate.isAfter(todayDate)) {
             String name = internalOpportunitySnapshot.get('name');
             String interest = internalOpportunitySnapshot.get('interest');
-            Opportunity opportunity =
-                Opportunity(name, interest, 'داخلية'); // Set source as internal
+            Opportunity opportunity = Opportunity(
+                name, interest, 'داخلية', ''); // Set source as internal
             currentList.add(opportunity);
           }
         }
@@ -186,7 +190,7 @@ class _studentOpportunity extends State<studentOpportunity> {
           if (endDate.isAfter(todayDate)) {
             String name = externalOpportunitySnapshot.get('name');
             String interest = externalOpportunitySnapshot.get('interest');
-            Opportunity opportunity = Opportunity(name, interest, 'خارجية');
+            Opportunity opportunity = Opportunity(name, interest, 'خارجية', '');
             currentList.add(opportunity);
           }
         }
@@ -221,7 +225,8 @@ class _studentOpportunity extends State<studentOpportunity> {
 
           if (endDate.isBefore(todayDate)) {
             String name = internalOpportunitySnapshot.get('name');
-            compList.add(name);
+            Opportunity opportunity = Opportunity(name, '', '', opportunityId);
+            compList.add(opportunity);
           }
         }
 
@@ -238,14 +243,15 @@ class _studentOpportunity extends State<studentOpportunity> {
 
           if (endDate.isBefore(todayDate)) {
             String name = externalOpportunitySnapshot.get('name');
-            compList.add(name);
+            Opportunity opportunity = Opportunity(name, '', '', opportunityId);
+            compList.add(opportunity);
           }
         }
       }
     }
   }
 
-  void myAlert() {
+  void myAlert(int index) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -279,7 +285,7 @@ class _studentOpportunity extends State<studentOpportunity> {
                     //if user click this button, user can upload image from gallery
                     onPressed: () {
                       Navigator.pop(context);
-                      getImage(ImageSource.gallery);
+                      getImage(ImageSource.gallery, index);
                     },
                     child: Row(
                       textDirection: TextDirection.rtl,
@@ -294,7 +300,7 @@ class _studentOpportunity extends State<studentOpportunity> {
                     //if user click this button. user can upload image from camera
                     onPressed: () {
                       Navigator.pop(context);
-                      getImage(ImageSource.camera);
+                      getImage(ImageSource.camera, index);
                     },
                     child: Row(
                       textDirection: TextDirection.rtl,
@@ -329,7 +335,7 @@ class _studentOpportunity extends State<studentOpportunity> {
                     onPressed: () {
                       Navigator.pop(context);
                       if (imageUrl != null) {
-                        saveImageUrlToFirestore(imageUrl!, context);
+                        saveImageUrlToFirestore(imageUrl!, context, index);
                         showSuccessMessage(context);
                       } else {
                         showErrorMessage(context);
@@ -611,7 +617,7 @@ class _studentOpportunity extends State<studentOpportunity> {
                                     color: Color.fromARGB(115, 127, 179, 71),
                                   ),
                                   child: Text(
-                                    compList[index],
+                                    compList[index].name,
                                     style: TextStyle(
                                       color: Color(0xFF0A2F5A),
                                     ),
@@ -629,7 +635,7 @@ class _studentOpportunity extends State<studentOpportunity> {
                                           height: 20,
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              myAlert();
+                                              myAlert(index);
                                             },
                                             child: Text(
                                               'رفع الشهادة',

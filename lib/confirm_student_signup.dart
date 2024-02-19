@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:provider/provider.dart';
+import 'user_state.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ConfirmStudentPage extends StatefulWidget {
   @override
@@ -7,15 +10,77 @@ class ConfirmStudentPage extends StatefulWidget {
 }
 
 class _ConfirmStudentPage extends State<ConfirmStudentPage> {
-  List<Map<String, dynamic>> items = [
+  String schoolId = '';
+  /*List<Map<String, dynamic>> items = [
     {'title': 'اسم الطالب الاول', 'subtitle': 'الصف الدرسي', 'id': 1},
     {'title': 'اسم الطالب الثاني', 'subtitle': 'الصف الدرسي', 'id': 1},
-  ];
+  ];*/
+  List<Map<String, dynamic>> items = [];
 
-  void _deleteItem(int id) {
+  void _deleteItem(String id) {
     setState(() {
       items.removeWhere((item) => item['id'] == id);
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchSchoolId();
+  }
+
+  Future<void> fetchSchoolId() async {
+    try {
+      String userId = Provider.of<UserState>(context, listen: false).userId;
+      var docSnapshot = await FirebaseFirestore.instance
+          .collection('schoolCoordinator')
+          .doc(userId)
+          .get();
+      if (docSnapshot.exists) {
+        setState(() {
+          schoolId = docSnapshot.data()?['schoolId'] ?? '';
+          fetchStudents();
+        });
+      } else {
+        print("Document does not exist");
+      }
+    } catch (e) {
+      print("Error fetching document: $e");
+    }
+  }
+
+  Future<void> fetchStudents() async {
+    // Query Firestore to retrieve students with the same schoolId as the coordinator and accountStatus is false
+    var querySnapshot = await FirebaseFirestore.instance
+        .collection('student')
+        .where('schoolId', isEqualTo: schoolId)
+        .where('accountStatus', isEqualTo: false)
+        .get();
+
+    // Transform the query results into the format used by the UI
+    var fetchedItems = querySnapshot.docs
+        .map((doc) => {
+              'title': doc['name'],
+              'subtitle': determineSubtitle(doc),
+              'id': doc.id,
+            })
+        .toList();
+
+    setState(() {
+      items = fetchedItems;
+    });
+  }
+
+  String determineSubtitle(doc) {
+    if (doc['grade'] == 10) {
+      return "الصف الأول";
+    } else if (doc['grade'] == 11) {
+      return "الصف الثاني";
+    } else if (doc['grade'] == 12) {
+      return "الصف الثالث";
+    } else {
+      return "Other Grade"; // Default case or further handling
+    }
   }
 
   @override
@@ -40,7 +105,7 @@ class _ConfirmStudentPage extends State<ConfirmStudentPage> {
                 right: 70,
                 top: 20,
                 child: Text(
-                  " طلابي  ",
+                  " توثيق الطلاب  ",
                   style: TextStyle(
                     color: Color(0xFF0A2F5A),
                     fontSize: 28,
@@ -77,7 +142,7 @@ class _ConfirmStudentPage extends State<ConfirmStudentPage> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: items.length,
               itemBuilder: (context, index) {
-                int itemId = items[index]['id'];
+                String itemId = items[index]['id'];
                 return Card(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
@@ -150,7 +215,7 @@ class _ConfirmStudentPage extends State<ConfirmStudentPage> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 113),
+                                  SizedBox(width: 119),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 3, horizontal: 8),

@@ -13,6 +13,7 @@ import 'package:tatwaei/coorEdit.dart';
 import 'package:tatwaei/coordEditDelete.dart';
 import 'package:tatwaei/coordinatorOneStudent.dart';
 import 'package:tatwaei/coordinatorOppo.dart';
+import 'package:tatwaei/login.dart';
 
 import 'user_state.dart';
 //import 'login.dart';
@@ -29,7 +30,7 @@ Future main() async {
       create: (context) => UserState(),
       child: MaterialApp(
         theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFfbfae9)),
-        home:coorDelete(),
+        home: LoginPage(),
       ),
     ),
   );

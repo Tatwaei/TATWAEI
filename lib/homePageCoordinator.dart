@@ -692,7 +692,7 @@ class _HomePageState extends State<homePageCoordinator> {
                           child: ListTile(
                             title: Stack(
                               children: [
-                               Positioned(
+                                Positioned(
                                   top: 12,
                                   right: 80,
                                   child: Container(
@@ -702,7 +702,6 @@ class _HomePageState extends State<homePageCoordinator> {
                                       borderRadius: BorderRadius.circular(15),
                                       color: Color.fromARGB(115, 127, 179, 71),
                                     ),
-                                   
                                     child: Text(
                                       filteredItems[index]['name'],
                                       textDirection: TextDirection.rtl,
@@ -725,14 +724,14 @@ class _HomePageState extends State<homePageCoordinator> {
                                       borderRadius: BorderRadius.circular(15),
                                       color: Color.fromARGB(115, 127, 179, 71),
                                     ),
-                                  child: Text(
-                                    source,
-                                    style: TextStyle(
-                                      color: Color(0xFF0A2F5A),
-                                      fontSize: 14,
-                                     
+                                    child: Text(
+                                      source,
+                                      style: TextStyle(
+                                        color: Color(0xFF0A2F5A),
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                  ),),
+                                  ),
                                 ),
                                 Positioned(
                                   top: 50,
@@ -744,14 +743,14 @@ class _HomePageState extends State<homePageCoordinator> {
                                       borderRadius: BorderRadius.circular(15),
                                       color: Color.fromARGB(115, 127, 179, 71),
                                     ),
-                                  child: Text(
-                                    filteredItems[index]['interest'],
-                                    style: TextStyle(
-                                      color: Color(0xFF0A2F5A),
-                                      fontSize: 14,
-                                     
+                                    child: Text(
+                                      filteredItems[index]['interest'],
+                                      style: TextStyle(
+                                        color: Color(0xFF0A2F5A),
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                  ),),
+                                  ),
                                 ),
                                 Positioned(
                                   right: 0,

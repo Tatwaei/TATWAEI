@@ -642,7 +642,6 @@ class _HomePageState extends State<homePageAdmin> {
                                       borderRadius: BorderRadius.circular(15),
                                       color: Color.fromARGB(115, 127, 179, 71),
                                     ),
-                                   
                                     child: Text(
                                       filteredItems[index]['name'],
                                       textDirection: TextDirection.rtl,
@@ -665,14 +664,14 @@ class _HomePageState extends State<homePageAdmin> {
                                       borderRadius: BorderRadius.circular(15),
                                       color: Color.fromARGB(115, 127, 179, 71),
                                     ),
-                                  child: Text(
-                                    source,
-                                    style: TextStyle(
-                                      color: Color(0xFF0A2F5A),
-                                      fontSize: 14,
-                                     
+                                    child: Text(
+                                      source,
+                                      style: TextStyle(
+                                        color: Color(0xFF0A2F5A),
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                  ),),
+                                  ),
                                 ),
                                 Positioned(
                                   top: 50,
@@ -684,14 +683,14 @@ class _HomePageState extends State<homePageAdmin> {
                                       borderRadius: BorderRadius.circular(15),
                                       color: Color.fromARGB(115, 127, 179, 71),
                                     ),
-                                  child: Text(
-                                    filteredItems[index]['interest'],
-                                    style: TextStyle(
-                                      color: Color(0xFF0A2F5A),
-                                      fontSize: 14,
-                                     
+                                    child: Text(
+                                      filteredItems[index]['interest'],
+                                      style: TextStyle(
+                                        color: Color(0xFF0A2F5A),
+                                        fontSize: 14,
+                                      ),
                                     ),
-                                  ),),
+                                  ),
                                 ),
                                 Positioned(
                                   right: 0,

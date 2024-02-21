@@ -256,32 +256,40 @@ class _StudentMyhours extends State<StudentMyhours> {
                   itemCount: verifiedOpp.length,
                   itemBuilder: (context, index) {
                     return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Color(0xFFf7f6d4),
+                      ),
                       width: 70.0,
                       height: 90.0,
                       margin: EdgeInsets.only(bottom: 20),
-                      color: Color(0xFFf7f6d4),
                       child: ListTile(
                         title: Stack(
                           children: [
                             Positioned(
-                              top: 12,
-                              left: 80,
-                              child: Text(
-                                verifiedOpp[index].name,
-                                style: TextStyle(
-                                  backgroundColor:
-                                      Color.fromARGB(115, 127, 179, 71),
-                                ),
-                              ),
-                            ),
+                                top: 10,
+                                left: 50,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Color.fromARGB(115, 127, 179, 71),
+                                  ),
+                                  child: Text(
+                                    verifiedOpp[index].name,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                )),
                             Positioned(
                               child: Stack(
                                 children: [
                                   // Other positioned widgets or elements in the stack...
 
                                   Positioned(
-                                    top: 30,
-                                    left: 5,
+                                    top: 40,
+                                    left: 0,
                                     child: ElevatedButton.icon(
                                       onPressed: () {
                                         _showCertificatePopup(
@@ -305,7 +313,7 @@ class _StudentMyhours extends State<StudentMyhours> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
                                             Color.fromARGB(255, 187, 213, 159),
-                                        fixedSize: Size(90, 1),
+                                        fixedSize: Size(140, 1),
                                       ),
                                     ),
                                   ),

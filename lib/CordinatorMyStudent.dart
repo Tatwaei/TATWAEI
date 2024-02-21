@@ -37,7 +37,7 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
     // _loadProfileData();
   }
 
-String documentId='';
+  String documentId = '';
 
   Future<void> getStudentList() async {
     String studentId = Provider.of<UserState>(context, listen: false).userId;
@@ -54,7 +54,7 @@ String documentId='';
             .collection('student')
             .where('schoolId', isEqualTo: schoolId)
             .get();
-            
+
     if (studentSnapshot.size > 0) {
       // List<Student> studentList = [];
       for (QueryDocumentSnapshot<Map<String, dynamic>> documentSnapshot
@@ -67,7 +67,7 @@ String documentId='';
         int hours = documentSnapshot.get('verifiedHours');
         String castedhours = hours.toString();
 
-        Student student = Student(name, castedid, castedhours,documentId);
+        Student student = Student(name, castedid, castedhours, documentId);
         fetchedStudentList.add(student);
       }
       setState(() {
@@ -145,57 +145,76 @@ String documentId='';
                     itemCount: studentList.length,
                     itemBuilder: (context, index) {
                       return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Color(0xFFf7f6d4),
+                        ),
                         width: 70.0,
                         height: 90.0,
                         margin: EdgeInsets.only(bottom: 20),
-                        color: Color(0xFFf7f6d4),
                         child: ListTile(
                           title: Stack(
                             children: [
                               Positioned(
-                                top: 12,
-                                left: 205,
-                                child: Text(
-                                  studentList[index].name,
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                    backgroundColor:
-                                        Color.fromARGB(115, 127, 179, 71),
-                                  ),
-                                ),
-                              ),
+                                  top: 12,
+                                  left: 120,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
+                                    child: Text(
+                                      studentList[index].name,
+                                      style: TextStyle(
+                                        color: Color(0xFF0A2F5A),
+                                      ),
+                                    ),
+                                  )),
                               Positioned(
-                                top: 50,
-                                left: 205,
-                                child: Text(
-                                  studentList[index].castedid,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF0A2F5A),
-                                    backgroundColor:
-                                        Color.fromARGB(115, 127, 179, 71),
-                                  ),
-                                ),
-                              ),
+                                  top: 50,
+                                  left: 180,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
+                                    child: Text(
+                                      studentList[index].castedid,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xFF0A2F5A),
+                                      ),
+                                    ),
+                                  )),
                               Positioned(
-                                top: 30,
-                                left: 20,
-                                child: Text(
-                                  studentList[index].castedhours,
-                                  //studentList[index].verihours,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF0A2F5A),
-                                    backgroundColor:
-                                        Color.fromARGB(115, 127, 179, 71),
-                                  ),
-                                ),
-                              ),
+                                  top: 12,
+                                  left: 20,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Color.fromARGB(115, 127, 179, 71),
+                                    ),
+                                    child: Text(
+                                      studentList[index].castedhours,
+                                      //studentList[index].verihours,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xFF0A2F5A),
+                                      ),
+                                    ),
+                                  )),
                             ],
                           ),
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => coordinatorOneStudent(studentId: studentList[index].documentId)));
+                                builder: (context) => coordinatorOneStudent(
+                                    studentId: studentList[index].documentId)));
                           }, //going to the student info page
                         ),
                       );

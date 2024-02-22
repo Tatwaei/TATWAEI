@@ -339,7 +339,10 @@ class _HomePageState extends State<homePageAdmin> {
                             style: ElevatedButton.styleFrom(
                                 backgroundColor:
                                     Color.fromARGB(255, 187, 213, 159)),
-                            onPressed: () {}, //should handle the filtering
+                            onPressed: () {
+                              _applyFilter();
+                              Navigator.of(context).pop();
+                            }, //should handle the filtering
                             child: Text('تطبيق',
                                 style: TextStyle(color: Color(0xFF0A2F5A))),
                           ),
@@ -356,10 +359,55 @@ class _HomePageState extends State<homePageAdmin> {
     );
   }
 
-  void _applyFilter() {
-    // Apply the filter logic here
-    print('Applying filter');
+  void _applyFilter() async {
+    List<DocumentSnapshot> searchResults = [];
+    List<DocumentSnapshot> internalOpportunities = [];
+    List<DocumentSnapshot> externalOpportunities = [];
+
+    if (!(filservice ||
+        filsocial ||
+        filbusns ||
+        filhealth ||
+        filother ||
+        filmale ||
+        filfemale ||
+        filinternal ||
+        filexternal)) {
+      // If none are selected, fetch the full list of opportunities
+      searchResults.addAll(opp);
+    } else {
+      // Apply the filter logic here
+      print('Applying filter');
+      if (filinternal) {
+        QuerySnapshot internalSnapshot =
+            await _firestore.collection('internalOpportunity').get();
+        internalOpportunities.addAll(internalSnapshot.docs);
+      }
+      if (filexternal) {
+        QuerySnapshot externalSnapshot =
+            await _firestore.collection('externalOpportunity').get();
+        externalOpportunities.addAll(externalSnapshot.docs);
+      }
+      searchResults.addAll(opp.where((doc) {
+        dynamic fieldValueinterest = doc['interest'];
+        dynamic fieldValuegender = doc['gender'];
+
+        // Check if the fieldValue contains any of the specified terms
+        return (filservice &&
+                fieldValueinterest.toString().contains('خدمية')) ||
+            (filsocial && fieldValueinterest.toString().contains('اجتماعية')) ||
+            (filbusns && fieldValueinterest.toString().contains('ادارية')) ||
+            (filhealth && fieldValueinterest.toString().contains('صحية')) ||
+            (filother && fieldValueinterest.toString().contains('اخرى')) ||
+            (filmale && fieldValuegender.toString().contains('ذكر')) ||
+            (filfemale && fieldValuegender.toString().contains('انثى'));
+      }));
+    }
     // Update the UI or perform any other operations based on the filter
+    setState(() {
+      filteredItems =
+          searchResults + internalOpportunities + externalOpportunities;
+    });
   }
 
   @override

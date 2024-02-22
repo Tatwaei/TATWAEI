@@ -14,12 +14,19 @@ class coordinatorOneStudent extends StatefulWidget {
   coordinatorOneStudent({required this.studentId});
 }
 
-class Opportunity {
+class Opportunity1 {
   final String name;
   final String interest;
   final String source;
 
-  Opportunity(this.name, this.interest, this.source);
+  Opportunity1(this.name, this.interest, this.source);
+}
+
+class Opportunity2 {
+  final String name;
+  final String opportunityId;
+
+  Opportunity2(this.name, this.opportunityId);
 }
 
 class _coordinatorOneStudent extends State<coordinatorOneStudent> {
@@ -54,8 +61,8 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
   bool showList1 = false;
   bool showList2 = false;
 
-  List<Opportunity> currentList = [];
-  List<String> compList = [];
+  List<Opportunity1> currentList = [];
+  List<Opportunity2> compList = [];
 
   Future<void> getCurrentOpp() async {
     QuerySnapshot<Map<String, dynamic>> seatSnapshot = await FirebaseFirestore
@@ -84,8 +91,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
           if (endDate.isAfter(todayDate)) {
             String name = internalOpportunitySnapshot.get('name');
             String interest = internalOpportunitySnapshot.get('interest');
-            Opportunity opportunity =
-                Opportunity(name, interest, 'داخلية'); // Set source as internal
+            Opportunity1 opportunity =Opportunity1 (name, interest, 'داخلية'); // Set source as internal
             currentList.add(opportunity);
           }
         }
@@ -104,7 +110,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
           if (endDate.isAfter(todayDate)) {
             String name = externalOpportunitySnapshot.get('name');
             String interest = externalOpportunitySnapshot.get('interest');
-            Opportunity opportunity = Opportunity(name, interest, 'خارجية');
+            Opportunity1 opportunity = Opportunity1 (name, interest, 'خارجية');
             currentList.add(opportunity);
           }
         }
@@ -138,7 +144,8 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
 
           if (endDate.isBefore(todayDate)) {
             String name = internalOpportunitySnapshot.get('name');
-            compList.add(name);
+            Opportunity2 opp =Opportunity2 (name, opportunityId); // Set source as internal
+            compList.add(opp);
           }
         }
 
@@ -155,14 +162,16 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
 
           if (endDate.isBefore(todayDate)) {
             String name = externalOpportunitySnapshot.get('name');
-            compList.add(name);
+            Opportunity2 opp =Opportunity2 (name, opportunityId); // Set source as internal
+            compList.add(opp);
+            
           }
         }
       }
     }
   }
 
-  void myAlert() {
+  void myAlert(BuildContext context,String opportunityId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -170,6 +179,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
           future: FirebaseFirestore.instance
               .collection('seat')
               .where('studentId', isEqualTo: widget.studentId)
+              .where('opportunityId', isEqualTo: opportunityId)
               .get(),
           builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
@@ -193,6 +203,9 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
             // Access the image URL from the document snapshot
             String imageUrl = document.get('certificate');
             String documentId = document.id;
+            print('Document Snapshot: $documentId');
+
+            print('Image URL: $imageUrl'); 
 
             return AlertDialog(
               backgroundColor: Color(0xFFf4f1be),
@@ -204,7 +217,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                 width: MediaQuery.of(context).size.height * 0.4,
                 child: Column(
                   children: [
-                    if (imageUrl != null)
+                    if (imageUrl != null && imageUrl.isNotEmpty)
                       Container(
                         width: 200,
                         height: 200,
@@ -213,7 +226,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                           fit: BoxFit.cover,
                         ),
                       ),
-                    if (imageUrl == null)
+                    if (imageUrl == null || imageUrl.isEmpty)
                       Text(
                         'No Image Uploaded',
                         style: TextStyle(fontSize: 20),
@@ -309,7 +322,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(70.0),
         child: AppBar(
-            backgroundColor: Color(0xFFece793),
+            backgroundColor: Color.fromRGBO(236, 231, 147, 1),
             iconTheme: IconThemeData(color: Color(0xFFD3CA25), size: 45.0),
             title: Stack(
               alignment: Alignment.centerRight,
@@ -589,14 +602,14 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                                     color: Color.fromARGB(115, 127, 179, 71),
                                   ),
                                   child: Text(
-                                    compList[index],
+                                    compList[index].name,
                                     style: TextStyle(
                                       color: Color(0xFF0A2F5A),
                                     ),
                                   ),
                                 ),
                               ),
-                              Stack(
+                             Stack(
                                 children: [
                                   Positioned(
                                     top: 55,
@@ -607,7 +620,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                                           height: 20,
                                           child: ElevatedButton.icon(
                                             onPressed: () {
-                                              myAlert();
+                                              myAlert(context,compList[index].opportunityId);
                                             },
                                             icon: IconTheme(
                                               data: IconThemeData(

@@ -18,8 +18,9 @@ class Opportunity1 {
   final String name;
   final String interest;
   final String source;
+  final String opportunityId;
 
-  Opportunity1(this.name, this.interest, this.source);
+  Opportunity1(this.name, this.interest, this.source , this.opportunityId);
 }
 
 class Opportunity2 {
@@ -91,7 +92,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
           if (endDate.isAfter(todayDate)) {
             String name = internalOpportunitySnapshot.get('name');
             String interest = internalOpportunitySnapshot.get('interest');
-            Opportunity1 opportunity =Opportunity1 (name, interest, 'داخلية'); // Set source as internal
+            Opportunity1 opportunity =Opportunity1 (name, interest, 'داخلية',opportunityId); // Set source as internal
             currentList.add(opportunity);
           }
         }
@@ -110,7 +111,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
           if (endDate.isAfter(todayDate)) {
             String name = externalOpportunitySnapshot.get('name');
             String interest = externalOpportunitySnapshot.get('interest');
-            Opportunity1 opportunity = Opportunity1 (name, interest, 'خارجية');
+            Opportunity1 opportunity = Opportunity1 (name, interest, 'خارجية',opportunityId);
             currentList.add(opportunity);
           }
         }
@@ -564,9 +565,10 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                             ],
                           ),
                           onTap: () {
+                            String oppId = currentList[index].opportunityId;
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => OpportunityDetails(),
+                                builder: (context) => OpportunityDetails(oppId: oppId,),
                               ),
                             );
                           },
@@ -679,9 +681,10 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                             ],
                           ),
                           onTap: () {
+                            String oppId = compList[index].opportunityId;
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => OpportunityDetails(),
+                                builder: (context) => OpportunityDetails(oppId: oppId,),
                               ),
                             );
                           },

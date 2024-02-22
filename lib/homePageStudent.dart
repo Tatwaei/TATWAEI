@@ -810,8 +810,9 @@ class _HomePageState extends State<HomePageStudent> {
                               ],
                             ),
                             onTap: () {
+                              String oppId = filteredItems[index].id; // Assuming filteredItems is a list of DocumentSnapshots
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => OpportunityDetails()));
+                                builder: (context) =>OpportunityDetails(oppId: oppId),));
                             },
                           ),
                         );

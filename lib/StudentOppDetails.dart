@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
-void main() {
-  runApp(MyApp());
-}
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFfbfae9)),
-      home: OpportunityDetails(),
-    );
-  }
-}
+
 
 class OpportunityDetails extends StatefulWidget {
   @override
   _OpportunityPageState createState() => _OpportunityPageState();
+
+   final String oppId;
+  OpportunityDetails({required this.oppId});
 }
 
 class _OpportunityPageState extends State<OpportunityDetails> {

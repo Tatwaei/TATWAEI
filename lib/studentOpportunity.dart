@@ -14,13 +14,20 @@ class studentOpportunity extends StatefulWidget {
   _studentOpportunity createState() => _studentOpportunity();
 }
 
-class Opportunity {
+class Opportunity1 {
   final String name;
   final String interest;
   final String source;
   final String opportunityId;
 
-  Opportunity(this.name, this.interest, this.source, this.opportunityId);
+  Opportunity1(this.name, this.interest, this.source, this.opportunityId);
+}
+
+class Opportunity2 {
+  final String name;
+  final String opportunityId;
+
+  Opportunity2(this.name, this.opportunityId);
 }
 
 class _studentOpportunity extends State<studentOpportunity> {
@@ -129,8 +136,8 @@ class _studentOpportunity extends State<studentOpportunity> {
   bool showList1 = false;
   bool showList2 = false;
 
-  List<Opportunity> currentList = [];
-  List<Opportunity> compList = [];
+  List<Opportunity1> currentList = [];
+  List<Opportunity2> compList = [];
 
   @override
   void initState() {
@@ -170,8 +177,8 @@ class _studentOpportunity extends State<studentOpportunity> {
           if (endDate.isAfter(todayDate)) {
             String name = internalOpportunitySnapshot.get('name');
             String interest = internalOpportunitySnapshot.get('interest');
-            Opportunity opportunity = Opportunity(
-                name, interest, 'داخلية', ''); // Set source as internal
+            Opportunity1 opportunity = Opportunity1(
+                name, interest, 'داخلية', opportunityId); // Set source as internal
             currentList.add(opportunity);
           }
         }
@@ -190,7 +197,7 @@ class _studentOpportunity extends State<studentOpportunity> {
           if (endDate.isAfter(todayDate)) {
             String name = externalOpportunitySnapshot.get('name');
             String interest = externalOpportunitySnapshot.get('interest');
-            Opportunity opportunity = Opportunity(name, interest, 'خارجية', '');
+            Opportunity1 opportunity = Opportunity1(name, interest, 'خارجية', opportunityId);
             currentList.add(opportunity);
           }
         }
@@ -225,7 +232,7 @@ class _studentOpportunity extends State<studentOpportunity> {
 
           if (endDate.isBefore(todayDate)) {
             String name = internalOpportunitySnapshot.get('name');
-            Opportunity opportunity = Opportunity(name, '', '', opportunityId);
+            Opportunity2 opportunity = Opportunity2(name,opportunityId);
             compList.add(opportunity);
           }
         }
@@ -243,7 +250,7 @@ class _studentOpportunity extends State<studentOpportunity> {
 
           if (endDate.isBefore(todayDate)) {
             String name = externalOpportunitySnapshot.get('name');
-            Opportunity opportunity = Opportunity(name, '', '', opportunityId);
+            Opportunity2 opportunity = Opportunity2(name,opportunityId);
             compList.add(opportunity);
           }
         }
@@ -579,9 +586,10 @@ class _studentOpportunity extends State<studentOpportunity> {
                             ],
                           ),
                           onTap: () {
+                            String oppId = currentList[index].opportunityId;
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => OpportunityDetails(),
+                                builder: (context) => OpportunityDetails(oppId: oppId,),
                               ),
                             );
                           },
@@ -706,9 +714,10 @@ class _studentOpportunity extends State<studentOpportunity> {
                             ],
                           ),
                           onTap: () {
+                            String oppId = compList[index].opportunityId;
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => OpportunityDetails(),
+                                builder: (context) => OpportunityDetails(oppId: oppId,),
                               ),
                             );
                           },

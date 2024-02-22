@@ -6,6 +6,9 @@ import 'CoordinatorExoppDetails.dart';
 import 'coordinatorAccount.dart';
 import 'CordinatorMyStudent.dart';
 import 'confirm_student_signup.dart';
+import 'package:provider/provider.dart';
+import 'user_state.dart';
+
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference internalOpportunity =
@@ -21,6 +24,7 @@ class homePageCoordinator extends StatefulWidget {
 class _HomePageState extends State<homePageCoordinator> {
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
+  late String initialSchool = "";
 
   Future<List<DocumentSnapshot>> getIngredients() async {
     CollectionReference internalOpportunity =
@@ -423,7 +427,46 @@ class _HomePageState extends State<homePageCoordinator> {
         filteredItems = opp;
       });
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getSchoolName();
+    });
   }
+
+  Future<void> getSchoolName() async {
+    String coorId = Provider.of<UserState>(context, listen: false).userId; 
+
+if (coorId != null && coorId.isNotEmpty) {
+  DocumentSnapshot<Map<String, dynamic>> coorDocument =
+      await FirebaseFirestore.instance
+          .collection('schoolCoordinator')
+          .doc(coorId)
+          .get();
+
+  if (coorDocument.exists) {
+    setState(() {
+      // Update your state with the retrieved data;
+
+      String schoolId = coorDocument.get('schoolId');   
+           getSchoolData(schoolId);
+      
+    });
+  }}
+}
+Future<void> getSchoolData(String schoolId) async {
+  DocumentSnapshot<Map<String, dynamic>> schoolDocument =
+      await FirebaseFirestore.instance
+          .collection('school')
+          .doc(schoolId)
+          .get();
+
+  if (schoolDocument.exists) {
+    setState(() {
+      // Update your state with the retrieved data
+      initialSchool = schoolDocument.get('schoolName');
+     
+    });
+  }
+}
 
   Future<String> getSource(DocumentSnapshot<Object?> opportunity) async {
     String source = '';
@@ -493,7 +536,7 @@ class _HomePageState extends State<homePageCoordinator> {
                               ),
                             ),
                             Text(
-                              ' الثانوية الرابعة',
+                             initialSchool,
                               style: TextStyle(
                                 color: Color.fromARGB(115, 127, 179, 71),
                                 fontSize: 24,

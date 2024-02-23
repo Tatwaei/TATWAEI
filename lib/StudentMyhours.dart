@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'user_state.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:io';
+//import 'dart:io';
 
 class StudentMyhours extends StatefulWidget {
   @override
@@ -14,8 +14,8 @@ class StudentMyhours extends StatefulWidget {
 
 class Opportunity {
   final String name;
-
-  Opportunity(this.name);
+  final String opportunityId;
+  Opportunity(this.name, this.opportunityId);
 }
 
 int hours = 0;
@@ -61,7 +61,8 @@ class _StudentMyhours extends State<StudentMyhours> {
 
         if (internalOpportunitySnapshot.exists) {
           String name = internalOpportunitySnapshot.get('name');
-          Opportunity opportunity = Opportunity(name); // Set source as internal
+          Opportunity opportunity =
+              Opportunity(name, opportunityId); // Set source as internal
           verifiedOpp.add(opportunity);
         }
 
@@ -74,7 +75,8 @@ class _StudentMyhours extends State<StudentMyhours> {
 
         if (externalOpportunitySnapshot.exists) {
           String name = externalOpportunitySnapshot.get('name');
-          Opportunity opportunity = Opportunity(name); // Set source as internal
+          Opportunity opportunity =
+              Opportunity(name, opportunityId); // Set source as internal
           verifiedOpp.add(opportunity);
         }
       }
@@ -92,34 +94,91 @@ class _StudentMyhours extends State<StudentMyhours> {
             .doc(studentId)
             .get();
     hours = studentSnapshot.get('verifiedHours');
-    castedhours = '${hours.toString()} ساعة';
+    castedhours = ' ${hours.toString()} ';
   }
 
-  void _showCertificatePopup(BuildContext context) {
+  void _showCertificatePopup(BuildContext context, String opportunityId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Color(0xFFf7f6d4),
-          child: Container(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset('images/certificate.jpg'),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 187, 213, 159)),
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the pop-up
-                  },
-                  child:
-                      Text('اغلاق', style: TextStyle(color: Color(0xFF0A2F5A))),
+        String studentId =
+            Provider.of<UserState>(context, listen: false).userId;
+
+        return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          future: FirebaseFirestore.instance
+              .collection('seat')
+              .where('studentId', isEqualTo: studentId)
+              .where('opportunityId', isEqualTo: opportunityId)
+              .get(),
+          builder: (BuildContext context,
+              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // While waiting for the data to load, you can show a loading indicator
+              return CircularProgressIndicator();
+            }
+            if (snapshot.hasError) {
+              // If there's an error, you can show an error message
+              return Text('Error: ${snapshot.error}');
+            }
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              // If the document doesn't exist or there's no data, you can show a message
+              return Text('No Data Found');
+            }
+
+            // Assuming there's only one document matching the query
+            DocumentSnapshot<Map<String, dynamic>> document =
+                snapshot.data!.docs[0];
+
+            // Access the image URL from the document snapshot
+            String imageUrl = document.get('certificate');
+            String documentId = document.id;
+            print('Document Snapshot: $documentId');
+
+            print('Image URL: $imageUrl');
+
+            return AlertDialog(
+              backgroundColor: Color(0xFFf4f1be),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              content: Container(
+                height: MediaQuery.of(context).size.width * 0.8,
+                width: MediaQuery.of(context).size.height * 0.4,
+                child: Column(
+                  children: [
+                    if (imageUrl != null && imageUrl.isNotEmpty)
+                      Container(
+                        width: 200,
+                        height: 200,
+                        child: Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    if (imageUrl == null || imageUrl.isEmpty)
+                      Text(
+                        'No Image Uploaded',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    SizedBox(height: 20), // Added space
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromARGB(255, 187, 213, 159),
+                        ),
+                        child: Text(
+                          'Close',
+                          style: TextStyle(
+                            color: Color(0xFF0A2F5A),
+                          ),
+                        )),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
@@ -188,7 +247,7 @@ class _StudentMyhours extends State<StudentMyhours> {
                   },
                 ),
               ),
-              SizedBox(height: 20.0),
+              // SizedBox(height: 20.0),
               Padding(
                 padding: EdgeInsets.only(left: 5, bottom: 5, top: 1),
                 child: Container(
@@ -221,10 +280,9 @@ class _StudentMyhours extends State<StudentMyhours> {
                             color: Color.fromARGB(115, 127, 179, 71),
                           ),
                           child: Text(
-                            '$castedhours',
+                            '$castedhours ساعه',
                             style: TextStyle(
-                              fontSize: 12,
-                            ),
+                                fontSize: 12, color: Color(0xFF0A2F5A)),
                           ),
                         ),
                       ),
@@ -246,15 +304,16 @@ class _StudentMyhours extends State<StudentMyhours> {
                                 value: hours / 40 * 100,
                                 title:
                                     '${(hours / 40 * 100).toStringAsFixed(2)}%', // Display percentage
-                                radius: 80,
+                                radius: 70,
                                 titleStyle: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
+                                  fontSize: 16,
+                                ),
                               ),
                               PieChartSectionData(
                                 color: Colors.grey,
                                 value: 100 - (hours / 40 * 100),
                                 title: 'المتبقي',
-                                radius: 80,
+                                radius: 70,
                               ),
                             ],
                             borderData: FlBorderData(show: false),
@@ -271,12 +330,12 @@ class _StudentMyhours extends State<StudentMyhours> {
                 padding: EdgeInsets.only(left: 1, bottom: 5, top: 1),
                 child: Container(
                   //width: 70,
-                  margin: EdgeInsets.fromLTRB(170, 1, 1, 1),
+                  margin: EdgeInsets.fromLTRB(130, 1, 1, 1),
                   decoration: BoxDecoration(
                       color: Color.fromARGB(115, 127, 179, 71),
                       borderRadius: BorderRadius.circular(8)),
                   child: Text(
-                    "فرص تطوع تم التحقق ",
+                    "فرص تطوع تم التحقق منها",
                     style: TextStyle(color: Color(0xFF0A2F5A), fontSize: 16),
                   ),
                 ),
@@ -309,8 +368,7 @@ class _StudentMyhours extends State<StudentMyhours> {
                                   child: Text(
                                     verifiedOpp[index].name,
                                     style: TextStyle(
-                                      fontSize: 16,
-                                    ),
+                                        fontSize: 16, color: Color(0xFF0A2F5A)),
                                   ),
                                 )),
                             Positioned(
@@ -324,7 +382,9 @@ class _StudentMyhours extends State<StudentMyhours> {
                                     child: ElevatedButton.icon(
                                       onPressed: () {
                                         _showCertificatePopup(
-                                            context); // Handle button press
+                                            context,
+                                            verifiedOpp[index]
+                                                .opportunityId); // Handle button press
                                       },
                                       icon: IconTheme(
                                         data: IconThemeData(

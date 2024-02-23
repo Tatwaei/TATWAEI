@@ -18,6 +18,9 @@ class Opportunity {
   Opportunity(this.name);
 }
 
+int hours = 0;
+String castedhours = '';
+
 class _StudentMyhours extends State<StudentMyhours> {
   List<String> items = List<String>.generate(2, (index) => 'Item $index');
   List<String> filteredItems = [];
@@ -28,6 +31,7 @@ class _StudentMyhours extends State<StudentMyhours> {
     filteredItems = items;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getVerifiedOpp();
+      getVerifiedhours();
     });
 
     // _loadProfileData();
@@ -78,6 +82,17 @@ class _StudentMyhours extends State<StudentMyhours> {
         verifiedOpp2 = verifiedOpp; // Update the studentList
       });
     }
+  }
+
+  Future<void> getVerifiedhours() async {
+    String studentId = Provider.of<UserState>(context, listen: false).userId;
+    DocumentSnapshot<Map<String, dynamic>> studentSnapshot =
+        await FirebaseFirestore.instance
+            .collection('student')
+            .doc(studentId)
+            .get();
+    hours = studentSnapshot.get('verifiedHours');
+    castedhours = '${hours.toString()} ساعة';
   }
 
   void _showCertificatePopup(BuildContext context) {
@@ -192,38 +207,54 @@ class _StudentMyhours extends State<StudentMyhours> {
                 padding: EdgeInsets.only(left: 5, bottom: 5, top: 1),
                 child: Container(
                   color: Color(0xFFf7f6d4),
-                  height: 250,
+                  height: 280,
                   width: 400,
                   child: Stack(
                     children: [
                       Positioned(
                         top: 5,
-                        right: 10,
-                        child: Text(
-                          'عدد الساعات',
-                          style: TextStyle(
-                            fontSize: 12,
-                            backgroundColor: Color.fromARGB(115, 127, 179, 71),
+                        right: 5,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: Color.fromARGB(115, 127, 179, 71),
+                          ),
+                          child: Text(
+                            '$castedhours',
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                       ),
+                      SizedBox(
+                        height: 25,
+                      ),
                       Container(
-                        margin: EdgeInsets.only(top: 30),
+                        margin: EdgeInsets.only(top: 35),
                         color: Color(0xFFf7f6d4),
                         height: 200,
                         width: 400,
                         child: PieChart(
                           PieChartData(
+                            startDegreeOffset: -90,
+                            centerSpaceRadius: 50,
                             sections: [
                               PieChartSectionData(
-                                color: Colors.transparent,
-                                radius: 30,
+                                color: Color.fromARGB(115, 127, 179, 71),
+                                value: hours / 40 * 100,
+                                title:
+                                    '${(hours / 40 * 100).toStringAsFixed(2)}%', // Display percentage
+                                radius: 80,
+                                titleStyle: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
                               ),
                               PieChartSectionData(
-                                color: Color.fromARGB(115, 127, 179, 71),
-                                value:
-                                    50, // Your actual value for the outer part
-                                radius: 30,
+                                color: Colors.grey,
+                                value: 100 - (hours / 40 * 100),
+                                title: 'المتبقي',
+                                radius: 80,
                               ),
                             ],
                             borderData: FlBorderData(show: false),

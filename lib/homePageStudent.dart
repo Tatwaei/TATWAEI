@@ -8,7 +8,6 @@ import 'StudentMyhours.dart';
 import 'package:provider/provider.dart';
 import 'user_state.dart';
 
-
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference internalOpportunity =
     FirebaseFirestore.instance.collection('internalOpportunity');
@@ -24,7 +23,6 @@ class _HomePageState extends State<HomePageStudent> {
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
   late String initialName = '';
-
 
   Future<List<DocumentSnapshot>> getIngredients() async {
     CollectionReference internalOpportunity =
@@ -427,12 +425,12 @@ class _HomePageState extends State<HomePageStudent> {
         filteredItems = opp;
       });
     });
-     WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       getUserName();
     });
   }
 
-    Future<void> getUserName() async {
+  Future<void> getUserName() async {
     String userId = Provider.of<UserState>(context, listen: false).userId;
     DocumentSnapshot<Map<String, dynamic>> userDocument =
         await FirebaseFirestore.instance
@@ -833,9 +831,13 @@ class _HomePageState extends State<HomePageStudent> {
                               ],
                             ),
                             onTap: () {
-                              String oppId = filteredItems[index].id; // Assuming filteredItems is a list of DocumentSnapshots
+                              String oppId = filteredItems[index]
+                                  .id; // Assuming filteredItems is a list of DocumentSnapshots
+                              print('Clicked oppId: $oppId');
                               Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>OpportunityDetails(oppId: oppId),));
+                                builder: (context) =>
+                                    OpportunityDetails(oppId: oppId),
+                              ));
                             },
                           ),
                         );

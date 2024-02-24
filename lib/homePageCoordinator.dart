@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'CoordinatorInoppDetails.dart';
-import 'CoordinatorExoppDetails.dart';
+import 'CoordinatorOppDetails.dart';
 import 'coordinatorAccount.dart';
 import 'CordinatorMyStudent.dart';
 import 'confirm_student_signup.dart';
 import 'package:provider/provider.dart';
 import 'user_state.dart';
-
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference internalOpportunity =
@@ -433,40 +431,40 @@ class _HomePageState extends State<homePageCoordinator> {
   }
 
   Future<void> getSchoolName() async {
-    String coorId = Provider.of<UserState>(context, listen: false).userId; 
+    String coorId = Provider.of<UserState>(context, listen: false).userId;
 
-if (coorId != null && coorId.isNotEmpty) {
-  DocumentSnapshot<Map<String, dynamic>> coorDocument =
-      await FirebaseFirestore.instance
-          .collection('schoolCoordinator')
-          .doc(coorId)
-          .get();
+    if (coorId != null && coorId.isNotEmpty) {
+      DocumentSnapshot<Map<String, dynamic>> coorDocument =
+          await FirebaseFirestore.instance
+              .collection('schoolCoordinator')
+              .doc(coorId)
+              .get();
 
-  if (coorDocument.exists) {
-    setState(() {
-      // Update your state with the retrieved data;
+      if (coorDocument.exists) {
+        setState(() {
+          // Update your state with the retrieved data;
 
-      String schoolId = coorDocument.get('schoolId');   
-           getSchoolData(schoolId);
-      
-    });
-  }}
-}
-Future<void> getSchoolData(String schoolId) async {
-  DocumentSnapshot<Map<String, dynamic>> schoolDocument =
-      await FirebaseFirestore.instance
-          .collection('school')
-          .doc(schoolId)
-          .get();
-
-  if (schoolDocument.exists) {
-    setState(() {
-      // Update your state with the retrieved data
-      initialSchool = schoolDocument.get('schoolName');
-     
-    });
+          String schoolId = coorDocument.get('schoolId');
+          getSchoolData(schoolId);
+        });
+      }
+    }
   }
-}
+
+  Future<void> getSchoolData(String schoolId) async {
+    DocumentSnapshot<Map<String, dynamic>> schoolDocument =
+        await FirebaseFirestore.instance
+            .collection('school')
+            .doc(schoolId)
+            .get();
+
+    if (schoolDocument.exists) {
+      setState(() {
+        // Update your state with the retrieved data
+        initialSchool = schoolDocument.get('schoolName');
+      });
+    }
+  }
 
   Future<String> getSource(DocumentSnapshot<Object?> opportunity) async {
     String source = '';
@@ -536,7 +534,7 @@ Future<void> getSchoolData(String schoolId) async {
                               ),
                             ),
                             Text(
-                             initialSchool,
+                              initialSchool,
                               style: TextStyle(
                                 color: Color.fromARGB(115, 127, 179, 71),
                                 fontSize: 24,
@@ -869,8 +867,12 @@ Future<void> getSchoolData(String schoolId) async {
                               ],
                             ),
                             onTap: () {
+                              String oppId = filteredItems[index]
+                                  .id; // Assuming filteredItems is a list of DocumentSnapshots
+                              print('Clicked oppId: $oppId');
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => OpportunityDetails()));
+                                  builder: (context) =>
+                                      OpportunityDetails(oppId: oppId)));
                             },
                           ),
                         );

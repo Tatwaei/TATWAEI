@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'AdminInoppDetails.dart';
-import 'AdminExoppDetails.dart';
+import 'AdminOppDetails.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference internalOpportunity =
@@ -766,8 +765,12 @@ class _HomePageState extends State<homePageAdmin> {
                               ],
                             ),
                             onTap: () {
+                              String oppId = filteredItems[index]
+                                  .id; // Assuming filteredItems is a list of DocumentSnapshots
+                              print('Clicked oppId: $oppId');
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => OpportunityDetails()));
+                                  builder: (context) =>
+                                      OpportunityDetails(oppId: oppId)));
                             },
                           ),
                         );

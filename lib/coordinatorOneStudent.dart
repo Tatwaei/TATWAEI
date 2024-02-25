@@ -32,7 +32,6 @@ class Opportunity2 {
 
 class _coordinatorOneStudent extends State<coordinatorOneStudent> {
   String initialName = "";
-  String initialID = "";
 
   @override
   void initState() {
@@ -54,7 +53,6 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
       setState(() {
         // Update your state with the retrieved data
         initialName = userDocument.get('name');
-        initialID = userDocument.get('StudentId').toString();
       });
     }
   }
@@ -438,18 +436,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                   style: TextStyle(fontSize: 18, color: Color(0xFF0A2F5A)),
                 ),
               ),
-              SizedBox(height: 10),
-              Container(
-                alignment: Alignment.center,
-                height: 30,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Color(0xFFb4d392)),
-                child: Text(
-                  initialID,
-                  style: TextStyle(fontSize: 18, color: Color(0xFF0A2F5A)),
-                ),
-              ),
+             
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

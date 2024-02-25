@@ -7,6 +7,8 @@ import 'studentOpportunity.dart';
 import 'StudentMyhours.dart';
 import 'package:provider/provider.dart';
 import 'user_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tatwaei/login.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference internalOpportunity =
@@ -598,8 +600,16 @@ class _HomePageState extends State<HomePageStudent> {
                       fontSize: 24,
                     ),
                   ),
-                  onTap: () {
-                    // Handle drawer item tap for logout
+                  onTap: () async {
+                    try {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        (Route<dynamic> route) => false,
+                      );
+                    } catch (error) {
+                      print("Sign out error: $error");
+                    }
                   },
                 ),
               ),

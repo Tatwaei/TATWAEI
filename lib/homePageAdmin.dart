@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'AdminOppDetails.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tatwaei/login.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference internalOpportunity =
@@ -533,8 +535,16 @@ class _HomePageState extends State<homePageAdmin> {
                       fontSize: 24,
                     ),
                   ),
-                  onTap: () {
-                    // Handle drawer item tap for logout
+                  onTap: () async {
+                    try {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        (Route<dynamic> route) => false,
+                      );
+                    } catch (error) {
+                      print("Sign out error: $error");
+                    }
                   },
                 ),
               ),

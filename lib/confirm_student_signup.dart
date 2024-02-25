@@ -50,7 +50,7 @@ class _ConfirmStudentPage extends State<ConfirmStudentPage> {
   }
 
   Future<void> fetchStudents() async {
-    // Query Firestore to retrieve students with the same schoolId as the coordinator and accountStatus is false
+    //retrieve students with the same schoolId as the coordinator and accountStatus is false
     var querySnapshot = await FirebaseFirestore.instance
         .collection('student')
         .where('schoolId', isEqualTo: schoolId)
@@ -80,6 +80,30 @@ class _ConfirmStudentPage extends State<ConfirmStudentPage> {
       return "الصف الثالث";
     } else {
       return "Other Grade"; // Default case or further handling
+    }
+  }
+
+  Future<void> acceptStudent(String studentId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('student')
+          .doc(studentId)
+          .update({
+        'accountStatus': true,
+      });
+    } catch (e) {
+      print("Error updating document: $e");
+    }
+  }
+
+  Future<void> denyStudent(String studentId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('student')
+          .doc(studentId)
+          .delete();
+    } catch (e) {
+      print("Error deleting document: $e");
     }
   }
 
@@ -183,7 +207,10 @@ class _ConfirmStudentPage extends State<ConfirmStudentPage> {
                               Row(
                                 children: [
                                   GestureDetector(
-                                    onTap: () => _deleteItem(itemId),
+                                    onTap: () async {
+                                      await denyStudent(itemId);
+                                      _deleteItem(itemId);
+                                    },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 3, horizontal: 13),
@@ -200,7 +227,10 @@ class _ConfirmStudentPage extends State<ConfirmStudentPage> {
                                   ),
                                   SizedBox(width: 8),
                                   GestureDetector(
-                                    onTap: () => _deleteItem(itemId),
+                                    onTap: () async {
+                                      await acceptStudent(itemId);
+                                      _deleteItem(itemId);
+                                    },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 3, horizontal: 13),

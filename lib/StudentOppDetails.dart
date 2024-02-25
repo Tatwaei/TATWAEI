@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
-
+import 'package:provider/provider.dart';
+import 'user_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OpportunityDetails extends StatefulWidget {
@@ -13,6 +14,8 @@ class OpportunityDetails extends StatefulWidget {
 }
 
 class _OpportunityPageState extends State<OpportunityDetails> {
+  late String opportunityId;
+  late String collectionName = "";
   late String oppname = '';
   late String oppdesc = '';
   late String gender = '';
@@ -29,13 +32,12 @@ class _OpportunityPageState extends State<OpportunityDetails> {
   void initState() {
     super.initState();
     print('OpportunityDetails oppId: ${widget.oppId}');
+    opportunityId = widget.oppId;
     fetchData(widget.oppId);
   }
 
   Future<void> fetchData(String oppId) async {
     try {
-      String collectionName;
-
       // Assuming oppId is a unique identifier for opportunities
       DocumentSnapshot<Map<String, dynamic>> oppDocumentInternal =
           await FirebaseFirestore.instance
@@ -106,6 +108,26 @@ class _OpportunityPageState extends State<OpportunityDetails> {
     } catch (e) {
       print('Error fetching data: $e');
       // Handle the error, show an error message or take appropriate action
+    }
+  }
+
+  Future<bool> checkIfAlreadyRegistered(
+      String opportunityId, String studentId) async {
+    try {
+      // Check if there is a record in the 'seats' collection for the given opportunity and student
+      QuerySnapshot<Map<String, dynamic>> result = await FirebaseFirestore
+          .instance
+          .collection('seat')
+          .where('opportunityId', isEqualTo: opportunityId)
+          .where('studentId', isEqualTo: studentId)
+          .get();
+
+      // If there is at least one document, the student is already registered
+      return result.docs.isNotEmpty;
+    } catch (e) {
+      print('Error checking registration: $e');
+      // Handle the error, show an error message, or take appropriate action
+      return false; // Assume not registered in case of an error
     }
   }
 
@@ -287,7 +309,16 @@ class _OpportunityPageState extends State<OpportunityDetails> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      "يوم $numberOfDays",
+                                      "يوم",
+                                      style: TextStyle(
+                                        color: Color(0xFF0A2F5A),
+                                        fontSize: 16,
+                                      ),
+                                      softWrap: true,
+                                      maxLines: 2,
+                                    ),
+                                    Text(
+                                      " $numberOfDays",
                                       style: TextStyle(
                                         color: Color(0xFF0A2F5A),
                                         fontSize: 16,
@@ -308,7 +339,7 @@ class _OpportunityPageState extends State<OpportunityDetails> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      "عدد المقاعد",
+                                      "عدد المقاعد المتاحة",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color:
@@ -329,7 +360,16 @@ class _OpportunityPageState extends State<OpportunityDetails> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      "$numofseats",
+                                      "مقعد",
+                                      style: TextStyle(
+                                        color: Color(0xFF0A2F5A),
+                                        fontSize: 16,
+                                      ),
+                                      softWrap: true,
+                                      maxLines: 2,
+                                    ),
+                                    Text(
+                                      " $numofseats",
                                       style: TextStyle(
                                         color: Color(0xFF0A2F5A),
                                         fontSize: 16,
@@ -596,43 +636,150 @@ class _OpportunityPageState extends State<OpportunityDetails> {
           backgroundColor: Color.fromARGB(115, 127, 179, 71),
           elevation: 0,
           hoverColor: Color(0xFF0A2F5A),
-          // Adjust the width property to increase its width
-          // Adjust the width as needed
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 
-  void _showDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            "تم التسجيل بنجاح ",
-            style: TextStyle(color: Color(0xFF0A2F5A)),
-            textAlign: TextAlign.center,
-          ),
-          content: IconButton(
-            iconSize: 150,
-            color: Color.fromARGB(115, 127, 179, 71),
-            icon: Icon(Icons.check_circle),
-            onPressed: () {},
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                "الغاء",
-                style: TextStyle(color: Color(0xFF0A2F5A), fontSize: 20),
+  void _showDialog() async {
+    String opportunityId = widget.oppId;
+    String studentId = Provider.of<UserState>(context, listen: false).userId;
+
+    if (numofseats > 0) {
+      // Check if the student has already registered for this opportunity
+      bool isAlreadyRegistered =
+          await checkIfAlreadyRegistered(opportunityId, studentId);
+
+      if (!isAlreadyRegistered) {
+        // Decrement available seats
+        numofseats--;
+
+        // Determine the next seatNum based on the current numOfSeats
+        int nextSeatNum = numofseats;
+
+        // Update 'numOfSeats' in Firestore
+        try {
+          await FirebaseFirestore.instance
+              .collection(collectionName) // Update with your collection name
+              .doc(opportunityId)
+              .update({
+            'numOfSeats': numofseats,
+          });
+
+          // Create a new record in the 'seats' collection
+          await FirebaseFirestore.instance.collection('seat').add({
+            'opportunityId': opportunityId,
+            'studentId': studentId,
+            'certificateStatus': false,
+            'availability': true,
+            'certificate': '', // Empty string at the beginning
+            'seatNum': nextSeatNum,
+          });
+
+          // Show success dialog
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text(
+                  "تم التسجيل بنجاح ",
+                  style: TextStyle(color: Color(0xFF0A2F5A)),
+                  textAlign: TextAlign.center,
+                ),
+                content: IconButton(
+                  iconSize: 120,
+                  color: Color.fromARGB(115, 127, 179, 71),
+                  icon: Icon(Icons.check_circle),
+                  onPressed: () {},
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "الغاء",
+                      style: TextStyle(color: Color(0xFF0A2F5A), fontSize: 20),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+
+          // Optionally, you can update the UI to reflect the changes
+          setState(() {
+            // Update relevant UI components
+          });
+        } catch (e) {
+          print('Error updating numOfSeats: $e');
+          // Handle the error, show an error message, or take appropriate action
+        }
+      } else {
+        // Student is already registered for this opportunity, show a message or handle accordingly
+        // ...
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                "تم التسجيل في الفرصة من قبل",
+                style: TextStyle(color: Color(0xFF0A2F5A)),
+                textAlign: TextAlign.center,
               ),
-            ),
-          ],
+              content: IconButton(
+                iconSize: 120,
+                color: Colors.red,
+                icon: Icon(Icons.error),
+                onPressed: () {},
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    "الغاء",
+                    style: TextStyle(color: Color(0xFF0A2F5A), fontSize: 20),
+                  ),
+                ),
+              ],
+            );
+          },
         );
-      },
-    );
+      }
+    } else {
+      // No available seats, show a message or handle accordingly
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              "لا يوجد مقاعد متاحة",
+              style: TextStyle(color: Color(0xFF0A2F5A)),
+              textAlign: TextAlign.center,
+            ),
+            content: IconButton(
+              iconSize: 120,
+              color: Colors.red,
+              icon: Icon(Icons.error_outline_rounded),
+              onPressed: () {},
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  "الغاء",
+                  style: TextStyle(color: Color(0xFF0A2F5A), fontSize: 20),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }

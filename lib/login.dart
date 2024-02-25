@@ -98,12 +98,12 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     // Attempt to find the user in the 'admin' collection
-    userDoc = await FirebaseFirestore.instance
-        .collection('admin')
-        .doc(_emailController.text.trim())
+    var userDoc2 = await FirebaseFirestore.instance
+        .collection('administrator')
+        .where('email', isEqualTo: _emailController.text.trim())
         .get();
 
-    if (userDoc.exists) {
+    if (userDoc2.docs.isNotEmpty) {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => homePageAdmin()));
       return;

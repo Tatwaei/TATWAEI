@@ -20,7 +20,7 @@ class Opportunity1 {
   final String source;
   final String opportunityId;
 
-  Opportunity1(this.name, this.interest, this.source , this.opportunityId);
+  Opportunity1(this.name, this.interest, this.source, this.opportunityId);
 }
 
 class Opportunity2 {
@@ -92,7 +92,8 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
           if (endDate.isAfter(todayDate)) {
             String name = internalOpportunitySnapshot.get('name');
             String interest = internalOpportunitySnapshot.get('interest');
-            Opportunity1 opportunity =Opportunity1 (name, interest, 'داخلية',opportunityId); // Set source as internal
+            Opportunity1 opportunity = Opportunity1(name, interest, 'داخلية',
+                opportunityId); // Set source as internal
             currentList.add(opportunity);
           }
         }
@@ -111,7 +112,8 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
           if (endDate.isAfter(todayDate)) {
             String name = externalOpportunitySnapshot.get('name');
             String interest = externalOpportunitySnapshot.get('interest');
-            Opportunity1 opportunity = Opportunity1 (name, interest, 'خارجية',opportunityId);
+            Opportunity1 opportunity =
+                Opportunity1(name, interest, 'خارجية', opportunityId);
             currentList.add(opportunity);
           }
         }
@@ -145,7 +147,8 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
 
           if (endDate.isBefore(todayDate)) {
             String name = internalOpportunitySnapshot.get('name');
-            Opportunity2 opp =Opportunity2 (name, opportunityId); // Set source as internal
+            Opportunity2 opp =
+                Opportunity2(name, opportunityId); // Set source as internal
             compList.add(opp);
           }
         }
@@ -163,16 +166,16 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
 
           if (endDate.isBefore(todayDate)) {
             String name = externalOpportunitySnapshot.get('name');
-            Opportunity2 opp =Opportunity2 (name, opportunityId); // Set source as internal
+            Opportunity2 opp =
+                Opportunity2(name, opportunityId); // Set source as internal
             compList.add(opp);
-            
           }
         }
       }
     }
   }
 
-  void myAlert(BuildContext context,String opportunityId) {
+  void myAlert(BuildContext context, String opportunityId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -206,7 +209,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
             String documentId = document.id;
             print('Document Snapshot: $documentId');
 
-            print('Image URL: $imageUrl'); 
+            print('Image URL: $imageUrl');
 
             return AlertDialog(
               backgroundColor: Color(0xFFf4f1be),
@@ -274,12 +277,13 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         // Update the certificateStatus to true
                         FirebaseFirestore.instance
                             .collection('seat')
                             .doc(documentId)
-                            .update({'certificateStatus': true}).then((_) {
+                            .update({'certificateStatus': true}).then(
+                                (_) async {
                           // Show a success message
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -287,6 +291,48 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                             ),
                           );
 
+                          // Get the numOfHours value from the opportunity document
+                          DocumentSnapshot<Map<String, dynamic>>
+                              opportunitySnapshot = await FirebaseFirestore
+                                  .instance
+                                  .collection('internalOpportunity')
+                                  .doc(opportunityId)
+                                  .get();
+                          if (!opportunitySnapshot.exists) {
+                            opportunitySnapshot = await FirebaseFirestore
+                                .instance
+                                .collection('externalOpportunity')
+                                .doc(opportunityId)
+                                .get();
+                          }
+
+                          if (opportunitySnapshot.exists) {
+                            int numOfHours =
+                                opportunitySnapshot.get('numOfHours');
+
+                            // Get the current value of verifiedHours from the student document
+                            DocumentSnapshot<Map<String, dynamic>>
+                                studentSnapshot = await FirebaseFirestore
+                                    .instance
+                                    .collection('student')
+                                    .doc(widget.studentId)
+                                    .get();
+
+                            int currentVerifiedHours =
+                                studentSnapshot.get('verifiedHours') ?? 0;
+
+                            // Calculate the new value of verifiedHours
+                            int updatedVerifiedHours =
+                                currentVerifiedHours + numOfHours;
+
+                            // Update verifiedHours in the student document
+                            FirebaseFirestore.instance
+                                .collection('student')
+                                .doc(widget.studentId)
+                                .update({
+                              'verifiedHours': updatedVerifiedHours
+                            });
+                          }
                           // Close the dialog
                           Navigator.pop(context);
                         }).catchError((error) {
@@ -568,7 +614,9 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                             String oppId = currentList[index].opportunityId;
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => OpportunityDetails(oppId: oppId,),
+                                builder: (context) => OpportunityDetails(
+                                  oppId: oppId,
+                                ),
                               ),
                             );
                           },
@@ -611,7 +659,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                                   ),
                                 ),
                               ),
-                             Stack(
+                              Stack(
                                 children: [
                                   Positioned(
                                     top: 55,
@@ -622,7 +670,10 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                                           height: 20,
                                           child: ElevatedButton.icon(
                                             onPressed: () {
-                                              myAlert(context,compList[index].opportunityId);
+                                              myAlert(
+                                                  context,
+                                                  compList[index]
+                                                      .opportunityId);
                                             },
                                             icon: IconTheme(
                                               data: IconThemeData(
@@ -684,7 +735,9 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                             String oppId = compList[index].opportunityId;
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => OpportunityDetails(oppId: oppId,),
+                                builder: (context) => OpportunityDetails(
+                                  oppId: oppId,
+                                ),
                               ),
                             );
                           },

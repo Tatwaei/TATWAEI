@@ -445,7 +445,17 @@ class _studentOpportunity extends State<studentOpportunity> {
                       ),
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
+                            MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed)) {
+                              return Color(0xFFb4d392); // Color when pressed
+                            }
+                            return showList2
+                                ? Color.fromARGB(255, 230, 248, 211)
+                                : Color(
+                                    0xFFb4d392); // Default color and color when not pressed
+                          },
+                        ),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
@@ -473,8 +483,18 @@ class _studentOpportunity extends State<studentOpportunity> {
                             TextStyle(fontSize: 20, color: Color(0xFF0A2F5A)),
                       ),
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
+                         backgroundColor:
+                            MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed)) {
+                              return Color(0xFFb4d392); // Color when pressed
+                            }
+                            return showList1
+                                ? Color.fromARGB(255, 230, 248, 211)
+                                : Color(
+                                    0xFFb4d392); // Default color and color when not pressed
+                          },
+                        ),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
@@ -508,7 +528,7 @@ class _studentOpportunity extends State<studentOpportunity> {
                             children: [
                               Positioned(
                                 top: 12,
-                                left: 50,
+                                right: 80,
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 10),
                                   decoration: BoxDecoration(

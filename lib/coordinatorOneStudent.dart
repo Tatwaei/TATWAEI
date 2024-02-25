@@ -327,9 +327,8 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                             FirebaseFirestore.instance
                                 .collection('student')
                                 .doc(widget.studentId)
-                                .update({
-                              'verifiedHours': updatedVerifiedHours
-                            });
+                                .update(
+                                    {'verifiedHours': updatedVerifiedHours});
                           }
                           // Close the dialog
                           Navigator.pop(context);
@@ -436,7 +435,6 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                   style: TextStyle(fontSize: 18, color: Color(0xFF0A2F5A)),
                 ),
               ),
-             
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -456,8 +454,18 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                             TextStyle(fontSize: 20, color: Color(0xFF0A2F5A)),
                       ),
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
+                         backgroundColor:
+                            MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed)) {
+                              return Color(0xFFb4d392); // Color when pressed
+                            }
+                            return showList2
+                                ? Color.fromARGB(255, 230, 248, 211)
+                                : Color(
+                                    0xFFb4d392); // Default color and color when not pressed
+                          },
+                        ),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
@@ -486,7 +494,17 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                       ),
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
+                            MaterialStateProperty.resolveWith<Color>(
+                          (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed)) {
+                              return Color(0xFFb4d392); // Color when pressed
+                            }
+                            return showList1
+                                ? Color.fromARGB(255, 230, 248, 211)
+                                : Color(
+                                    0xFFb4d392); // Default color and color when not pressed
+                          },
+                        ),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
@@ -520,7 +538,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                             children: [
                               Positioned(
                                 top: 12,
-                                left: 50,
+                                right: 80,
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 10),
                                   decoration: BoxDecoration(

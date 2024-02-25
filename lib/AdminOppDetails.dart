@@ -289,7 +289,16 @@ class _OpportunityPageState extends State<OpportunityDetails> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      "يوم $numberOfDays",
+                                      "يوم",
+                                      style: TextStyle(
+                                        color: Color(0xFF0A2F5A),
+                                        fontSize: 16,
+                                      ),
+                                      softWrap: true,
+                                      maxLines: 2,
+                                    ),
+                                    Text(
+                                      " $numberOfDays",
                                       style: TextStyle(
                                         color: Color(0xFF0A2F5A),
                                         fontSize: 16,
@@ -331,7 +340,16 @@ class _OpportunityPageState extends State<OpportunityDetails> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      "$numofseats",
+                                      "مقعد",
+                                      style: TextStyle(
+                                        color: Color(0xFF0A2F5A),
+                                        fontSize: 16,
+                                      ),
+                                      softWrap: true,
+                                      maxLines: 2,
+                                    ),
+                                    Text(
+                                      " $numofseats",
                                       style: TextStyle(
                                         color: Color(0xFF0A2F5A),
                                         fontSize: 16,

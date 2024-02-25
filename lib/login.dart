@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
     if (email.isEmpty || !email.contains('@') || !email.contains('.com')) {
       // Display a SnackBar for invalid email
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid email address.')),
+        SnackBar(content: Text('يرجى إدخال عنوان بريد إلكتروني صالح')),
       );
       return; // Stop the sign-in process
     }
@@ -36,7 +36,8 @@ class _LoginPageState extends State<LoginPage> {
     if (password.isEmpty || password.length < 6) {
       // Display a SnackBar for invalid password
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password must be at least 6 characters.')),
+        SnackBar(
+            content: Text('يجب أن تكون كلمة المرور مكونة من 6 أحرف على الأقل')),
       );
       return; // Stop the sign-in process
     }
@@ -108,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("User not found or not authorized.")));
+        SnackBar(content: Text("المستخدم غير موجود، او تم رفض توثيقة")));
   }
 
   void dispose() {

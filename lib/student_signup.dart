@@ -56,19 +56,19 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
         _nameController.text.isEmpty ||
         _phoneController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in all fields')),
+        SnackBar(content: Text('يرجى تعبئة جميع الحقول')),
       );
       return;
     }
     if (selectedSchool == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select your school.')),
+        SnackBar(content: Text('يرجى اختيار مدرستك')),
       );
       return;
     }
     if (_nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter your name.')),
+        SnackBar(content: Text('يرجى إدخال إسمك')),
       );
       return;
     }
@@ -77,27 +77,28 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
         !_emailController.text.trim().contains('@') ||
         !_emailController.text.trim().contains('.com')) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid email address.')),
+        SnackBar(content: Text('يرجى إدخال عنوان بريد إلكتروني صالح')),
       );
       return;
     }
     if (_passwordController.text.isEmpty ||
         _passwordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password must be at least 6 characters long.')),
+        SnackBar(
+            content: Text('يجب أن تكون كلمة المرور مكونة من 6 أحرف على الأقل')),
       );
       return;
     }
     if (_phoneController.text.trim().isEmpty ||
         _phoneController.text.length < 10) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid phone number.')),
+        SnackBar(content: Text('يرجى إدخال رقم هاتف صالح')),
       );
       return;
     }
     if (selectedGrade == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select your grade.')),
+        SnackBar(content: Text('يرجى اختيار صفك الدراسي')),
       );
       return;
     }

@@ -14,10 +14,9 @@ class CordinatorMyStudent extends StatefulWidget {
 
 class Student {
   final String name;
-  final String castedid;
   final String castedhours;
   final String documentId;
-  Student(this.name, this.castedid, this.castedhours, this.documentId);
+  Student(this.name, this.castedhours, this.documentId);
 }
 
 class _CordinatorMyStudent extends State<CordinatorMyStudent> {
@@ -62,12 +61,10 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
         documentId = documentSnapshot.id;
 
         String name = documentSnapshot.get('name');
-        int studentId = documentSnapshot.get('StudentId');
-        String castedid = studentId.toString();
         int hours = documentSnapshot.get('verifiedHours');
         String castedhours = hours.toString();
 
-        Student student = Student(name, castedid, castedhours, documentId);
+        Student student = Student(name, castedhours, documentId);
         fetchedStudentList.add(student);
       }
       setState(() {
@@ -168,24 +165,6 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                                     child: Text(
                                       studentList[index].name,
                                       style: TextStyle(
-                                        color: Color(0xFF0A2F5A),
-                                      ),
-                                    ),
-                                  )),
-                              Positioned(
-                                  top: 50,
-                                  left: 180,
-                                  child: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Color.fromARGB(115, 127, 179, 71),
-                                    ),
-                                    child: Text(
-                                      studentList[index].castedid,
-                                      style: TextStyle(
-                                        fontSize: 12,
                                         color: Color(0xFF0A2F5A),
                                       ),
                                     ),

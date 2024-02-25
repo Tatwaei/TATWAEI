@@ -22,6 +22,8 @@ class _OpportunityPageState extends State<OpportunityDetails> {
 
   late String startdate = '';
   late String enddate = '';
+  late DateTime startDate = DateTime.now();
+  late DateTime endDate = DateTime.now();
   late int numberOfDays = 0;
   late int numofseats = 0;
   late int numofhrs = 0;
@@ -78,10 +80,8 @@ class _OpportunityPageState extends State<OpportunityDetails> {
         gender = opportunityDocument['gender'];
 
         // Convert 'startDate' and 'endDate' to DateTime objects
-        DateTime startDate =
-            (opportunityDocument['startDate'] as Timestamp).toDate();
-        DateTime endDate =
-            (opportunityDocument['endDate'] as Timestamp).toDate();
+        startDate = (opportunityDocument['startDate'] as Timestamp).toDate();
+        endDate = (opportunityDocument['endDate'] as Timestamp).toDate();
         // Format 'startDate' and 'endDate' to display only the date
         startdate =
             "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
@@ -622,22 +622,24 @@ class _OpportunityPageState extends State<OpportunityDetails> {
           ),
         ),
       ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-            bottom: 16.0), // Adjust the bottom padding to move it up
-        child: FloatingActionButton(
-          onPressed: () {
-            _showDialog();
-          },
-          child: Text(
-            "للتسجيل",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Color.fromARGB(115, 127, 179, 71),
-          elevation: 0,
-          hoverColor: Color(0xFF0A2F5A),
-        ),
-      ),
+      floatingActionButton: startDate.isBefore(DateTime.now())
+          ? null // Hide the button if startdate is before the current date
+          : Padding(
+              padding: EdgeInsets.only(
+                  bottom: 16.0), // Adjust the bottom padding to move it up
+              child: FloatingActionButton(
+                onPressed: () {
+                  _showDialog();
+                },
+                child: Text(
+                  "للتسجيل",
+                  style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Color.fromARGB(115, 127, 179, 71),
+                elevation: 0,
+                hoverColor: Color(0xFF0A2F5A),
+              ),
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
@@ -708,10 +710,7 @@ class _OpportunityPageState extends State<OpportunityDetails> {
             },
           );
 
-          // Optionally, you can update the UI to reflect the changes
-          setState(() {
-            // Update relevant UI components
-          });
+          setState(() {});
         } catch (e) {
           print('Error updating numOfSeats: $e');
           // Handle the error, show an error message, or take appropriate action

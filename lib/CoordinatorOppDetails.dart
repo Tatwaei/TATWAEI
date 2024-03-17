@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tatwaei/cEditDelete.dart';
 import 'dart:math';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -602,25 +603,32 @@ class _OpportunityPageState extends State<OpportunityDetails> {
           ),
         ),
       ),
-      floatingActionButton: isInternalOpportunity
-          ? Padding(
-              padding: EdgeInsets.only(
-                  bottom: 16.0), // Adjust the bottom padding to move it up
-              child: FloatingActionButton(
-                onPressed: () {},
-                child: Text(
-                  "تحرير",
-                  style: TextStyle(color: Colors.white),
-                ),
-                backgroundColor: Color.fromARGB(115, 127, 179, 71),
-                elevation: 0,
-                hoverColor: Color(0xFF0A2F5A),
-                // Adjust the width property to increase its width
-                // Adjust the width as needed
-              ),
-            )
-          : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-    );
+      
+
+floatingActionButton: isInternalOpportunity
+    ? Padding(
+        padding: EdgeInsets.only(
+            bottom: 16.0), // Adjust the bottom padding to move it up
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => cEditDelete(oppId: widget.oppId)),
+            );
+          },
+          child: Text(
+            "تحرير",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Color.fromARGB(115, 127, 179, 71),
+          elevation: 0,
+          hoverColor: Color(0xFF0A2F5A),
+        ),
+      )
+    : null,
+
+floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+
+ );
   }
 }

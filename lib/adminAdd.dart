@@ -1,6 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:tatwaei/homePageAdmin.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class adminAdd extends StatefulWidget {
   @override
@@ -8,6 +9,18 @@ class adminAdd extends StatefulWidget {
 }
 
 class _adminAddState extends State<adminAdd> {
+  // Define controllers for text editing
+  TextEditingController _opportunityController = TextEditingController();
+  TextEditingController _detailsController = TextEditingController();
+  TextEditingController _genderController = TextEditingController();
+  TextEditingController _seatsController = TextEditingController();
+  TextEditingController _locationController = TextEditingController();
+  TextEditingController _benefitsController = TextEditingController();
+  TextEditingController _hoursController = TextEditingController();
+  TextEditingController _placeController = TextEditingController();
+  DateTime? _startDate;
+  DateTime? _endDate;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,40 +63,41 @@ class _adminAddState extends State<adminAdd> {
           ),
         ),
       ),
-      body: Expanded(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 40),
-            child: Column(
-              children: [
-                SizedBox(height: 20.0),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    color: Color(0xFFD3CA25),
-                    padding: EdgeInsets.only(bottom: 10, left: 310),
-                    icon: Transform(
-                      alignment: Alignment.topRight,
-                      transform: Matrix4.rotationY(pi),
-                      child: Icon(Icons.arrow_back),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 40),
+          child: Column(
+            children: [
+              SizedBox(height: 20.0),
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  color: Color(0xFFD3CA25),
+                  padding: EdgeInsets.only(bottom: 10, left: 310),
+                  icon: Transform(
+                    alignment: Alignment.topRight,
+                    transform: Matrix4.rotationY(pi),
+                    child: Icon(Icons.arrow_back),
                   ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                 ),
-                SizedBox(height: 20.0),
-                // Replace these with your desired text and box fields
-                buildRow(" الفرصة التطوعية"),
-                buildRow("تفاصيل الفرصة التطوعية"),
-                buildDoubleRow("  تاريخ النهاية", "تاريخ البداية  "),
-                buildDoubleRow(" الجنس ", " المقاعد "),
-                buildDoubleRow("مكان التطوع  ", " المجال التطوعي "),
-                buildRow("الموقع "),
-                buildRow("الفوائد المكتسبه من الفرصة التطوعية "),
-                buildRow("صوره "),
-              ],
-            ),
+              ),
+              SizedBox(height: 20.0),
+              buildRow(" الفرصة التطوعية", _opportunityController),
+              buildRow("تفاصيل الفرصة التطوعية", _detailsController),
+              buildDateRow("تاريخ البداية", _startDate, () {
+                _selectStartDate(context);
+              }),
+              buildDateRow("تاريخ النهاية", _endDate, () {
+                _selectEndDate(context);
+              }),
+              buildDoubleRow(" الجنس ", _genderController, " المقاعد ", _seatsController),
+              buildDoubleRow("مكان التطوع  ", _placeController, " المجال التطوعي ", _benefitsController),
+              buildRow("الموقع ", _locationController),
+              buildRow("عدد ساعات ", _hoursController),
+            ],
           ),
         ),
       ),
@@ -94,7 +108,33 @@ class _adminAddState extends State<adminAdd> {
             left: 16.0,
             child: FloatingActionButton(
               onPressed: () {
-                // Add onPressed logic for the first button
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 50,
+                      ),
+                      content: Text(
+                        "تم إلغاء الإضافة بنجاح",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFF0A2F5A),
+                        ),
+                      ),
+                    );
+                  },
+                );
+                // After 5 seconds, navigate to HomePageAdmin
+                Future.delayed(Duration(seconds: 5), () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => homePageAdmin()),
+                  );
+                });
               },
               child: Text(
                 "إلغاء",
@@ -109,10 +149,120 @@ class _adminAddState extends State<adminAdd> {
             right: 16.0,
             child: FloatingActionButton(
               onPressed: () {
-                // Add onPressed logic for the second button
+                // Check if all fields are filled
+                if (_opportunityController.text.isNotEmpty &&
+                    _detailsController.text.isNotEmpty &&
+                    _startDate != null &&
+                    _endDate != null &&
+                    _seatsController.text.isNotEmpty &&
+                    _genderController.text.isNotEmpty &&
+                    _benefitsController.text.isNotEmpty &&
+                    _locationController.text.isNotEmpty &&
+                    _hoursController.text.isNotEmpty) {
+                  // Generate opportunity ID
+                  String opportunityId = FirebaseFirestore.instance.collection('externalOpportunity').doc().id;
+
+                  // Convert dates to Timestamp
+                  Timestamp startDateTimestamp = Timestamp.fromDate(_startDate!);
+                  Timestamp endDateTimestamp = Timestamp.fromDate(_endDate!);
+
+                  // Create external opportunity data
+                  Map<String, dynamic> opportunityData = {
+                    'opportunityId': opportunityId,
+                    'name': _opportunityController.text,
+                    'description': _detailsController.text,
+                    'startDate': startDateTimestamp,
+                    'endDate': endDateTimestamp,
+                    'numOfSeats': int.parse(_seatsController.text),
+                    'gender': _genderController.text,
+                    'interest': _benefitsController.text,
+                    'opportunityProvider': _placeController.text,
+                    'location': _locationController.text,
+                    'numOfHours': int.parse(_hoursController.text),
+                    'a_email': 'ContactTatwaei@gmail.com', // Administrator's email
+                  };
+
+                  // Add the external opportunity to Firestore
+                  FirebaseFirestore.instance.collection('externalOpportunity').doc(opportunityId).set(opportunityData).then((value) {
+                    // Show success message
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: 50,
+                          ),
+                          content: Text(
+                            "تمت الإضافة بنجاح",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Color(0xFF0A2F5A),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                    // After 5 seconds, navigate to HomePageAdmin
+                    Future.delayed(Duration(seconds: 5), () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => homePageAdmin()),
+                      );
+                    });
+                  }).catchError((error) {
+                    // Show error message if something goes wrong
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Icon(
+                            Icons.error,
+                            color: Colors.red,
+                            size: 50,
+                          ),
+                          content: Text(
+                            "حدث خطأ أثناء إضافة الفرصة التطوعية. الرجاء المحاولة مرة أخرى.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Color(0xFF0A2F5A),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  });
+                } else {
+                  // Show error message if any field is empty
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Icon(
+                          Icons.error,
+                          color: Colors.red,
+                          size: 50,
+                        ),
+                        content: Text(
+                          "الرجاء تعبئة جميع الحقول.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Color(0xFF0A2F5A),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+                
               },
+              
               child: Text(
-                "تعديل",
+                "إضافة",
                 style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
               ),
               backgroundColor: Color.fromARGB(115, 127, 179, 71),
@@ -125,7 +275,7 @@ class _adminAddState extends State<adminAdd> {
     );
   }
 
-  Widget buildRow(String labelText) {
+  Widget buildRow(String labelText, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -133,16 +283,11 @@ class _adminAddState extends State<adminAdd> {
           padding: EdgeInsets.only(),
           child: Align(
             alignment: Alignment.centerRight,
-            child: GestureDetector(
-              onTap: () {
-                // Add onPressed logic for editing
-              },
-              child: Text(
-                labelText,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Color(0xFF0A2F5A),
-                ),
+            child: Text(
+              labelText,
+              style: TextStyle(
+                fontSize: 20,
+                color: Color(0xFF0A2F5A),
               ),
             ),
           ),
@@ -170,9 +315,11 @@ class _adminAddState extends State<adminAdd> {
                 ),
               ),
               Expanded(
-                child: Text(
-                  "Field Value", // Replace with your field value
-                  textAlign: TextAlign.end,
+                child: TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                  ),
                 ),
               ),
             ],
@@ -183,18 +330,136 @@ class _adminAddState extends State<adminAdd> {
     );
   }
 
-  Widget buildDoubleRow(String leftLabelText, String rightLabelText) {
+  Widget buildDoubleRow(String leftLabelText, TextEditingController leftController, String rightLabelText, TextEditingController rightController) {
     return Row(
       children: [
         Expanded(
-          child: buildRow(leftLabelText),
+          child: buildRow(leftLabelText, leftController),
         ),
         SizedBox(width: 20),
         Expanded(
-          child: buildRow(rightLabelText),
+          child: buildRow(rightLabelText, rightController),
         ),
       ],
     );
+  }
+
+  Widget buildDateRow(String labelText, DateTime? date, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                labelText,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Color(0xFF0A2F5A),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            height: 40,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Color(0xFFf7f6d4),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: onTap,
+                    child: Icon(
+                      Icons.calendar_today,
+                      color: Color(0xFFa7cc7f),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    date != null ? "${date.day}/${date.month}/${date.year}" : "اختر تاريخ",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: date != null ? Color(0xFF0A2F5A) : Color(0xFFa7cc7f),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _selectStartDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _startDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Color.fromARGB(115, 127, 179, 71), // Head background color
+              onPrimary: Colors.white, // Head text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                primary: Color(0xFF0A2F5A), // Button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _startDate) {
+      setState(() {
+        _startDate = picked;
+      });
+    }
+  }
+
+  Future<void> _selectEndDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _endDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Color.fromARGB(115, 127, 179, 71), // Head background color
+              onPrimary: Colors.white, // Head text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                primary: Color(0xFF0A2F5A), // Button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _endDate) {
+      setState(() {
+        _endDate = picked;
+      });
+    }
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tatwaei/coordinatorOppo.dart';
 import 'CoordinatorOppDetails.dart';
 import 'coordinatorAccount.dart';
 import 'CordinatorMyStudent.dart';
@@ -608,23 +609,28 @@ class _HomePageState extends State<homePageCoordinator> {
                   },
                 ),
               ),
+             
               Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
-                width: 100,
-                color: Color.fromARGB(115, 127, 179, 71),
-                child: ListTile(
-                  title: Text(
-                    ' فرص التطوع',
-                    style: TextStyle(
-                      color: Color(0xFF0A2F5A),
-                      fontSize: 24,
-                    ),
-                  ),
-                  onTap: () {
-                    // Handle drawer item tap for logout
-                  },
-                ),
-              ),
+  margin: EdgeInsets.only(top: 10, bottom: 10),
+  width: 100,
+  color: Color.fromARGB(115, 127, 179, 71),
+  child: ListTile(
+    title: Text(
+      "فرص التطوع",
+      style: TextStyle(
+        color: Color(0xFF0A2F5A),
+        fontSize: 24,
+      ),
+    ),
+    onTap: () {
+      // Navigate to the adminOppo page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => coordinatorOppo()),
+      );
+    },
+  ),
+),
               Container(
                 margin: EdgeInsets.only(top: 10, bottom: 10),
                 width: 100,

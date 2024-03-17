@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tatwaei/aEditDelete.dart';
+import 'package:tatwaei/homePageAdmin.dart';
 import 'dart:math';
 
 import 'package:url_launcher/url_launcher.dart';
 
-class OpportunityDetails extends StatefulWidget {
+class aDelete extends StatefulWidget {
   @override
   _OpportunityPageState createState() => _OpportunityPageState();
 
   final String oppId;
-  OpportunityDetails({required this.oppId});
+  aDelete({required this.oppId});
 }
 
-class _OpportunityPageState extends State<OpportunityDetails> {
+class _OpportunityPageState extends State<aDelete> {
   late String oppname = '';
   late String oppdesc = '';
   late String gender = '';
@@ -603,31 +603,130 @@ class _OpportunityPageState extends State<OpportunityDetails> {
           ),
         ),
       ),
-      floatingActionButton: isExternalOpportunity
-    ? Padding(
-        padding: EdgeInsets.only(
-            bottom: 16.0), // Adjust the bottom padding to move it up
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => aEditDelete(oppId: widget.oppId)),
-            );
-          },
-          child: Text(
-            "تحرير",
-            style: TextStyle(color: Colors.white),
+       floatingActionButton: Stack(
+        children: [
+          Positioned(
+            bottom: 16.0,
+            left: 16.0,
+            child: FloatingActionButton(
+              onPressed: () {
+                // Show message and navigate to homePageCoordinator
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text(
+                        "تم إلغاء الحذف بنجاح",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFF0A2F5A),
+                        ),
+                      ),
+                    );
+                  },
+                );
+                Future.delayed(Duration(seconds: 5), () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => homePageAdmin()),
+                  );
+                });
+              },
+              child: Text(
+                "إلغاء",
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Color.fromARGB(115, 127, 179, 71),
+              elevation: 0,
+            ),
           ),
-          backgroundColor: Color.fromARGB(115, 127, 179, 71),
-          elevation: 0,
-          hoverColor: Color(0xFF0A2F5A),
-        ),
-      )
-    : null,
+          Positioned(
+            bottom: 16.0,
+            right: 16.0,
+            child: FloatingActionButton(
+              onPressed: () {
+                // Show message and delete opportunity after 5 seconds
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text(
+                        "تم الحذف بنجاح",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFF0A2F5A),
+                        ),
+                      ),
+                    );
+                  },
+                );
+                Future.delayed(Duration(seconds: 5), () {
+                  // Delete opportunity from database
+                  deleteOpportunityFromDatabase(widget.oppId);
+                  // Navigate to homePageCoordinator
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => homePageAdmin()),
+                  );
+                });
+              },
+              child: Text(
+                "حذف",
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Color.fromARGB(115, 127, 179, 71),
+              elevation: 0,
+            ),
+          ),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+  }
 
-floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+  
+void deleteOpportunityFromDatabase(String oppId) async {
+  try {
+    String collectionName;
 
- );
+    // Assuming oppId is a unique identifier for opportunities
+    DocumentSnapshot<Map<String, dynamic>> oppDocumentInternal =
+        await FirebaseFirestore.instance
+            .collection('internalOpportunity')
+            .doc(oppId)
+            .get();
+
+    DocumentSnapshot<Map<String, dynamic>> oppDocumentExternal =
+        await FirebaseFirestore.instance
+            .collection('externalOpportunity')
+            .doc(oppId)
+            .get();
+
+    if (oppDocumentInternal.exists) {
+      // The opportunity belongs to internalOpportunity collection
+      collectionName = 'internalOpportunity';
+    } else if (oppDocumentExternal.exists) {
+      // The opportunity belongs to externalOpportunity collection
+      collectionName = 'externalOpportunity';
+    } else {
+      // Handle the case where neither document exists
+      // You can show an error message or take appropriate action
+      print('Opportunity not found in any collection');
+      return;
+    }
+
+    // Delete opportunity from database
+    await FirebaseFirestore.instance
+        .collection(collectionName)
+        .doc(oppId)
+        .delete();
+
+    print('External opportunity deleted successfully');
+  } catch (e) {
+    print('Error deleting opportunity: $e');
+    // Handle the error, show an error message or take appropriate action
   }
 }
-
+}

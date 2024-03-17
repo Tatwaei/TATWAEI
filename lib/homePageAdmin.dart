@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tatwaei/adminOppo.dart';
 import 'AdminOppDetails.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tatwaei/login.dart';
@@ -507,22 +508,28 @@ class _HomePageState extends State<homePageAdmin> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
-                width: 100,
-                color: Color.fromARGB(115, 127, 179, 71),
-                child: ListTile(
-                  title: Text(
-                    "فرص التطوع",
-                    style: TextStyle(
-                      color: Color(0xFF0A2F5A),
-                      fontSize: 24,
-                    ),
-                  ),
-                  onTap: () {
-                    // Handle drawer item tap for home
-                  },
-                ),
-              ),
+  margin: EdgeInsets.only(top: 10, bottom: 10),
+  width: 100,
+  color: Color.fromARGB(115, 127, 179, 71),
+  child: ListTile(
+    title: Text(
+      "فرص التطوع",
+      style: TextStyle(
+        color: Color(0xFF0A2F5A),
+        fontSize: 24,
+      ),
+    ),
+    onTap: () {
+      // Navigate to the adminOppo page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => adminOppo()),
+      );
+    },
+  ),
+),
+
+             
               Container(
                 margin: EdgeInsets.only(top: 10, bottom: 10),
                 width: 100,

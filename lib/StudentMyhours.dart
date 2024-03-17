@@ -301,17 +301,20 @@ class _StudentMyhours extends State<StudentMyhours> {
                             sections: [
                               PieChartSectionData(
                                 color: Color.fromARGB(115, 127, 179, 71),
-                                value: hours / 40 * 100,
+                                value: (hours >= 40) ? 100 : (hours / 40 * 100),
                                 title:
-                                    '${(hours / 40 * 100).toStringAsFixed(2)}%', // Display percentage
+                                    '${(hours >= 40) ? 100 : (hours / 40 * 100).toStringAsFixed(2)}%', // Display percentage
+
                                 radius: 70,
                                 titleStyle: TextStyle(
                                   fontSize: 16,
                                 ),
                               ),
                               PieChartSectionData(
-                                color: Colors.grey,
-                                value: 100 - (hours / 40 * 100),
+                                color: Colors.white,
+                                value: (hours >= 40)
+                                    ? 0
+                                    : (100 - (hours / 40 * 100)),
                                 title: 'المتبقي',
                                 radius: 70,
                               ),

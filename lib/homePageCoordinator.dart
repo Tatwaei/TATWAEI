@@ -12,6 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tatwaei/login.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+final FirebaseAuth _auth = FirebaseAuth.instance;
 CollectionReference internalOpportunity =
     FirebaseFirestore.instance.collection('internalOpportunity');
 CollectionReference externalOpportunity =
@@ -23,26 +24,43 @@ class homePageCoordinator extends StatefulWidget {
 }
 
 class _HomePageState extends State<homePageCoordinator> {
+    late List<DocumentSnapshot> internal = [];
+
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
   late String initialSchool = "";
 
-  Future<List<DocumentSnapshot>> getIngredients() async {
-    CollectionReference internalOpportunity =
-        _firestore.collection('internalOpportunity');
-    CollectionReference externalOpportunity =
-        _firestore.collection('externalOpportunity');
+    Future<List<DocumentSnapshot>> getIngredients() async {
+      CollectionReference internalOpportunity =
+          _firestore.collection('internalOpportunity');
+      CollectionReference externalOpportunity =
+          _firestore.collection('externalOpportunity');
 
-    QuerySnapshot internalSnapshot = await internalOpportunity.get();
-    QuerySnapshot externalSnapshot = await externalOpportunity.get();
+    DateTime now = DateTime.now();
 
-    List<DocumentSnapshot> internal = internalSnapshot.docs;
-    List<DocumentSnapshot> external = externalSnapshot.docs;
+      // Get current user's email
+      User? user = _auth.currentUser;
+      String? email = user?.email;
 
-    List<DocumentSnapshot> opp = [...internal, ...external];
+      // Fetch opportunities where coordinator_email matches the current user's email
+      QuerySnapshot snapshot = await internalOpportunity
+          .where('coordinator_email', isEqualTo: email)
+          .get();
+      setState(() {
+        internal = snapshot.docs;
+      });
 
-    return opp;
-  }
+      QuerySnapshot externalSnapshot = await externalOpportunity.get();
+
+      List<DocumentSnapshot> external = externalSnapshot.docs;
+       
+      List<DocumentSnapshot> opp = [...internal, ...external].where((doc) {
+      DateTime startDate = doc['startDate'].toDate();
+      return startDate.isAfter(now);
+      }).toList();
+
+      return opp;
+    }
 
   List<DocumentSnapshot> opp = [];
   List<DocumentSnapshot<Object?>> filteredItems = [];
@@ -750,6 +768,7 @@ class _HomePageState extends State<homePageCoordinator> {
                       onSubmitted: (value) {
                         _performSearch();
                       },
+                      textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),

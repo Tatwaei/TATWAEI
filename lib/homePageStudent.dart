@@ -11,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tatwaei/login.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+final FirebaseAuth _auth = FirebaseAuth.instance;
 CollectionReference internalOpportunity =
     FirebaseFirestore.instance.collection('internalOpportunity');
 CollectionReference externalOpportunity =
@@ -32,13 +33,48 @@ class _HomePageState extends State<HomePageStudent> {
     CollectionReference externalOpportunity =
         _firestore.collection('externalOpportunity');
 
-    QuerySnapshot internalSnapshot = await internalOpportunity.get();
+  String userId = Provider.of<UserState>(context, listen: false).userId;
+
+  String? schoolId;
+  
+    DocumentSnapshot studentSnapshot  = await _firestore
+        .collection('student')
+        .doc(userId)
+        .get();
+   if (studentSnapshot.exists) {
+      schoolId = studentSnapshot.get('schoolId') as String?;
+    }
+
+    DateTime now = DateTime.now();
+
+  QuerySnapshot coordinatorSnapshot = await _firestore
+      .collection('schoolCoordinator')
+      .where('schoolId', isEqualTo: schoolId)
+      .get();
+
+  String? coordinatorEmail;
+  if (coordinatorSnapshot.size > 0) {
+  for (DocumentSnapshot doc in coordinatorSnapshot.docs) {
+    String? docSchoolId = doc.get('schoolId') as String?;
+    if (docSchoolId == schoolId) {
+      coordinatorEmail = doc.get('email') as String?;
+      break; // Exit the loop once the coordinator's email is found
+    }
+  }
+}
+    QuerySnapshot internalSnapshot = await internalOpportunity
+          .where('coordinator_email', isEqualTo: coordinatorEmail)
+          .get();
+    
     QuerySnapshot externalSnapshot = await externalOpportunity.get();
 
     List<DocumentSnapshot> internal = internalSnapshot.docs;
     List<DocumentSnapshot> external = externalSnapshot.docs;
 
-    List<DocumentSnapshot> opp = [...internal, ...external];
+    List<DocumentSnapshot> opp = [...internal, ...external].where((doc) {
+      DateTime startDate = doc['startDate'].toDate();
+      return startDate.isAfter(now);
+      }).toList();
 
     return opp;
   }
@@ -707,6 +743,7 @@ class _HomePageState extends State<HomePageStudent> {
                       onSubmitted: (value) {
                         _performSearch();
                       },
+                      textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),

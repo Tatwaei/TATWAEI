@@ -27,13 +27,18 @@ class _HomePageState extends State<homePageAdmin> {
     CollectionReference externalOpportunity =
         _firestore.collection('externalOpportunity');
 
+    DateTime now = DateTime.now();
+
     QuerySnapshot internalSnapshot = await internalOpportunity.get();
     QuerySnapshot externalSnapshot = await externalOpportunity.get();
 
     List<DocumentSnapshot> internal = internalSnapshot.docs;
     List<DocumentSnapshot> external = externalSnapshot.docs;
 
-    List<DocumentSnapshot> opp = [...internal, ...external];
+    List<DocumentSnapshot> opp = [...internal, ...external].where((doc) {
+      DateTime startDate = doc['startDate'].toDate();
+      return startDate.isAfter(now);
+      }).toList();
 
     return opp;
   }
@@ -649,6 +654,7 @@ class _HomePageState extends State<homePageAdmin> {
                       onSubmitted: (value) {
                         _performSearch();
                       },
+                      textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),

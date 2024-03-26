@@ -166,7 +166,7 @@ Future<void> getSchoolData(String schoolId) async {
     }
 
      if (modifiedPass.isNotEmpty && modifiedPass != initialPass) {
-      updatedData['pass'] = modifiedPass;
+      updatedData['password'] = modifiedPass;
     }
 
       if (updatedData.isNotEmpty) {
@@ -311,13 +311,18 @@ Future<void> getSchoolData(String schoolId) async {
                                visible: showSchoolForm,
                                child: TextFormField(
                                   textAlign: TextAlign.right,
-                                   //autovalidateMode:
-                                 //AutovalidateMode.onUserInteraction,
-                                //controller: _firstnameController,
-                               //validator: validateFirstnam
-                             //validator: validationPhoneNumber,
                                   controller: _schoolController,
-                                  onChanged: updateSchool,
+                                  onChanged: (value) {
+                                    if (value.trim().isEmpty) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text('الرجاءادخال الاسم')),
+                                      );
+                                    } else {
+                                      updateSchool(value);
+                                    }
+                                  },
                                   decoration: InputDecoration(
                                           labelText: 'الرجاء ادخال الاسم',
                     ),),  ),), 
@@ -376,12 +381,7 @@ Future<void> getSchoolData(String schoolId) async {
                                                           Expanded( child:Visibility(
                                                             visible: showPhoneNumberForm,
                                                             child: TextFormField(
-                                                            textAlign: TextAlign.right,
-                                                             //autovalidateMode:
-                                                            //AutovalidateMode.onUserInteraction,
-                                                           //controller: _firstnameController,
-                                                          //validator: validateFirstnam
-                                                         //validator: validationPhoneNumber,
+                                                            textAlign: TextAlign.right, 
                                                              maxLength: 12,
                                                              autovalidateMode: AutovalidateMode.onUserInteraction,
                                                              keyboardType: TextInputType.number,
@@ -389,7 +389,18 @@ Future<void> getSchoolData(String schoolId) async {
                                                             hintText: ("9665********"),
                                                                   ),
                                                             controller: _phoneNumberController,
-                                                            onChanged: updatePhone,
+                                                            onChanged: (value) {
+                                          if (value.trim().length < 10) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                  content: Text(
+                                                      'يرجى إدخال رقم هاتف صالح')),
+                                            );
+                                          } else {
+                                            updatePhone(value);
+                                          }
+                                        }
                                                             ),  ),), 
                              
                                                             Visibility(
@@ -442,13 +453,23 @@ Future<void> getSchoolData(String schoolId) async {
                                visible: showEmailForm,
                                child: TextFormField(
                                   textAlign: TextAlign.right,
-                                   //autovalidateMode:
-                                 //AutovalidateMode.onUserInteraction,
-                                //controller: _firstnameController,
-                               //validator: validateFirstnam
-                             //validator: validationPhoneNumber,
                                   controller: _emailController,
-                                  onChanged: updateEmail,
+                                  onChanged: (value) {
+                                            if (value.trim().isEmpty ||
+                                                !value.trim().contains('@') ||
+                                                !value
+                                                    .trim()
+                                                    .contains('.com')) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                    content: Text(
+                                                        'يرجى إدخال عنوان بريد إلكتروني صالح')),
+                                              );
+                                            } else {
+                                              updateEmail(value);
+                                            }
+                                          },
                                   decoration: InputDecoration(
                                           labelText: 'الرجاء ادخال الايميل',
                     ),),  ),), 
@@ -505,13 +526,19 @@ Future<void> getSchoolData(String schoolId) async {
                                              visible: showPassForm,
                                              child: TextFormField(
                                              textAlign: TextAlign.right,
-                                              //autovalidateMode:
-                                             //AutovalidateMode.onUserInteraction,
-                                           //controller: _firstnameController,
-                                         //validator: validateFirstnam
-                                       //validator: validationPhoneNumber,
                                              controller: _passController,
-                                             onChanged: updatePass,
+                                             onChanged:  (value) {
+                                                if (value.trim().length < 6) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                        content: Text(
+                                                            'يرجى إدخال كلمة مرور صالحة (لا تقل عن 6 أحرف)')),
+                                                  );
+                                                } else {
+                                                  updatePass(value);
+                                                }
+                                              },
                                              obscureText: true,
                                              decoration: InputDecoration(
                                              labelText: 'الرجاء ادخال كلمة المرور',

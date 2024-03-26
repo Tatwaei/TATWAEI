@@ -31,22 +31,22 @@ class _studentAccount extends State<studentAccount> {
   late TextEditingController _emailController;
   late TextEditingController _passController;
 
-
   @override
   void initState() {
     super.initState();
-     _nameController = TextEditingController(text: initialName);
+    _nameController = TextEditingController(text: initialName);
     _classController = TextEditingController(text: initialClass.toString());
-    _phoneNumberController = TextEditingController(text: initialPhoneNumber.toString());
+    _phoneNumberController =
+        TextEditingController(text: initialPhoneNumber.toString());
     _emailController = TextEditingController(text: initialEmail);
     _passController = TextEditingController(text: initialPass);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-       getUserData();
+      getUserData();
     });
   }
 
   Future<void> getUserData() async {
- String userId = Provider.of<UserState>(context, listen: false).userId; 
+    String userId = Provider.of<UserState>(context, listen: false).userId;
     DocumentSnapshot<Map<String, dynamic>> userDocument =
         await FirebaseFirestore.instance
             .collection('student')
@@ -62,24 +62,25 @@ class _studentAccount extends State<studentAccount> {
         initialPass = userDocument.get('password');
 
         String schoolId = userDocument.get('schoolId');
-      getSchoolData(schoolId);
+        getSchoolData(schoolId);
       });
     }
   }
-  Future<void> getSchoolData(String schoolId) async {
-  DocumentSnapshot<Map<String, dynamic>> schoolDocument =
-      await FirebaseFirestore.instance
-          .collection('school')
-          .doc(schoolId)
-          .get();
 
-  if (schoolDocument.exists) {
-    setState(() {
-      // Update your state with the retrieved data
-      initialSchool = schoolDocument.get('schoolName');
-    });
+  Future<void> getSchoolData(String schoolId) async {
+    DocumentSnapshot<Map<String, dynamic>> schoolDocument =
+        await FirebaseFirestore.instance
+            .collection('school')
+            .doc(schoolId)
+            .get();
+
+    if (schoolDocument.exists) {
+      setState(() {
+        // Update your state with the retrieved data
+        initialSchool = schoolDocument.get('schoolName');
+      });
+    }
   }
-}
 
   bool showNameForm = false;
   bool showClassForm = false;
@@ -93,7 +94,6 @@ class _studentAccount extends State<studentAccount> {
   String modifiedEmail = "";
   String modifiedPass = "";
 
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -104,77 +104,77 @@ class _studentAccount extends State<studentAccount> {
     super.dispose();
   }
 
- void updateName(String value) {
- setState(() {
-    modifiedName = value.isNotEmpty ? value : initialName;
-  });
-}
+  void updateName(String value) {
+    setState(() {
+      modifiedName = value.isNotEmpty ? value : initialName;
+    });
+  }
 
   void updateClass(String value) {
-  setState(() {
-    modifiedClass = value.isNotEmpty ? value : initialClass.toString();
-  });
+    setState(() {
+      modifiedClass = value.isNotEmpty ? value : initialClass.toString();
+    });
   }
 
   void updatePhone(String value) {
-   setState(() {
-    modifiedPhone = value.isNotEmpty ? value : initialPhoneNumber;
-  });
+    setState(() {
+      modifiedPhone = value.isNotEmpty ? value : initialPhoneNumber;
+    });
   }
 
   void updateEmail(String value) {
-   setState(() {
-    modifiedEmail = value.isNotEmpty ? value : initialEmail;
-  });
+    setState(() {
+      modifiedEmail = value.isNotEmpty ? value : initialEmail;
+    });
   }
 
   void updatePass(String value) {
-  setState(() {
-    modifiedPass = value.isNotEmpty ? value : initialPass;
-  });
+    setState(() {
+      modifiedPass = value.isNotEmpty ? value : initialPass;
+    });
   }
 
   Future<void> saveUserData() async {
-String userId = Provider.of<UserState>(context, listen: false).userId; 
+    String userId = Provider.of<UserState>(context, listen: false).userId;
     try {
-    Map<String, dynamic> updatedData = {};
+      Map<String, dynamic> updatedData = {};
 
-    if (modifiedName.isNotEmpty && modifiedName != initialName) {
-      updatedData['name'] = modifiedName;
-    }
-
-    if (modifiedClass.isNotEmpty && modifiedClass != initialClass.toString()) {
-      updatedData['grade'] = modifiedClass;
-      int? modifiedClassInt = int.tryParse(modifiedClass);
-      if (modifiedClassInt != null) {
-        initialClass = modifiedClassInt;
+      if (modifiedName.isNotEmpty && modifiedName != initialName) {
+        updatedData['name'] = modifiedName;
       }
-    }
+
+      if (modifiedClass.isNotEmpty &&
+          modifiedClass != initialClass.toString()) {
+        updatedData['grade'] = modifiedClass;
+        int? modifiedClassInt = int.tryParse(modifiedClass);
+        if (modifiedClassInt != null) {
+          initialClass = modifiedClassInt;
+        }
+      }
 
       if (modifiedPhone.isNotEmpty && modifiedPhone != initialPhoneNumber) {
-      updatedData['phoneNumber'] = modifiedPhone;
-    }
+        updatedData['phoneNumber'] = modifiedPhone;
+      }
 
-     if (modifiedEmail.isNotEmpty && modifiedEmail != initialEmail) {
-      updatedData['email'] = modifiedEmail;
-    }
+      if (modifiedEmail.isNotEmpty && modifiedEmail != initialEmail) {
+        updatedData['email'] = modifiedEmail;
+      }
 
-     if (modifiedPass.isNotEmpty && modifiedPass != initialPass) {
-      updatedData['pass'] = modifiedPass;
-    }
+      if (modifiedPass.isNotEmpty && modifiedPass != initialPass) {
+        updatedData['password'] = modifiedPass;
+      }
 
       if (updatedData.isNotEmpty) {
         // Update the state with the modified values before sending to the database
         setState(() {
-        modifiedName = initialName;
-        modifiedClass = initialClass.toString();
-        modifiedPhone = initialPhoneNumber;
-        modifiedEmail = initialEmail;
-        modifiedPass = initialPass;
+          modifiedName = initialName;
+          modifiedClass = initialClass.toString();
+          modifiedPhone = initialPhoneNumber;
+          modifiedEmail = initialEmail;
+          modifiedPass = initialPass;
         });
-     
-    // Handle the error if necessary
-  
+
+        // Handle the error if necessary
 
         // Send the modified data to the database
         await FirebaseFirestore.instance
@@ -305,13 +305,18 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                                 visible: showNameForm,
                                 child: TextFormField(
                                   textAlign: TextAlign.right,
-                                  //autovalidateMode:
-                                  //AutovalidateMode.onUserInteraction,
-                                  //controller: _firstnameController,
-                                  //validator: validateFirstnam
-                                  //validator: validationPhoneNumber,
                                   controller: _nameController,
-                                  onChanged: updateName,
+                                  onChanged: (value) {
+                                    if (value.trim().isEmpty) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text('يرجى إدخال إسمك')),
+                                      );
+                                    } else {
+                                      updateName(value);
+                                    }
+                                  },
                                   decoration: InputDecoration(
                                     labelText: 'الرجاء ادخال الاسم',
                                   ),
@@ -322,13 +327,15 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                               visible: !showNameForm,
                               child: Expanded(
                                 child: Padding(
-                                  padding: EdgeInsets.only(left: 100),
-                                  child: Text(
-                                    modifiedName.isNotEmpty
-                                        ? modifiedName
-                                        : initialName,
-                                    style: TextStyle(fontSize: 18),
-                                  ),
+                                  padding:  EdgeInsets.zero,
+                                  child: 
+                                      Text(
+                                        modifiedName.isNotEmpty
+                                            ? modifiedName
+                                            : initialName,
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    
                                 ),
                               ),
                             ),
@@ -386,13 +393,19 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                                 visible: showClassForm,
                                 child: TextFormField(
                                   textAlign: TextAlign.right,
-                                  //autovalidateMode:
-                                  //AutovalidateMode.onUserInteraction,
-                                  //controller: _firstnameController,
-                                  //validator: validateFirstnam
-                                  //validator: validationPhoneNumber,
                                   controller: _classController,
-                                  onChanged: updateClass,
+                                  onChanged: (value) {
+                                    if (value.trim().isEmpty) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'يرجى ادخال الصف الدراسي')),
+                                      );
+                                    } else {
+                                      updateClass(value);
+                                    }
+                                  },
                                   decoration: InputDecoration(
                                     labelText: 'الرجاء ادخال الصف الدراسي',
                                   ),
@@ -403,7 +416,7 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                               visible: !showClassForm,
                               child: Expanded(
                                 child: Padding(
-                                  padding: EdgeInsets.only(left: 60),
+                                    padding:    EdgeInsets.only(left: 110),
                                   child: Text(
                                     modifiedClass.isNotEmpty
                                         ? modifiedClass
@@ -508,22 +521,27 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                                   child: Visibility(
                                     visible: showPhoneNumberForm,
                                     child: TextFormField(
-                                      textAlign: TextAlign.right,
-                                      //autovalidateMode:
-                                      //AutovalidateMode.onUserInteraction,
-                                      //controller: _firstnameController,
-                                      //validator: validateFirstnam
-                                      //validator: validationPhoneNumber,
-                                      maxLength: 12,
-                                      autovalidateMode:
-                                          AutovalidateMode.onUserInteraction,
-                                      keyboardType: TextInputType.number,
-                                      decoration: InputDecoration(
-                                        hintText: ("9665********"),
-                                      ),
-                                      controller: _phoneNumberController,
-                                      onChanged: updatePhone,
-                                    ),
+                                        textAlign: TextAlign.right,
+                                        maxLength: 12,
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+                                        keyboardType: TextInputType.number,
+                                        decoration: InputDecoration(
+                                          hintText: ("9665********"),
+                                        ),
+                                        controller: _phoneNumberController,
+                                        onChanged: (value) {
+                                          if (value.trim().length < 10) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                  content: Text(
+                                                      'يرجى إدخال رقم هاتف صالح')),
+                                            );
+                                          } else {
+                                            updatePhone(value);
+                                          }
+                                        }),
                                   ),
                                 ),
                                 Visibility(
@@ -590,13 +608,23 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                                         visible: showEmailForm,
                                         child: TextFormField(
                                           textAlign: TextAlign.left,
-                                          //autovalidateMode:
-                                          //AutovalidateMode.onUserInteraction,
-                                          //controller: _firstnameController,
-                                          //validator: validateFirstnam
-                                          //validator: validationPhoneNumber,
                                           controller: _emailController,
-                                          onChanged: updateEmail,
+                                          onChanged: (value) {
+                                            if (value.trim().isEmpty ||
+                                                !value.trim().contains('@') ||
+                                                !value
+                                                    .trim()
+                                                    .contains('.com')) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                    content: Text(
+                                                        'يرجى إدخال عنوان بريد إلكتروني صالح')),
+                                              );
+                                            } else {
+                                              updateEmail(value);
+                                            }
+                                          },
                                           decoration: InputDecoration(
                                             labelText:
                                                 'الرجاء ادخال البريد الالكتروني',
@@ -668,13 +696,19 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                                             visible: showPassForm,
                                             child: TextFormField(
                                               textAlign: TextAlign.left,
-                                              //autovalidateMode:
-                                              //AutovalidateMode.onUserInteraction,
-                                              //controller: _firstnameController,
-                                              //validator: validateFirstnam
-                                              //validator: validationPhoneNumber,
                                               controller: _passController,
-                                              onChanged: updatePass,
+                                              onChanged: (value) {
+                                                if (value.trim().length < 6) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                        content: Text(
+                                                            'يرجى إدخال كلمة مرور صالحة (لا تقل عن 6 أحرف)')),
+                                                  );
+                                                } else {
+                                                  updatePass(value);
+                                                }
+                                              },
                                               obscureText: true,
                                               decoration: InputDecoration(
                                                 labelText:

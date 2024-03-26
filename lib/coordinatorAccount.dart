@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+import 'package:tatwaei/homePageCoordinator.dart';
 import 'user_state.dart';
 import 'dart:math';
 
@@ -733,6 +734,16 @@ class _coordinatorAccount extends State<coordinatorAccount> {
                                               );
                                             },
                                           );
+                                          Future.delayed(Duration(seconds: 1),
+                                              () {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          homePageCoordinator()),
+                                            );
+                                          });
                                         } catch (error) {
                                           print(
                                               'Error saving user data: $error');

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+import 'package:tatwaei/homePageStudent.dart';
 import 'user_state.dart';
 import 'dart:math';
 
@@ -62,7 +63,7 @@ class _studentAccount extends State<studentAccount> {
       return "يرجى إدخال الصف الدراسي";
     } else if ((validCharacters.hasMatch(formClass))) {
       return 'يجب أن يحتوي الصف على ارقام فقط';
-    } else if ( formClass.length < 2 || formClass.length > 2) {
+    } else if (formClass.length < 2 || formClass.length > 2) {
       return 'يجب أن يحتوى على رقمين فقط ';
     } else
       return null;
@@ -784,6 +785,16 @@ class _studentAccount extends State<studentAccount> {
                                                 );
                                               },
                                             );
+                                            Future.delayed(Duration(seconds: 1),
+                                                () {
+                                              Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        HomePageStudent()),
+                                              );
+                                            });
                                           } catch (error) {
                                             print(
                                                 'Error saving user data: $error');

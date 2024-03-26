@@ -153,8 +153,7 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                           title: Stack(
                             children: [
                               Positioned(
-                                  top: 12,
-                                  left: 120,
+                                  right: 0,
                                   child: Container(
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 20),
@@ -164,17 +163,18 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
                                     ),
                                     child: Text(
                                       studentList[index].name,
+                                      textAlign: TextAlign.start,
                                       style: TextStyle(
                                         color: Color(0xFF0A2F5A),
                                       ),
                                     ),
                                   )),
                               Positioned(
-                                  top: 12,
-                                  left: 20,
+                                  top: 40,
+                                  left: 15,
                                   child: Container(
                                     padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
+                                        EdgeInsets.symmetric(horizontal: 30),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(15),
                                       color: Color.fromARGB(115, 127, 179, 71),

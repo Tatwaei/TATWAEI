@@ -31,6 +31,74 @@ class _studentAccount extends State<studentAccount> {
   late TextEditingController _emailController;
   late TextEditingController _passController;
 
+  late TextEditingController _nameCheckController =
+      TextEditingController(text: modifiedName);
+  late TextEditingController _classCheckController =
+      TextEditingController(text: modifiedClass);
+  late TextEditingController _emailCheckController =
+      TextEditingController(text: modifiedEmail);
+  late TextEditingController _phonenCheckController =
+      TextEditingController(text: modifiedPhone);
+  late TextEditingController _PassCheckController =
+      TextEditingController(text: modifiedPass);
+
+  String? validateName(String? formName) {
+    final validCharacters = RegExp(r'[!@#<>?":_`~;[\]\/|=+)(*&^%0-9-]');
+
+    if (formName == null || formName.trim().isEmpty) {
+      return "يرجى إدخال اسم";
+    } else if ((validCharacters.hasMatch(formName))) {
+      return 'يجب أن يحتوي الاسم على حروف فقط';
+    } else if (formName != null && formName.length < 2) {
+      return 'يجب أن يحتوى الاسم على حرفين على الأقل';
+    } else
+      return null;
+  }
+
+  String? validateClass(String? formClass) {
+    final validCharacters = RegExp(r'[!@#<>?":_`~;[\]\/|=+)(*&^%a-zA-Z]');
+
+    if (formClass == null || formClass.trim().isEmpty) {
+      return "يرجى إدخال الصف الدراسي";
+    } else if ((validCharacters.hasMatch(formClass))) {
+      return 'يجب أن يحتوي الصف على ارقام فقط';
+    } else if ( formClass.length < 2 || formClass.length > 2) {
+      return 'يجب أن يحتوى على رقمين فقط ';
+    } else
+      return null;
+  }
+
+  String? validatePhone(String? formPhone) {
+    RegExp regex =
+        RegExp(r'^(00966|966|\+966|05|5)(5|0|3|6|4|9|1|8|7)([0-9]{8})$');
+
+    if (formPhone == null || formPhone.trim().isEmpty) {
+      return "يرجى إدخال رقم هاتف";
+    } else if (formPhone.length < 10) {
+      return "يجب أن يحتوي الرقم على 10 خانات";
+    }
+    return null;
+  }
+
+  String? validateEmail(String? formEmail) {
+    if (formEmail == null || formEmail.trim().isEmpty) {
+      return "يرجى إدخال بريد إلكتروني";
+    }
+    String pattern = r'\w+@\w+\.\w+';
+    RegExp regex = RegExp(pattern);
+    if (!regex.hasMatch(formEmail)) return 'يرج إدخال عنوان بريد صحيح';
+    return null;
+  }
+
+  String? validatePass(String? formPass) {
+    if (formPass == null || formPass.trim().isEmpty) {
+      return "يرجى إدخال كلمة مرور";
+    } else if (formPass.length < 6) {
+      return "  يجب أن يحتوي الرقم على 6 خانات على الاقل";
+    }
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -306,17 +374,10 @@ class _studentAccount extends State<studentAccount> {
                                 child: TextFormField(
                                   textAlign: TextAlign.right,
                                   controller: _nameController,
-                                  onChanged: (value) {
-                                    if (value.trim().isEmpty) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                            content: Text('يرجى إدخال إسمك')),
-                                      );
-                                    } else {
-                                      updateName(value);
-                                    }
-                                  },
+                                  onChanged: updateName,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  validator: validateName,
                                   decoration: InputDecoration(
                                     labelText: 'الرجاء ادخال الاسم',
                                   ),
@@ -327,15 +388,13 @@ class _studentAccount extends State<studentAccount> {
                               visible: !showNameForm,
                               child: Expanded(
                                 child: Padding(
-                                  padding:  EdgeInsets.zero,
-                                  child: 
-                                      Text(
-                                        modifiedName.isNotEmpty
-                                            ? modifiedName
-                                            : initialName,
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                    
+                                  padding: EdgeInsets.zero,
+                                  child: Text(
+                                    modifiedName.isNotEmpty
+                                        ? modifiedName
+                                        : initialName,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
                                 ),
                               ),
                             ),
@@ -394,18 +453,10 @@ class _studentAccount extends State<studentAccount> {
                                 child: TextFormField(
                                   textAlign: TextAlign.right,
                                   controller: _classController,
-                                  onChanged: (value) {
-                                    if (value.trim().isEmpty) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                'يرجى ادخال الصف الدراسي')),
-                                      );
-                                    } else {
-                                      updateClass(value);
-                                    }
-                                  },
+                                  onChanged: updateClass,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  validator: validateClass,
                                   decoration: InputDecoration(
                                     labelText: 'الرجاء ادخال الصف الدراسي',
                                   ),
@@ -416,7 +467,7 @@ class _studentAccount extends State<studentAccount> {
                               visible: !showClassForm,
                               child: Expanded(
                                 child: Padding(
-                                    padding:    EdgeInsets.only(left: 110),
+                                  padding: EdgeInsets.only(left: 110),
                                   child: Text(
                                     modifiedClass.isNotEmpty
                                         ? modifiedClass
@@ -521,27 +572,18 @@ class _studentAccount extends State<studentAccount> {
                                   child: Visibility(
                                     visible: showPhoneNumberForm,
                                     child: TextFormField(
-                                        textAlign: TextAlign.right,
-                                        maxLength: 12,
-                                        autovalidateMode:
-                                            AutovalidateMode.onUserInteraction,
-                                        keyboardType: TextInputType.number,
-                                        decoration: InputDecoration(
-                                          hintText: ("9665********"),
-                                        ),
-                                        controller: _phoneNumberController,
-                                        onChanged: (value) {
-                                          if (value.trim().length < 10) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                  content: Text(
-                                                      'يرجى إدخال رقم هاتف صالح')),
-                                            );
-                                          } else {
-                                            updatePhone(value);
-                                          }
-                                        }),
+                                      textAlign: TextAlign.right,
+                                      maxLength: 10,
+                                      keyboardType: TextInputType.number,
+                                      decoration: InputDecoration(
+                                        hintText: ("05********"),
+                                      ),
+                                      controller: _phoneNumberController,
+                                      onChanged: updatePhone,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+                                      validator: validatePhone,
+                                    ),
                                   ),
                                 ),
                                 Visibility(
@@ -609,22 +651,10 @@ class _studentAccount extends State<studentAccount> {
                                         child: TextFormField(
                                           textAlign: TextAlign.left,
                                           controller: _emailController,
-                                          onChanged: (value) {
-                                            if (value.trim().isEmpty ||
-                                                !value.trim().contains('@') ||
-                                                !value
-                                                    .trim()
-                                                    .contains('.com')) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                    content: Text(
-                                                        'يرجى إدخال عنوان بريد إلكتروني صالح')),
-                                              );
-                                            } else {
-                                              updateEmail(value);
-                                            }
-                                          },
+                                          onChanged: updateEmail,
+                                          autovalidateMode: AutovalidateMode
+                                              .onUserInteraction,
+                                          validator: validateEmail,
                                           decoration: InputDecoration(
                                             labelText:
                                                 'الرجاء ادخال البريد الالكتروني',
@@ -697,18 +727,10 @@ class _studentAccount extends State<studentAccount> {
                                             child: TextFormField(
                                               textAlign: TextAlign.left,
                                               controller: _passController,
-                                              onChanged: (value) {
-                                                if (value.trim().length < 6) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                        content: Text(
-                                                            'يرجى إدخال كلمة مرور صالحة (لا تقل عن 6 أحرف)')),
-                                                  );
-                                                } else {
-                                                  updatePass(value);
-                                                }
-                                              },
+                                              onChanged: updatePass,
+                                              autovalidateMode: AutovalidateMode
+                                                  .onUserInteraction,
+                                              validator: validatePass,
                                               obscureText: true,
                                               decoration: InputDecoration(
                                                 labelText:
@@ -766,9 +788,6 @@ class _studentAccount extends State<studentAccount> {
                                             print(
                                                 'Error saving user data: $error');
                                           }
-                                        } else {
-                                          // No changes made, show a message or handle accordingly
-                                          print('No changes made');
                                         }
                                       },
                                       child: Text(

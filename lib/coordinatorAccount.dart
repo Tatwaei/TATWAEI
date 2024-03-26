@@ -736,13 +736,7 @@ class _coordinatorAccount extends State<coordinatorAccount> {
                                           );
                                           Future.delayed(Duration(seconds: 1),
                                               () {
-                                            Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          homePageCoordinator()),
-                                            );
+                                            Navigator.of(context).pop();
                                           });
                                         } catch (error) {
                                           print(

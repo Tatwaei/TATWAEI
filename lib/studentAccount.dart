@@ -787,13 +787,7 @@ class _studentAccount extends State<studentAccount> {
                                             );
                                             Future.delayed(Duration(seconds: 1),
                                                 () {
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (BuildContext
-                                                            context) =>
-                                                        HomePageStudent()),
-                                              );
+                                               Navigator.of(context).pop();
                                             });
                                           } catch (error) {
                                             print(

@@ -246,7 +246,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                         FirebaseFirestore.instance
                             .collection('seat')
                             .doc(documentId)
-                            .update({'certificateStatus': false}).then((_) {
+                            .update({'certificateStatus': false,'certificate': ''}).then((_) {
                           // Show a success message
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(

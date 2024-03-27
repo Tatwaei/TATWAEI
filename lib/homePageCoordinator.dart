@@ -23,6 +23,14 @@ class homePageCoordinator extends StatefulWidget {
 }
 
 class _HomePageState extends State<homePageCoordinator> {
+  Future<void> onRefresh() async {
+    var newOpp = await getIngredients();
+    setState(() {
+      opp = newOpp;
+      filteredItems = newOpp; // Update this as needed for your app's logic
+    });
+  }
+
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
   late String initialSchool = "";
@@ -609,28 +617,28 @@ class _HomePageState extends State<homePageCoordinator> {
                   },
                 ),
               ),
-             
               Container(
-  margin: EdgeInsets.only(top: 10, bottom: 10),
-  width: 100,
-  color: Color.fromARGB(115, 127, 179, 71),
-  child: ListTile(
-    title: Text(
-      "فرص التطوع",
-      style: TextStyle(
-        color: Color(0xFF0A2F5A),
-        fontSize: 24,
-      ),
-    ),
-    onTap: () {
-      // Navigate to the adminOppo page
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => coordinatorOppo()),
-      );
-    },
-  ),
-),
+                margin: EdgeInsets.only(top: 10, bottom: 10),
+                width: 100,
+                color: Color.fromARGB(115, 127, 179, 71),
+                child: ListTile(
+                  title: Text(
+                    "فرص التطوع",
+                    style: TextStyle(
+                      color: Color(0xFF0A2F5A),
+                      fontSize: 24,
+                    ),
+                  ),
+                  onTap: () {
+                    // Navigate to the adminOppo page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => coordinatorOppo()),
+                    );
+                  },
+                ),
+              ),
               Container(
                 margin: EdgeInsets.only(top: 10, bottom: 10),
                 width: 100,
@@ -771,131 +779,138 @@ class _HomePageState extends State<homePageCoordinator> {
             ),
             SizedBox(height: 20),
             Expanded(
-              child: ListView.builder(
-                itemCount: filteredItems.length,
-                itemBuilder: (context, index) {
-                  return FutureBuilder<String>(
-                    future: getSource(filteredItems[index]),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        // Return a loading indicator if the data is still loading
-                        return CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        // Handle the error case
-                        return Text('Error loading source');
-                      } else {
-                        // Data is loaded successfully, display the source
-                        String source = snapshot.data!;
-                        return Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            color: Color(0xFFf7f6d4),
-                          ),
-                          width: 70.0,
-                          height: 90.0,
-                          margin: EdgeInsets.only(bottom: 20),
-                          child: ListTile(
-                            title: Stack(
-                              children: [
-                                Positioned(
-                                  top: 12,
-                                  right: 80,
-                                  child: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Color.fromARGB(115, 127, 179, 71),
-                                    ),
-                                    child: Text(
-                                      filteredItems[index]['name'],
-                                      textDirection: TextDirection.rtl,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Color(0xFF0A2F5A),
-                                        //    backgroundColor:
-                                        //     Color.fromARGB(115, 127, 179, 71),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 50,
-                                  left: 130,
-                                  child: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Color.fromARGB(115, 127, 179, 71),
-                                    ),
-                                    child: Text(
-                                      source,
-                                      style: TextStyle(
-                                        color: Color(0xFF0A2F5A),
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 50,
-                                  left: 20,
-                                  child: Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 20),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Color.fromARGB(115, 127, 179, 71),
-                                    ),
-                                    child: Text(
-                                      filteredItems[index]['interest'],
-                                      style: TextStyle(
-                                        color: Color(0xFF0A2F5A),
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  child: Container(
-                                    width: 70.0,
-                                    height: 70.0,
-                                    decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.white,
-                                          spreadRadius: 5,
-                                          blurRadius: 7,
-                                          offset: Offset(0,
-                                              3), // changes position of shadow
-                                        ),
-                                      ],
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        fit: BoxFit.fill,
-                                        image: AssetImage('images/logo1.png'),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+              child: RefreshIndicator(
+                onRefresh: onRefresh,
+                child: ListView.builder(
+                  itemCount: filteredItems.length,
+                  itemBuilder: (context, index) {
+                    return FutureBuilder<String>(
+                      future: getSource(filteredItems[index]),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          // Return a loading indicator if the data is still loading
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          // Handle the error case
+                          return Text('Error loading source');
+                        } else {
+                          // Data is loaded successfully, display the source
+                          String source = snapshot.data!;
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Color(0xFFf7f6d4),
                             ),
-                            onTap: () {
-                              String oppId = filteredItems[index]
-                                  .id; // Assuming filteredItems is a list of DocumentSnapshots
-                              print('Clicked oppId: $oppId');
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      OpportunityDetails(oppId: oppId)));
-                            },
-                          ),
-                        );
-                      }
-                    },
-                  );
-                },
+                            width: 70.0,
+                            height: 90.0,
+                            margin: EdgeInsets.only(bottom: 20),
+                            child: ListTile(
+                              title: Stack(
+                                children: [
+                                  Positioned(
+                                    top: 12,
+                                    right: 80,
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color:
+                                            Color.fromARGB(115, 127, 179, 71),
+                                      ),
+                                      child: Text(
+                                        filteredItems[index]['name'],
+                                        textDirection: TextDirection.rtl,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Color(0xFF0A2F5A),
+                                          //    backgroundColor:
+                                          //     Color.fromARGB(115, 127, 179, 71),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 50,
+                                    left: 130,
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color:
+                                            Color.fromARGB(115, 127, 179, 71),
+                                      ),
+                                      child: Text(
+                                        source,
+                                        style: TextStyle(
+                                          color: Color(0xFF0A2F5A),
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 50,
+                                    left: 20,
+                                    child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color:
+                                            Color.fromARGB(115, 127, 179, 71),
+                                      ),
+                                      child: Text(
+                                        filteredItems[index]['interest'],
+                                        style: TextStyle(
+                                          color: Color(0xFF0A2F5A),
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 0,
+                                    child: Container(
+                                      width: 70.0,
+                                      height: 70.0,
+                                      decoration: BoxDecoration(
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.white,
+                                            spreadRadius: 5,
+                                            blurRadius: 7,
+                                            offset: Offset(0,
+                                                3), // changes position of shadow
+                                          ),
+                                        ],
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: AssetImage('images/logo1.png'),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              onTap: () {
+                                String oppId = filteredItems[index]
+                                    .id; // Assuming filteredItems is a list of DocumentSnapshots
+                                print('Clicked oppId: $oppId');
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        OpportunityDetails(oppId: oppId)));
+                              },
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ],

@@ -12,6 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tatwaei/login.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+final FirebaseAuth _auth = FirebaseAuth.instance;
 CollectionReference internalOpportunity =
     FirebaseFirestore.instance.collection('internalOpportunity');
 CollectionReference externalOpportunity =
@@ -23,14 +24,6 @@ class homePageCoordinator extends StatefulWidget {
 }
 
 class _HomePageState extends State<homePageCoordinator> {
-  Future<void> onRefresh() async {
-    var newOpp = await getIngredients();
-    setState(() {
-      opp = newOpp;
-      filteredItems = newOpp; // Update this as needed for your app's logic
-    });
-  }
-
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
   late String initialSchool = "";
@@ -41,13 +34,28 @@ class _HomePageState extends State<homePageCoordinator> {
     CollectionReference externalOpportunity =
         _firestore.collection('externalOpportunity');
 
-    QuerySnapshot internalSnapshot = await internalOpportunity.get();
+    DateTime now = DateTime.now();
+
+    // Get current user's email
+    User? user = _auth.currentUser;
+    String? email = user?.email;
+
+    // Fetch opportunities where coordinator_email matches the current user's email
+    QuerySnapshot snapshot = await internalOpportunity
+        .where('coordinator_email', isEqualTo: email)
+        .get();
+    setState(() {
+      internal = snapshot.docs;
+    });
+
     QuerySnapshot externalSnapshot = await externalOpportunity.get();
 
-    List<DocumentSnapshot> internal = internalSnapshot.docs;
     List<DocumentSnapshot> external = externalSnapshot.docs;
 
-    List<DocumentSnapshot> opp = [...internal, ...external];
+    List<DocumentSnapshot> opp = [...internal, ...external].where((doc) {
+      DateTime startDate = doc['startDate'].toDate();
+      return startDate.isAfter(now);
+    }).toList();
 
     return opp;
   }
@@ -758,6 +766,7 @@ class _HomePageState extends State<homePageCoordinator> {
                       onSubmitted: (value) {
                         _performSearch();
                       },
+                      textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+import 'package:tatwaei/homePageStudent.dart';
 import 'user_state.dart';
 import 'dart:math';
 
@@ -31,22 +32,90 @@ class _studentAccount extends State<studentAccount> {
   late TextEditingController _emailController;
   late TextEditingController _passController;
 
+  late TextEditingController _nameCheckController =
+      TextEditingController(text: modifiedName);
+  late TextEditingController _classCheckController =
+      TextEditingController(text: modifiedClass);
+  late TextEditingController _emailCheckController =
+      TextEditingController(text: modifiedEmail);
+  late TextEditingController _phonenCheckController =
+      TextEditingController(text: modifiedPhone);
+  late TextEditingController _PassCheckController =
+      TextEditingController(text: modifiedPass);
+
+  String? validateName(String? formName) {
+    final validCharacters = RegExp(r'[!@#<>?":_`~;[\]\/|=+)(*&^%0-9-]');
+
+    if (formName == null || formName.trim().isEmpty) {
+      return "يرجى إدخال اسم";
+    } else if ((validCharacters.hasMatch(formName))) {
+      return 'يجب أن يحتوي الاسم على حروف فقط';
+    } else if (formName != null && formName.length < 2) {
+      return 'يجب أن يحتوى الاسم على حرفين على الأقل';
+    } else
+      return null;
+  }
+
+  String? validateClass(String? formClass) {
+    final validCharacters = RegExp(r'[!@#<>?":_`~;[\]\/|=+)(*&^%a-zA-Z]');
+
+    if (formClass == null || formClass.trim().isEmpty) {
+      return "يرجى إدخال الصف الدراسي";
+    } else if ((validCharacters.hasMatch(formClass))) {
+      return 'يجب أن يحتوي الصف على ارقام فقط';
+    } else if (formClass.length < 2 || formClass.length > 2) {
+      return 'يجب أن يحتوى على رقمين فقط ';
+    } else
+      return null;
+  }
+
+  String? validatePhone(String? formPhone) {
+    RegExp regex =
+        RegExp(r'^(00966|966|\+966|05|5)(5|0|3|6|4|9|1|8|7)([0-9]{8})$');
+
+    if (formPhone == null || formPhone.trim().isEmpty) {
+      return "يرجى إدخال رقم هاتف";
+    } else if (formPhone.length < 10) {
+      return "يجب أن يحتوي الرقم على 10 خانات";
+    }
+    return null;
+  }
+
+  String? validateEmail(String? formEmail) {
+    if (formEmail == null || formEmail.trim().isEmpty) {
+      return "يرجى إدخال بريد إلكتروني";
+    }
+    String pattern = r'\w+@\w+\.\w+';
+    RegExp regex = RegExp(pattern);
+    if (!regex.hasMatch(formEmail)) return 'يرج إدخال عنوان بريد صحيح';
+    return null;
+  }
+
+  String? validatePass(String? formPass) {
+    if (formPass == null || formPass.trim().isEmpty) {
+      return "يرجى إدخال كلمة مرور";
+    } else if (formPass.length < 6) {
+      return "  يجب أن يحتوي الرقم على 6 خانات على الاقل";
+    }
+    return null;
+  }
 
   @override
   void initState() {
     super.initState();
-     _nameController = TextEditingController(text: initialName);
+    _nameController = TextEditingController(text: initialName);
     _classController = TextEditingController(text: initialClass.toString());
-    _phoneNumberController = TextEditingController(text: initialPhoneNumber.toString());
+    _phoneNumberController =
+        TextEditingController(text: initialPhoneNumber.toString());
     _emailController = TextEditingController(text: initialEmail);
     _passController = TextEditingController(text: initialPass);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-       getUserData();
+      getUserData();
     });
   }
 
   Future<void> getUserData() async {
- String userId = Provider.of<UserState>(context, listen: false).userId; 
+    String userId = Provider.of<UserState>(context, listen: false).userId;
     DocumentSnapshot<Map<String, dynamic>> userDocument =
         await FirebaseFirestore.instance
             .collection('student')
@@ -62,24 +131,25 @@ class _studentAccount extends State<studentAccount> {
         initialPass = userDocument.get('password');
 
         String schoolId = userDocument.get('schoolId');
-      getSchoolData(schoolId);
+        getSchoolData(schoolId);
       });
     }
   }
-  Future<void> getSchoolData(String schoolId) async {
-  DocumentSnapshot<Map<String, dynamic>> schoolDocument =
-      await FirebaseFirestore.instance
-          .collection('school')
-          .doc(schoolId)
-          .get();
 
-  if (schoolDocument.exists) {
-    setState(() {
-      // Update your state with the retrieved data
-      initialSchool = schoolDocument.get('schoolName');
-    });
+  Future<void> getSchoolData(String schoolId) async {
+    DocumentSnapshot<Map<String, dynamic>> schoolDocument =
+        await FirebaseFirestore.instance
+            .collection('school')
+            .doc(schoolId)
+            .get();
+
+    if (schoolDocument.exists) {
+      setState(() {
+        // Update your state with the retrieved data
+        initialSchool = schoolDocument.get('schoolName');
+      });
+    }
   }
-}
 
   bool showNameForm = false;
   bool showClassForm = false;
@@ -93,7 +163,6 @@ class _studentAccount extends State<studentAccount> {
   String modifiedEmail = "";
   String modifiedPass = "";
 
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -104,77 +173,77 @@ class _studentAccount extends State<studentAccount> {
     super.dispose();
   }
 
- void updateName(String value) {
- setState(() {
-    modifiedName = value.isNotEmpty ? value : initialName;
-  });
-}
+  void updateName(String value) {
+    setState(() {
+      modifiedName = value.isNotEmpty ? value : initialName;
+    });
+  }
 
   void updateClass(String value) {
-  setState(() {
-    modifiedClass = value.isNotEmpty ? value : initialClass.toString();
-  });
+    setState(() {
+      modifiedClass = value.isNotEmpty ? value : initialClass.toString();
+    });
   }
 
   void updatePhone(String value) {
-   setState(() {
-    modifiedPhone = value.isNotEmpty ? value : initialPhoneNumber;
-  });
+    setState(() {
+      modifiedPhone = value.isNotEmpty ? value : initialPhoneNumber;
+    });
   }
 
   void updateEmail(String value) {
-   setState(() {
-    modifiedEmail = value.isNotEmpty ? value : initialEmail;
-  });
+    setState(() {
+      modifiedEmail = value.isNotEmpty ? value : initialEmail;
+    });
   }
 
   void updatePass(String value) {
-  setState(() {
-    modifiedPass = value.isNotEmpty ? value : initialPass;
-  });
+    setState(() {
+      modifiedPass = value.isNotEmpty ? value : initialPass;
+    });
   }
 
   Future<void> saveUserData() async {
-String userId = Provider.of<UserState>(context, listen: false).userId; 
+    String userId = Provider.of<UserState>(context, listen: false).userId;
     try {
-    Map<String, dynamic> updatedData = {};
+      Map<String, dynamic> updatedData = {};
 
-    if (modifiedName.isNotEmpty && modifiedName != initialName) {
-      updatedData['name'] = modifiedName;
-    }
-
-    if (modifiedClass.isNotEmpty && modifiedClass != initialClass.toString()) {
-      updatedData['grade'] = modifiedClass;
-      int? modifiedClassInt = int.tryParse(modifiedClass);
-      if (modifiedClassInt != null) {
-        initialClass = modifiedClassInt;
+      if (modifiedName.isNotEmpty && modifiedName != initialName) {
+        updatedData['name'] = modifiedName;
       }
-    }
+
+      if (modifiedClass.isNotEmpty &&
+          modifiedClass != initialClass.toString()) {
+        updatedData['grade'] = modifiedClass;
+        int? modifiedClassInt = int.tryParse(modifiedClass);
+        if (modifiedClassInt != null) {
+          initialClass = modifiedClassInt;
+        }
+      }
 
       if (modifiedPhone.isNotEmpty && modifiedPhone != initialPhoneNumber) {
-      updatedData['phoneNumber'] = modifiedPhone;
-    }
+        updatedData['phoneNumber'] = modifiedPhone;
+      }
 
-     if (modifiedEmail.isNotEmpty && modifiedEmail != initialEmail) {
-      updatedData['email'] = modifiedEmail;
-    }
+      if (modifiedEmail.isNotEmpty && modifiedEmail != initialEmail) {
+        updatedData['email'] = modifiedEmail;
+      }
 
-     if (modifiedPass.isNotEmpty && modifiedPass != initialPass) {
-      updatedData['pass'] = modifiedPass;
-    }
+      if (modifiedPass.isNotEmpty && modifiedPass != initialPass) {
+        updatedData['password'] = modifiedPass;
+      }
 
       if (updatedData.isNotEmpty) {
         // Update the state with the modified values before sending to the database
         setState(() {
-        modifiedName = initialName;
-        modifiedClass = initialClass.toString();
-        modifiedPhone = initialPhoneNumber;
-        modifiedEmail = initialEmail;
-        modifiedPass = initialPass;
+          modifiedName = initialName;
+          modifiedClass = initialClass.toString();
+          modifiedPhone = initialPhoneNumber;
+          modifiedEmail = initialEmail;
+          modifiedPass = initialPass;
         });
-     
-    // Handle the error if necessary
-  
+
+        // Handle the error if necessary
 
         // Send the modified data to the database
         await FirebaseFirestore.instance
@@ -305,13 +374,11 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                                 visible: showNameForm,
                                 child: TextFormField(
                                   textAlign: TextAlign.right,
-                                  //autovalidateMode:
-                                  //AutovalidateMode.onUserInteraction,
-                                  //controller: _firstnameController,
-                                  //validator: validateFirstnam
-                                  //validator: validationPhoneNumber,
                                   controller: _nameController,
                                   onChanged: updateName,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  validator: validateName,
                                   decoration: InputDecoration(
                                     labelText: 'الرجاء ادخال الاسم',
                                   ),
@@ -322,7 +389,7 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                               visible: !showNameForm,
                               child: Expanded(
                                 child: Padding(
-                                  padding: EdgeInsets.only(left: 100),
+                                  padding: EdgeInsets.zero,
                                   child: Text(
                                     modifiedName.isNotEmpty
                                         ? modifiedName
@@ -386,13 +453,11 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                                 visible: showClassForm,
                                 child: TextFormField(
                                   textAlign: TextAlign.right,
-                                  //autovalidateMode:
-                                  //AutovalidateMode.onUserInteraction,
-                                  //controller: _firstnameController,
-                                  //validator: validateFirstnam
-                                  //validator: validationPhoneNumber,
                                   controller: _classController,
                                   onChanged: updateClass,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  validator: validateClass,
                                   decoration: InputDecoration(
                                     labelText: 'الرجاء ادخال الصف الدراسي',
                                   ),
@@ -403,7 +468,7 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                               visible: !showClassForm,
                               child: Expanded(
                                 child: Padding(
-                                  padding: EdgeInsets.only(left: 60),
+                                  padding: EdgeInsets.only(left: 110),
                                   child: Text(
                                     modifiedClass.isNotEmpty
                                         ? modifiedClass
@@ -509,20 +574,16 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                                     visible: showPhoneNumberForm,
                                     child: TextFormField(
                                       textAlign: TextAlign.right,
-                                      //autovalidateMode:
-                                      //AutovalidateMode.onUserInteraction,
-                                      //controller: _firstnameController,
-                                      //validator: validateFirstnam
-                                      //validator: validationPhoneNumber,
-                                      maxLength: 12,
-                                      autovalidateMode:
-                                          AutovalidateMode.onUserInteraction,
+                                      maxLength: 10,
                                       keyboardType: TextInputType.number,
                                       decoration: InputDecoration(
-                                        hintText: ("9665********"),
+                                        hintText: ("05********"),
                                       ),
                                       controller: _phoneNumberController,
                                       onChanged: updatePhone,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+                                      validator: validatePhone,
                                     ),
                                   ),
                                 ),
@@ -590,13 +651,11 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                                         visible: showEmailForm,
                                         child: TextFormField(
                                           textAlign: TextAlign.left,
-                                          //autovalidateMode:
-                                          //AutovalidateMode.onUserInteraction,
-                                          //controller: _firstnameController,
-                                          //validator: validateFirstnam
-                                          //validator: validationPhoneNumber,
                                           controller: _emailController,
                                           onChanged: updateEmail,
+                                          autovalidateMode: AutovalidateMode
+                                              .onUserInteraction,
+                                          validator: validateEmail,
                                           decoration: InputDecoration(
                                             labelText:
                                                 'الرجاء ادخال البريد الالكتروني',
@@ -668,13 +727,11 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                                             visible: showPassForm,
                                             child: TextFormField(
                                               textAlign: TextAlign.left,
-                                              //autovalidateMode:
-                                              //AutovalidateMode.onUserInteraction,
-                                              //controller: _firstnameController,
-                                              //validator: validateFirstnam
-                                              //validator: validationPhoneNumber,
                                               controller: _passController,
                                               onChanged: updatePass,
+                                              autovalidateMode: AutovalidateMode
+                                                  .onUserInteraction,
+                                              validator: validatePass,
                                               obscureText: true,
                                               decoration: InputDecoration(
                                                 labelText:
@@ -728,13 +785,14 @@ String userId = Provider.of<UserState>(context, listen: false).userId;
                                                 );
                                               },
                                             );
+                                            Future.delayed(Duration(seconds: 1),
+                                                () {
+                                               Navigator.of(context).pop();
+                                            });
                                           } catch (error) {
                                             print(
                                                 'Error saving user data: $error');
                                           }
-                                        } else {
-                                          // No changes made, show a message or handle accordingly
-                                          print('No changes made');
                                         }
                                       },
                                       child: Text(

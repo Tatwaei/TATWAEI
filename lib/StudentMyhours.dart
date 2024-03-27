@@ -249,23 +249,31 @@ class _StudentMyhours extends State<StudentMyhours> {
               ),
               // SizedBox(height: 20.0),
               Padding(
-                padding: EdgeInsets.only(left: 5, bottom: 5, top: 1),
+                padding: EdgeInsets.only(left: 5, bottom: 5, top: 1, right: 5),
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(170, 1, 1, 1),
+                  width: 160,
+                  margin: EdgeInsets.fromLTRB(140, 1, 1, 1),
                   decoration: BoxDecoration(
                       color: Color.fromARGB(115, 127, 179, 71),
                       borderRadius: BorderRadius.circular(8)),
                   child: Text(
+                    textAlign: TextAlign
+                        .start, // This sets the text alignment to the start (right for RTL languages)
+                    textDirection: TextDirection.rtl,
                     "الساعات التي تم اكمالها",
                     style: TextStyle(color: Color(0xFF0A2F5A), fontSize: 16),
                   ),
                 ),
               ),
+
               SizedBox(height: 5.0),
               Padding(
                 padding: EdgeInsets.only(left: 5, bottom: 5, top: 1),
                 child: Container(
-                  color: Color(0xFFf7f6d4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Color(0xFFf7f6d4),
+                  ),
                   height: 280,
                   width: 400,
                   child: Stack(
@@ -298,6 +306,7 @@ class _StudentMyhours extends State<StudentMyhours> {
                           PieChartData(
                             startDegreeOffset: -90,
                             centerSpaceRadius: 50,
+                            centerSpaceColor: Color(0xFFf7f6d4),
                             sections: [
                               PieChartSectionData(
                                 color: Color.fromARGB(115, 127, 179, 71),
@@ -330,14 +339,16 @@ class _StudentMyhours extends State<StudentMyhours> {
               ),
               SizedBox(height: 30.0),
               Padding(
-                padding: EdgeInsets.only(left: 1, bottom: 5, top: 1),
+                padding: EdgeInsets.only(left: 5, bottom: 5, top: 1),
                 child: Container(
-                  //width: 70,
+                  width: 200,
                   margin: EdgeInsets.fromLTRB(130, 1, 1, 1),
                   decoration: BoxDecoration(
                       color: Color.fromARGB(115, 127, 179, 71),
                       borderRadius: BorderRadius.circular(8)),
                   child: Text(
+                    textAlign: TextAlign.start,
+                    textDirection: TextDirection.rtl,
                     "فرص تطوع تم التحقق منها",
                     style: TextStyle(color: Color(0xFF0A2F5A), fontSize: 16),
                   ),
@@ -360,15 +371,40 @@ class _StudentMyhours extends State<StudentMyhours> {
                         title: Stack(
                           children: [
                             Positioned(
+                              right: 0,
+                              child: Container(
+                                width: 70.0,
+                                height: 70.0,
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.white,
+                                      spreadRadius: 5,
+                                      blurRadius: 7,
+                                      offset: Offset(
+                                          0, 3), // changes position of shadow
+                                    ),
+                                  ],
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: AssetImage('images/logo1.png'),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
                                 top: 10,
-                                left: 50,
+                                //left: 40,
+                                right: 73,
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
+                                  //padding: EdgeInsets.symmetric(horizontal: 20),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
                                     color: Color.fromARGB(115, 127, 179, 71),
                                   ),
                                   child: Text(
+                                    textAlign: TextAlign.start,
                                     verifiedOpp[index].name,
                                     style: TextStyle(
                                         fontSize: 16, color: Color(0xFF0A2F5A)),
@@ -377,10 +413,8 @@ class _StudentMyhours extends State<StudentMyhours> {
                             Positioned(
                               child: Stack(
                                 children: [
-                                  // Other positioned widgets or elements in the stack...
-
                                   Positioned(
-                                    top: 40,
+                                    top: 35,
                                     left: 0,
                                     child: ElevatedButton.icon(
                                       onPressed: () {
@@ -414,32 +448,8 @@ class _StudentMyhours extends State<StudentMyhours> {
                                 ],
                               ),
                             ),
-                            Positioned(
-                              right: 0,
-                              child: Container(
-                                width: 70.0,
-                                height: 70.0,
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.white,
-                                      spreadRadius: 5,
-                                      blurRadius: 7,
-                                      offset: Offset(
-                                          0, 3), // changes position of shadow
-                                    ),
-                                  ],
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: AssetImage('images/logo1.png'),
-                                  ),
-                                ),
-                              ),
-                            ),
                           ],
                         ),
-                        //onTap: () {},
                       ),
                     );
                   },

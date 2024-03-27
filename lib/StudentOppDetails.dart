@@ -772,7 +772,10 @@ class _OpportunityPageState extends State<OpportunityDetails> {
                 },
                 child: Text(
                   "الغاء",
-                  style: TextStyle(color: Color(0xFF0A2F5A), fontSize: 20),
+                  style: TextStyle(
+                    color: Color(0xFF0A2F5A),
+                    fontSize: 20,
+                  ),
                 ),
               ),
             ],

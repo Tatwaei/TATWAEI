@@ -38,7 +38,7 @@ class _HomePageState extends State<homePageAdmin> {
     List<DocumentSnapshot> opp = [...internal, ...external].where((doc) {
       DateTime startDate = doc['startDate'].toDate();
       return startDate.isAfter(now);
-      }).toList();
+    }).toList();
 
     return opp;
   }
@@ -513,28 +513,26 @@ class _HomePageState extends State<homePageAdmin> {
                 ),
               ),
               Container(
-  margin: EdgeInsets.only(top: 10, bottom: 10),
-  width: 100,
-  color: Color.fromARGB(115, 127, 179, 71),
-  child: ListTile(
-    title: Text(
-      "فرص التطوع",
-      style: TextStyle(
-        color: Color(0xFF0A2F5A),
-        fontSize: 24,
-      ),
-    ),
-    onTap: () {
-      // Navigate to the adminOppo page
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => adminOppo()),
-      );
-    },
-  ),
-),
-
-             
+                margin: EdgeInsets.only(top: 10, bottom: 10),
+                width: 100,
+                color: Color.fromARGB(115, 127, 179, 71),
+                child: ListTile(
+                  title: Text(
+                    "فرص التطوع",
+                    style: TextStyle(
+                      color: Color(0xFF0A2F5A),
+                      fontSize: 24,
+                    ),
+                  ),
+                  onTap: () {
+                    // Navigate to the adminOppo page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => adminOppo()),
+                    );
+                  },
+                ),
+              ),
               Container(
                 margin: EdgeInsets.only(top: 10, bottom: 10),
                 width: 100,
@@ -563,7 +561,6 @@ class _HomePageState extends State<homePageAdmin> {
               Container(
                 margin: EdgeInsets.only(top: 300),
                 width: 100,
-                color: Color.fromARGB(115, 127, 179, 71),
                 child: Column(
                   children: [
                     ListTile(

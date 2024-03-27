@@ -33,39 +33,37 @@ class _HomePageState extends State<HomePageStudent> {
     CollectionReference externalOpportunity =
         _firestore.collection('externalOpportunity');
 
-  String userId = Provider.of<UserState>(context, listen: false).userId;
+    String userId = Provider.of<UserState>(context, listen: false).userId;
 
-  String? schoolId;
-  
-    DocumentSnapshot studentSnapshot  = await _firestore
-        .collection('student')
-        .doc(userId)
-        .get();
-   if (studentSnapshot.exists) {
+    String? schoolId;
+
+    DocumentSnapshot studentSnapshot =
+        await _firestore.collection('student').doc(userId).get();
+    if (studentSnapshot.exists) {
       schoolId = studentSnapshot.get('schoolId') as String?;
     }
 
     DateTime now = DateTime.now();
 
-  QuerySnapshot coordinatorSnapshot = await _firestore
-      .collection('schoolCoordinator')
-      .where('schoolId', isEqualTo: schoolId)
-      .get();
+    QuerySnapshot coordinatorSnapshot = await _firestore
+        .collection('schoolCoordinator')
+        .where('schoolId', isEqualTo: schoolId)
+        .get();
 
-  String? coordinatorEmail;
-  if (coordinatorSnapshot.size > 0) {
-  for (DocumentSnapshot doc in coordinatorSnapshot.docs) {
-    String? docSchoolId = doc.get('schoolId') as String?;
-    if (docSchoolId == schoolId) {
-      coordinatorEmail = doc.get('email') as String?;
-      break; // Exit the loop once the coordinator's email is found
+    String? coordinatorEmail;
+    if (coordinatorSnapshot.size > 0) {
+      for (DocumentSnapshot doc in coordinatorSnapshot.docs) {
+        String? docSchoolId = doc.get('schoolId') as String?;
+        if (docSchoolId == schoolId) {
+          coordinatorEmail = doc.get('email') as String?;
+          break; // Exit the loop once the coordinator's email is found
+        }
+      }
     }
-  }
-}
     QuerySnapshot internalSnapshot = await internalOpportunity
-          .where('coordinator_email', isEqualTo: coordinatorEmail)
-          .get();
-    
+        .where('coordinator_email', isEqualTo: coordinatorEmail)
+        .get();
+
     QuerySnapshot externalSnapshot = await externalOpportunity.get();
 
     List<DocumentSnapshot> internal = internalSnapshot.docs;
@@ -74,7 +72,7 @@ class _HomePageState extends State<HomePageStudent> {
     List<DocumentSnapshot> opp = [...internal, ...external].where((doc) {
       DateTime startDate = doc['startDate'].toDate();
       return startDate.isAfter(now);
-      }).toList();
+    }).toList();
 
     return opp;
   }
@@ -652,7 +650,6 @@ class _HomePageState extends State<HomePageStudent> {
               Container(
                 margin: EdgeInsets.only(top: 150),
                 width: 100,
-                color: Color.fromARGB(115, 127, 179, 71),
                 child: Column(
                   children: [
                     ListTile(

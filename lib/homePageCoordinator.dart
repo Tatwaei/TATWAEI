@@ -24,43 +24,43 @@ class homePageCoordinator extends StatefulWidget {
 }
 
 class _HomePageState extends State<homePageCoordinator> {
-    late List<DocumentSnapshot> internal = [];
+  late List<DocumentSnapshot> internal = [];
 
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
   late String initialSchool = "";
 
-    Future<List<DocumentSnapshot>> getIngredients() async {
-      CollectionReference internalOpportunity =
-          _firestore.collection('internalOpportunity');
-      CollectionReference externalOpportunity =
-          _firestore.collection('externalOpportunity');
+  Future<List<DocumentSnapshot>> getIngredients() async {
+    CollectionReference internalOpportunity =
+        _firestore.collection('internalOpportunity');
+    CollectionReference externalOpportunity =
+        _firestore.collection('externalOpportunity');
 
     DateTime now = DateTime.now();
 
-      // Get current user's email
-      User? user = _auth.currentUser;
-      String? email = user?.email;
+    // Get current user's email
+    User? user = _auth.currentUser;
+    String? email = user?.email;
 
-      // Fetch opportunities where coordinator_email matches the current user's email
-      QuerySnapshot snapshot = await internalOpportunity
-          .where('coordinator_email', isEqualTo: email)
-          .get();
-      setState(() {
-        internal = snapshot.docs;
-      });
+    // Fetch opportunities where coordinator_email matches the current user's email
+    QuerySnapshot snapshot = await internalOpportunity
+        .where('coordinator_email', isEqualTo: email)
+        .get();
+    setState(() {
+      internal = snapshot.docs;
+    });
 
-      QuerySnapshot externalSnapshot = await externalOpportunity.get();
+    QuerySnapshot externalSnapshot = await externalOpportunity.get();
 
-      List<DocumentSnapshot> external = externalSnapshot.docs;
-       
-      List<DocumentSnapshot> opp = [...internal, ...external].where((doc) {
+    List<DocumentSnapshot> external = externalSnapshot.docs;
+
+    List<DocumentSnapshot> opp = [...internal, ...external].where((doc) {
       DateTime startDate = doc['startDate'].toDate();
       return startDate.isAfter(now);
-      }).toList();
+    }).toList();
 
-      return opp;
-    }
+    return opp;
+  }
 
   List<DocumentSnapshot> opp = [];
   List<DocumentSnapshot<Object?>> filteredItems = [];
@@ -627,28 +627,28 @@ class _HomePageState extends State<homePageCoordinator> {
                   },
                 ),
               ),
-             
               Container(
-  margin: EdgeInsets.only(top: 10, bottom: 10),
-  width: 100,
-  color: Color.fromARGB(115, 127, 179, 71),
-  child: ListTile(
-    title: Text(
-      "فرص التطوع",
-      style: TextStyle(
-        color: Color(0xFF0A2F5A),
-        fontSize: 24,
-      ),
-    ),
-    onTap: () {
-      // Navigate to the adminOppo page
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => coordinatorOppo()),
-      );
-    },
-  ),
-),
+                margin: EdgeInsets.only(top: 10, bottom: 10),
+                width: 100,
+                color: Color.fromARGB(115, 127, 179, 71),
+                child: ListTile(
+                  title: Text(
+                    "فرص التطوع",
+                    style: TextStyle(
+                      color: Color(0xFF0A2F5A),
+                      fontSize: 24,
+                    ),
+                  ),
+                  onTap: () {
+                    // Navigate to the adminOppo page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => coordinatorOppo()),
+                    );
+                  },
+                ),
+              ),
               Container(
                 margin: EdgeInsets.only(top: 10, bottom: 10),
                 width: 100,
@@ -677,7 +677,6 @@ class _HomePageState extends State<homePageCoordinator> {
               Container(
                 margin: EdgeInsets.only(top: 70),
                 width: 100,
-                color: Color.fromARGB(115, 127, 179, 71),
                 child: Column(
                   children: [
                     ListTile(

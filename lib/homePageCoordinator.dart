@@ -741,7 +741,6 @@ class _HomePageState extends State<homePageCoordinator> {
               Container(
                 margin: EdgeInsets.only(top: 70),
                 width: 100,
-                color: Color.fromARGB(115, 127, 179, 71),
                 child: Column(
                   children: [
                     ListTile(

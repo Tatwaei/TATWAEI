@@ -360,6 +360,26 @@ class _HomePageState extends State<HomePageStudent> {
                               ),
                             ],
                           ),
+                          Row(
+                            children: [
+                              Text(
+                                "كلاهما",
+                                style: TextStyle(
+                                  color: Color(0xFF0A2F5A),
+                                ),
+                              ),
+                              Radio<String>(
+                                value: 'كلاهما',
+                                groupValue: selectedGender,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedGender = value!;
+                                  });
+                                },
+                                activeColor: Color(0xFF0A2F5A),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -372,7 +392,7 @@ class _HomePageState extends State<HomePageStudent> {
                                 backgroundColor:
                                     Color.fromARGB(255, 187, 213, 159)),
                             onPressed: () {
-                              Navigator.of(context).pop(); // Close the pop-up
+                              Navigator.of(context).pop();
                             },
                             child: Text('اغلاق',
                                 style: TextStyle(color: Color(0xFF0A2F5A))),
@@ -387,14 +407,13 @@ class _HomePageState extends State<HomePageStudent> {
                             ),
                             onPressed: () {
                               setState(() {
-                                selectedGender =
-                                    ''; // Clear the selected gender
+                                selectedGender = '';
                                 placeSelected = '';
                                 filservice = false;
                                 filbusns = false;
                                 filsocial = false;
                                 filhealth = false;
-                                filother = false; // Clear the selected place
+                                filother = false;
                               });
                             },
                             child: Text("حذف الكل",
@@ -445,9 +464,8 @@ class _HomePageState extends State<HomePageStudent> {
               (filsocial && interests == "خدمية")) {
             typeMatch = true;
           }
-        }
+        } //if nothing is chosen from interest, then consider it
       } else {
-        // If no type criteria is selected, consider it as a match
         typeMatch = true;
       }
 
@@ -455,16 +473,16 @@ class _HomePageState extends State<HomePageStudent> {
       if (selectedGender != '') {
         if (gender != null) {
           if ((selectedGender == 'ذكر' && gender == 'ذكر') ||
-              (selectedGender == 'انثى' && gender == 'انثى')) {
+              (selectedGender == 'انثى' && gender == 'انثى') ||
+              (selectedGender == 'كلاهما' && gender == 'كلاهما')) {
             genderMatch = true;
           }
         }
       } else {
-        // If no gender criteria is selected, consider it as a match
+        //same thing here, no gender chosen , then consider all
         genderMatch = true;
       }
 
-      // Check if the opportunity is internal or external
       String? collectionName = opportunity.reference.parent?.id;
       if (placeSelected != '') {
         if (collectionName != null) {
@@ -476,7 +494,7 @@ class _HomePageState extends State<HomePageStudent> {
           }
         }
       } else {
-        // If no place criteria is selected, consider it as a match
+        //same thing here, no placw chosen , then consider all
         placeMatch = true;
       }
 

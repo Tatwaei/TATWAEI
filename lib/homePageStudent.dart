@@ -33,39 +33,37 @@ class _HomePageState extends State<HomePageStudent> {
     CollectionReference externalOpportunity =
         _firestore.collection('externalOpportunity');
 
-  String userId = Provider.of<UserState>(context, listen: false).userId;
+    String userId = Provider.of<UserState>(context, listen: false).userId;
 
-  String? schoolId;
-  
-    DocumentSnapshot studentSnapshot  = await _firestore
-        .collection('student')
-        .doc(userId)
-        .get();
-   if (studentSnapshot.exists) {
+    String? schoolId;
+
+    DocumentSnapshot studentSnapshot =
+        await _firestore.collection('student').doc(userId).get();
+    if (studentSnapshot.exists) {
       schoolId = studentSnapshot.get('schoolId') as String?;
     }
 
     DateTime now = DateTime.now();
 
-  QuerySnapshot coordinatorSnapshot = await _firestore
-      .collection('schoolCoordinator')
-      .where('schoolId', isEqualTo: schoolId)
-      .get();
+    QuerySnapshot coordinatorSnapshot = await _firestore
+        .collection('schoolCoordinator')
+        .where('schoolId', isEqualTo: schoolId)
+        .get();
 
-  String? coordinatorEmail;
-  if (coordinatorSnapshot.size > 0) {
-  for (DocumentSnapshot doc in coordinatorSnapshot.docs) {
-    String? docSchoolId = doc.get('schoolId') as String?;
-    if (docSchoolId == schoolId) {
-      coordinatorEmail = doc.get('email') as String?;
-      break; // Exit the loop once the coordinator's email is found
+    String? coordinatorEmail;
+    if (coordinatorSnapshot.size > 0) {
+      for (DocumentSnapshot doc in coordinatorSnapshot.docs) {
+        String? docSchoolId = doc.get('schoolId') as String?;
+        if (docSchoolId == schoolId) {
+          coordinatorEmail = doc.get('email') as String?;
+          break; // Exit the loop once the coordinator's email is found
+        }
+      }
     }
-  }
-}
     QuerySnapshot internalSnapshot = await internalOpportunity
-          .where('coordinator_email', isEqualTo: coordinatorEmail)
-          .get();
-    
+        .where('coordinator_email', isEqualTo: coordinatorEmail)
+        .get();
+
     QuerySnapshot externalSnapshot = await externalOpportunity.get();
 
     List<DocumentSnapshot> internal = internalSnapshot.docs;
@@ -74,7 +72,7 @@ class _HomePageState extends State<HomePageStudent> {
     List<DocumentSnapshot> opp = [...internal, ...external].where((doc) {
       DateTime startDate = doc['startDate'].toDate();
       return startDate.isAfter(now);
-      }).toList();
+    }).toList();
 
     return opp;
   }
@@ -104,10 +102,8 @@ class _HomePageState extends State<HomePageStudent> {
   bool filsocial = false;
   bool filhealth = false;
   bool filother = false;
-  bool filinternal = false;
-  bool filexternal = false;
-  bool filmale = false;
-  bool filfemale = false;
+  String placeSelected = '';
+  String selectedGender = '';
 
   void _filterPopup(BuildContext context) {
     showDialog(
@@ -265,37 +261,41 @@ class _HomePageState extends State<HomePageStudent> {
                         children: [
                           Row(
                             children: [
-                              Text("داخل المدرسة",
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                  )),
-                              Checkbox(
-                                activeColor: Color(0xFF0A2F5A),
-                                value: filinternal,
-                                onChanged: (bool? val) {
+                              Text(
+                                "داخل المدرسة",
+                                style: TextStyle(
+                                  color: Color(0xFF0A2F5A),
+                                ),
+                              ),
+                              Radio<String>(
+                                value: 'داخل المدرسة',
+                                groupValue: placeSelected,
+                                onChanged: (value) {
                                   setState(() {
-                                    print("work6");
-                                    filinternal = val!;
+                                    placeSelected = value!;
                                   });
                                 },
+                                activeColor: Color(0xFF0A2F5A),
                               ),
                             ],
                           ),
                           Row(
                             children: [
-                              Text("خارج المدرسة",
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                  )),
-                              Checkbox(
-                                activeColor: Color(0xFF0A2F5A),
-                                value: filexternal,
-                                onChanged: (bool? val) {
+                              Text(
+                                "خارج المدرسة",
+                                style: TextStyle(
+                                  color: Color(0xFF0A2F5A),
+                                ),
+                              ),
+                              Radio<String>(
+                                value: 'خارج المدرسة',
+                                groupValue: placeSelected,
+                                onChanged: (value) {
                                   setState(() {
-                                    print("work7");
-                                    filexternal = val!;
+                                    placeSelected = value!;
                                   });
                                 },
+                                activeColor: Color(0xFF0A2F5A),
                               ),
                             ],
                           ),
@@ -311,8 +311,9 @@ class _HomePageState extends State<HomePageStudent> {
                             TextStyle(fontSize: 25, color: Color(0xFF0A2F5A)),
                       ),
                       decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 187, 213, 159),
-                          borderRadius: BorderRadius.circular(5)),
+                        color: Color.fromARGB(255, 187, 213, 159),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                     ),
                     Container(
                       margin: EdgeInsets.only(left: 195, bottom: 10),
@@ -321,39 +322,41 @@ class _HomePageState extends State<HomePageStudent> {
                         children: [
                           Row(
                             children: [
-                              Text(" ذكر",
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                  )),
-                              Checkbox(
-                                activeColor: Color(0xFF0A2F5A),
-                                value: filmale,
-                                onChanged: (bool? val) {
-                                  setState(
-                                    () {
-                                      print("work8");
-                                      filmale = val!;
-                                    },
-                                  );
+                              Text(
+                                "ذكر",
+                                style: TextStyle(
+                                  color: Color(0xFF0A2F5A),
+                                ),
+                              ),
+                              Radio<String>(
+                                value: 'ذكر',
+                                groupValue: selectedGender,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedGender = value!;
+                                  });
                                 },
+                                activeColor: Color(0xFF0A2F5A),
                               ),
                             ],
                           ),
                           Row(
                             children: [
-                              Text("انثى",
-                                  style: TextStyle(
-                                    color: Color(0xFF0A2F5A),
-                                  )),
-                              Checkbox(
-                                activeColor: Color(0xFF0A2F5A),
-                                value: filfemale,
-                                onChanged: (bool? val) {
+                              Text(
+                                "انثى",
+                                style: TextStyle(
+                                  color: Color(0xFF0A2F5A),
+                                ),
+                              ),
+                              Radio<String>(
+                                value: 'انثى',
+                                groupValue: selectedGender,
+                                onChanged: (value) {
                                   setState(() {
-                                    print("work9");
-                                    filfemale = val!;
+                                    selectedGender = value!;
                                   });
                                 },
+                                activeColor: Color(0xFF0A2F5A),
                               ),
                             ],
                           ),
@@ -361,7 +364,7 @@ class _HomePageState extends State<HomePageStudent> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(left: 60),
+                      //margin: EdgeInsets.only(left: 10, right: 10),
                       child: Row(
                         children: [
                           ElevatedButton(
@@ -375,7 +378,30 @@ class _HomePageState extends State<HomePageStudent> {
                                 style: TextStyle(color: Color(0xFF0A2F5A))),
                           ),
                           SizedBox(
-                            width: 10,
+                            width: 4,
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Color.fromARGB(255, 187, 213, 159),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                selectedGender =
+                                    ''; // Clear the selected gender
+                                placeSelected = '';
+                                filservice = false;
+                                filbusns = false;
+                                filsocial = false;
+                                filhealth = false;
+                                filother = false; // Clear the selected place
+                              });
+                            },
+                            child: Text("حذف الكل",
+                                style: TextStyle(color: Color(0xFF0A2F5A))),
+                          ),
+                          SizedBox(
+                            width: 4,
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -402,53 +428,71 @@ class _HomePageState extends State<HomePageStudent> {
   }
 
   void _applyFilter() async {
-    List<DocumentSnapshot> searchResults = [];
-    List<DocumentSnapshot> internalOpportunities = [];
-    List<DocumentSnapshot> externalOpportunities = [];
+    List<DocumentSnapshot> opp = await getIngredients();
 
-    if (!(filservice ||
-        filsocial ||
-        filbusns ||
-        filhealth ||
-        filother ||
-        filmale ||
-        filfemale ||
-        filinternal ||
-        filexternal)) {
-      // If none are selected, fetch the full list of opportunities
-      searchResults.addAll(opp);
-    } else {
-      // Apply the filter logic here
-      print('Applying filter');
-      if (filinternal) {
-        QuerySnapshot internalSnapshot =
-            await _firestore.collection('internalOpportunity').get();
-        internalOpportunities.addAll(internalSnapshot.docs);
-      }
-      if (filexternal) {
-        QuerySnapshot externalSnapshot =
-            await _firestore.collection('externalOpportunity').get();
-        externalOpportunities.addAll(externalSnapshot.docs);
-      }
-      searchResults.addAll(opp.where((doc) {
-        dynamic fieldValueinterest = doc['interest'];
-        dynamic fieldValuegender = doc['gender'];
+    List<DocumentSnapshot> filteredOpportunities = opp.where((opportunity) {
+      bool typeMatch = false;
+      bool genderMatch = false;
+      bool placeMatch = false;
 
-        // Check if the fieldValue contains any of the specified terms
-        return (filservice &&
-                fieldValueinterest.toString().contains('خدمية')) ||
-            (filsocial && fieldValueinterest.toString().contains('اجتماعية')) ||
-            (filbusns && fieldValueinterest.toString().contains('ادارية')) ||
-            (filhealth && fieldValueinterest.toString().contains('صحية')) ||
-            (filother && fieldValueinterest.toString().contains('اخرى')) ||
-            (filmale && fieldValuegender.toString().contains('ذكر')) ||
-            (filfemale && fieldValuegender.toString().contains('انثى'));
-      }));
+      var interests = opportunity['interest'];
+      if ((filservice || filbusns || filhealth || filsocial || filother)) {
+        if (interests != null) {
+          if ((filsocial && interests == "اجتماعية") ||
+              (filbusns && interests == "ادارية") ||
+              (filhealth && interests == "صحية") ||
+              (filother && interests == "أخرى") ||
+              (filsocial && interests == "خدمية")) {
+            typeMatch = true;
+          }
+        }
+      } else {
+        // If no type criteria is selected, consider it as a match
+        typeMatch = true;
+      }
+
+      String gender = opportunity['gender'];
+      if (selectedGender != '') {
+        if (gender != null) {
+          if ((selectedGender == 'ذكر' && gender == 'ذكر') ||
+              (selectedGender == 'انثى' && gender == 'انثى')) {
+            genderMatch = true;
+          }
+        }
+      } else {
+        // If no gender criteria is selected, consider it as a match
+        genderMatch = true;
+      }
+
+      // Check if the opportunity is internal or external
+      String? collectionName = opportunity.reference.parent?.id;
+      if (placeSelected != '') {
+        if (collectionName != null) {
+          if ((placeSelected == "داخل المدرسة" &&
+                  collectionName == "internalOpportunity") ||
+              (placeSelected == "خارج المدرسة" &&
+                  collectionName == "externalOpportunity")) {
+            placeMatch = true;
+          }
+        }
+      } else {
+        // If no place criteria is selected, consider it as a match
+        placeMatch = true;
+      }
+
+      return typeMatch && genderMatch && placeMatch;
+    }).toList();
+    if (!filsocial &&
+        !filbusns &&
+        !filhealth &&
+        !filother &&
+        selectedGender.isEmpty &&
+        placeSelected.isEmpty) {
+      filteredOpportunities = opp;
     }
-    // Update the UI or perform any other operations based on the filter
+
     setState(() {
-      filteredItems =
-          searchResults + internalOpportunities + externalOpportunities;
+      filteredItems = filteredOpportunities;
     });
   }
 

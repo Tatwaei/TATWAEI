@@ -87,6 +87,31 @@ class _studentOpportunity extends State<studentOpportunity> {
     });
   }
 
+Future<String> getCertificateFromFirestore(BuildContext context, int index) async {
+  String studentId = Provider.of<UserState>(context, listen: false).userId;
+  String opportunityId = compList[index].opportunityId;
+
+  try {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('seat')
+        .where('studentId', isEqualTo: studentId)
+        .where('opportunityId', isEqualTo: opportunityId)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      // Assuming there's only one document for this studentId and opportunityId
+      DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+      return documentSnapshot['certificate'] ?? ''; // Return certificate if exists
+    } else {
+      print('No document found for studentId $studentId and opportunityId $opportunityId');
+      return ''; // Return empty string if document not found
+    }
+  } catch (error) {
+    print('Error retrieving certificate from Firestore: $error');
+    return ''; // Return empty string in case of error
+  }
+}
+
   void showSuccessMessage(BuildContext context) {
     showDialog(
       context: context,
@@ -662,9 +687,19 @@ class _studentOpportunity extends State<studentOpportunity> {
                                         SizedBox(
                                           height: 20,
                                           child: ElevatedButton(
-                                            onPressed: () {
-                                              myAlert(index);
-                                            },
+                                            onPressed: () async {
+     String certificate= await getCertificateFromFirestore(context, index); 
+
+  if (certificate != null && certificate.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('يوجد شهادة مرفوعة'),
+        
+      ),
+    );
+  } else {
+    myAlert(index);
+  }                                            },
                                             child: Text(
                                               'رفع الشهادة',
                                               style: TextStyle(

@@ -24,6 +24,16 @@ class homePageCoordinator extends StatefulWidget {
 }
 
 class _HomePageState extends State<homePageCoordinator> {
+  Future<void> onRefresh() async {
+    var newOpp = await getIngredients();
+    setState(() {
+      opp = newOpp;
+      filteredItems = newOpp; // Update this as needed for your app's logic
+    });
+  }
+
+  late List<DocumentSnapshot> internal = [];
+
   final TextEditingController _searchController = TextEditingController();
   String searchValue = '';
   late String initialSchool = "";

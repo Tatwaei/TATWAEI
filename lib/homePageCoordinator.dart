@@ -544,6 +544,62 @@ class _HomePageState extends State<homePageCoordinator> {
     }
   }
 
+  void LogoutConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'متأكد من تسجيل الخروج؟',
+                style: TextStyle(
+                  color: Color(0xFF0A2F5A),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      Navigator.of(context).pop(); // Close the dialog
+                      try {
+                        await FirebaseAuth.instance.signOut();
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                          (Route<dynamic> route) => false,
+                        );
+                      } catch (error) {
+                        print("Sign out error: $error");
+                      }
+                    },
+                    child: Text('نعم',
+                        style:
+                            TextStyle(color: Color(0xFF0A2F5A), fontSize: 15)),
+                  ),
+                  SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                    child: Text('لا',
+                        style:
+                            TextStyle(color: Color(0xFF0A2F5A), fontSize: 15)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> getSchoolData(String schoolId) async {
     DocumentSnapshot<Map<String, dynamic>> schoolDocument =
         await FirebaseFirestore.instance
@@ -760,7 +816,7 @@ class _HomePageState extends State<homePageCoordinator> {
                         ),
                       ),
                       onTap: () {
-                        // Handle drawer item tap for logout
+                        LogoutConfirmation(context);
                       },
                     ),
                     Row(

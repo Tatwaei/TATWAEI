@@ -789,16 +789,8 @@ class _HomePageState extends State<homePageCoordinator> {
                       fontSize: 24,
                     ),
                   ),
-                  onTap: () async {
-                    try {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                        (Route<dynamic> route) => false,
-                      );
-                    } catch (error) {
-                      print("Sign out error: $error");
-                    }
+                  onTap: () {
+                    LogoutConfirmation(context);
                   },
                 ),
               ),

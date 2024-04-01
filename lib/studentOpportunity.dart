@@ -387,6 +387,96 @@ Future<String> getCertificateFromFirestore(BuildContext context, int index) asyn
         });
   }
 
+  void myAlert2(BuildContext context, String opportunityId) {
+    String studentId = Provider.of<UserState>(context, listen: false).userId;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+          future: FirebaseFirestore.instance
+              .collection('seat')
+              .where('studentId', isEqualTo: studentId)
+              .where('opportunityId', isEqualTo: opportunityId)
+              .get(),
+          builder: (BuildContext context,
+              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // While waiting for the data to load, you can show a loading indicator
+              return CircularProgressIndicator();
+            }
+            if (snapshot.hasError) {
+              // If there's an error, you can show an error message
+              return Text('Error: ${snapshot.error}');
+            }
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              // If the document doesn't exist or there's no data, you can show a message
+              return Text('No Data Found');
+            }
+
+            // Assuming there's only one document matching the query
+            DocumentSnapshot<Map<String, dynamic>> document =
+                snapshot.data!.docs[0];
+
+            // Access the image URL from the document snapshot
+            String imageUrl = document.get('certificate');
+            String documentId = document.id;
+            print('Document Snapshot: $documentId');
+
+            print('Image URL: $imageUrl');
+
+            return AlertDialog(
+              backgroundColor: Color(0xFFf4f1be),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              content: Container(
+                height: MediaQuery.of(context).size.width * 0.8,
+                width: MediaQuery.of(context).size.height * 0.4,
+                child: Column(
+                  children: [
+                    if (imageUrl != null && imageUrl.isNotEmpty)
+                      Container(
+                        width: 200,
+                        height: 200,
+                        child: Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    if (imageUrl == null || imageUrl.isEmpty)
+                      Text(
+                        'No Image Uploaded',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                  ],
+                ),
+              ),
+              actions: [
+                ButtonBar(
+                  buttonPadding: EdgeInsets.only(right: 50),
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Color(0xFFb4d392)),
+                      ),
+                      child: Text(
+                        'اغلاق',
+                        style: TextStyle(color: Color(0xFF0A2F5A)),
+                      ),
+                    ), 
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -697,6 +787,7 @@ Future<String> getCertificateFromFirestore(BuildContext context, int index) asyn
         
       ),
     );
+    myAlert2(context,compList[index].opportunityId);
   } else {
     myAlert(index);
   }                                            },

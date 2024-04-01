@@ -309,73 +309,74 @@ class _HomePageState extends State<homePageCoordinator> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(left: 195, bottom: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                        margin: EdgeInsets.only(left: 195, bottom: 10),
+                        child: Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "ذكر",
-                                style: TextStyle(
-                                  color: Color(0xFF0A2F5A),
-                                ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "ذكر",
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                    ),
+                                  ),
+                                  Radio<String>(
+                                    value: 'ذكر',
+                                    groupValue: selectedGender,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedGender = value!;
+                                      });
+                                    },
+                                    activeColor: Color(0xFF0A2F5A),
+                                  ),
+                                ],
                               ),
-                              Radio<String>(
-                                value: 'ذكر',
-                                groupValue: selectedGender,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedGender = value!;
-                                  });
-                                },
-                                activeColor: Color(0xFF0A2F5A),
+                              Row(
+                                children: [
+                                  Text(
+                                    "انثى",
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                    ),
+                                  ),
+                                  Radio<String>(
+                                    value: 'انثى',
+                                    groupValue: selectedGender,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedGender = value!;
+                                      });
+                                    },
+                                    activeColor: Color(0xFF0A2F5A),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "كلاهما",
+                                    style: TextStyle(
+                                      color: Color(0xFF0A2F5A),
+                                    ),
+                                  ),
+                                  Radio<String>(
+                                    value: 'كلاهما',
+                                    groupValue: selectedGender,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedGender = value!;
+                                      });
+                                    },
+                                    activeColor: Color(0xFF0A2F5A),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                          Row(
-                            children: [
-                              Text(
-                                "انثى",
-                                style: TextStyle(
-                                  color: Color(0xFF0A2F5A),
-                                ),
-                              ),
-                              Radio<String>(
-                                value: 'انثى',
-                                groupValue: selectedGender,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedGender = value!;
-                                  });
-                                },
-                                activeColor: Color(0xFF0A2F5A),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "كلاهما",
-                                style: TextStyle(
-                                  color: Color(0xFF0A2F5A),
-                                ),
-                              ),
-                              Radio<String>(
-                                value: 'كلاهما',
-                                groupValue: selectedGender,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedGender = value!;
-                                  });
-                                },
-                                activeColor: Color(0xFF0A2F5A),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                        )),
                     Container(
                       //margin: EdgeInsets.only(left: 10, right: 10),
                       child: Row(

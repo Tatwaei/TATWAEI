@@ -38,7 +38,7 @@ Future main() async {
       create: (context) => UserState(),
       child: MaterialApp(
         theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFfbfae9)),
-       home:LoginPage(),
+       home:HomePageStudent(),
        
 
       ),

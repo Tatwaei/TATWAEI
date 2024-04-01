@@ -608,7 +608,7 @@ class _OpportunityPageState extends State<OpportunityDetails> {
 floatingActionButton: isInternalOpportunity
     ? Padding(
         padding: EdgeInsets.only(
-            bottom: 16.0), // Adjust the bottom padding to move it up
+            bottom: 40.0), // Adjust the bottom padding to move it up
         child: FloatingActionButton(
           onPressed: () {
             Navigator.push(

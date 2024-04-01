@@ -606,7 +606,7 @@ class _OpportunityPageState extends State<cEditDelete> {
           ),
         ),
       ),
-      floatingActionButton: Stack(
+      /*floatingActionButton: Stack(
   children: [
     Positioned(
       bottom: 16.0,
@@ -646,9 +646,48 @@ class _OpportunityPageState extends State<cEditDelete> {
     ),
   ],
 ),
-floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,*/floatingActionButton: Padding(
+  padding: const EdgeInsets.only(bottom: 40.0),
+  child: Container(
+    width: MediaQuery.of(context).size.width - 30,
+    child: Row(
+       mainAxisAlignment: MainAxisAlignment.spaceBetween,// Adjusted spacing
+      children: [
+        FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => cDelete(oppId: widget.oppId)),
+            );
+          },
+          child: Text(
+            "حذف",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Color.fromARGB(115, 127, 179, 71),
+          elevation: 0,
+        ),
+        FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => cEdit(oppId: widget.oppId)),
+            );
+          },
+          child: Text(
+            "تعديل",
+            style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+          ),
+          backgroundColor: Color.fromARGB(115, 127, 179, 71),
+          elevation: 0,
+        ),
+      ],
+    ),
+  ),
+),
+floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+
 
  );
   }
 }
-      

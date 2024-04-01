@@ -603,7 +603,76 @@ class _OpportunityPageState extends State<aDelete> {
           ),
         ),
       ),
-       floatingActionButton: Stack(
+     floatingActionButton: Padding(
+  padding: const EdgeInsets.only(bottom: 40.0),
+  child: Container(
+    width: MediaQuery.of(context).size.width - 30,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Adjusted spacing
+      children: [
+        FloatingActionButton(
+          onPressed: () {
+            // Show cancel dialog
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(
+                    "تم إلغاء الحذف بنجاح",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Color(0xFF0A2F5A),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+          child: Text(
+            "إلغاء",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Color.fromARGB(115, 127, 179, 71),
+          elevation: 0,
+        ),
+        FloatingActionButton(
+          onPressed: () {
+            // Show delete dialog
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text(
+                    "تم الحذف بنجاح",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Color(0xFF0A2F5A),
+                    ),
+                  ),
+                );
+              },
+            );
+            // Delete opportunity from database after 5 seconds
+            Future.delayed(Duration(seconds: 5), () {
+              deleteOpportunityFromDatabase(widget.oppId);
+            });
+          },
+          child: Text(
+            "حذف",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Color.fromARGB(115, 127, 179, 71),
+          elevation: 0,
+        ),
+      ],
+    ),
+  ),
+),
+floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+
+ /*floatingActionButton: Stack(
         children: [
           Positioned(
             bottom: 16.0,
@@ -626,12 +695,7 @@ class _OpportunityPageState extends State<aDelete> {
                     );
                   },
                 );
-                Future.delayed(Duration(seconds: 5), () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => homePageAdmin()),
-                  );
-                });
+            
               },
               child: Text(
                 "إلغاء",
@@ -662,15 +726,10 @@ class _OpportunityPageState extends State<aDelete> {
                     );
                   },
                 );
-                Future.delayed(Duration(seconds: 5), () {
+               // Future.delayed(Duration(seconds: 5), () {
                   // Delete opportunity from database
                   deleteOpportunityFromDatabase(widget.oppId);
-                  // Navigate to homePageCoordinator
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => homePageAdmin()),
-                  );
-                });
+                 
               },
               child: Text(
                 "حذف",
@@ -682,7 +741,7 @@ class _OpportunityPageState extends State<aDelete> {
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,*/
     );
   }
 

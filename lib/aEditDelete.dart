@@ -604,47 +604,46 @@ class _OpportunityPageState extends State<aEditDelete> {
           ),
         ),
       ),
-       floatingActionButton: Stack(
-  children: [
-    Positioned(
-      bottom: 16.0,
-      left: 16.0,
-      child: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => aDelete(oppId: widget.oppId)),
-          );
-        },
-        child: Text(
-          "حذف",
-          style: TextStyle(color: Colors.white),
+       floatingActionButton: Padding(
+  padding: const EdgeInsets.only(bottom: 40.0),
+  child: Container(
+    width: MediaQuery.of(context).size.width - 30,
+    child: Row(
+       mainAxisAlignment: MainAxisAlignment.spaceBetween,// Adjusted spacing
+      children: [
+        FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => aDelete(oppId: widget.oppId)),
+            );
+          },
+          child: Text(
+            "حذف",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Color.fromARGB(115, 127, 179, 71),
+          elevation: 0,
         ),
-        backgroundColor: Color.fromARGB(115, 127, 179, 71),
-        elevation: 0,
-      ),
-    ),
-    Positioned(
-      bottom: 16.0,
-      right: 16.0,
-      child: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => aEdit(oppId: widget.oppId)),
-          );
-        },
-        child: Text(
-          "تعديل",
-          style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+        FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => aEdit(oppId: widget.oppId)),
+            );
+          },
+          child: Text(
+            "تعديل",
+            style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+          ),
+          backgroundColor: Color.fromARGB(115, 127, 179, 71),
+          elevation: 0,
         ),
-        backgroundColor: Color.fromARGB(115, 127, 179, 71),
-        elevation: 0,
-      ),
+      ],
     ),
-  ],
+  ),
 ),
-floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
 
  );
   }

@@ -38,6 +38,28 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
 
+  void showPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(
+            'تم إنشاء حساب مدرستك',
+            style: TextStyle(
+              color: Color(0xFF0A2F5A),
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        );
+      },
+    );
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.of(context).pop();
+    });
+  }
+
   Future<void> signUp() async {
     if (_addressController.text.isEmpty ||
         _emailController.text.isEmpty ||
@@ -98,6 +120,7 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
       );
 
       // Step 4: Navigate to the home page
+      showPopup(context);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => LoginPage()),

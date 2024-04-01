@@ -23,6 +23,28 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
     fetchSchools();
   }
 
+  void showPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(
+            '!تم إنشاء حسابك\n نرجوا انتظار التوثيق',
+            style: TextStyle(
+              color: Color(0xFF0A2F5A),
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        );
+      },
+    );
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.of(context).pop();
+    });
+  }
+
   void fetchSchools() async {
     final QuerySnapshot snapshot = await schoolCollection.get();
     final List<String> fetchedSchools =
@@ -124,6 +146,7 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
       });
 
       // Navigate to HomePage if successful (ONLY FOR TESTING, SHOULD NAVIGATE TO LOG IN!)
+      showPopup(context);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => LoginPage()),

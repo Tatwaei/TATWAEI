@@ -380,61 +380,52 @@ class _HomePageState extends State<HomePageStudent> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(left: 195, bottom: 10),
-                      child: Row(
+                      margin: EdgeInsets.only(left: 120, bottom: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "ذكر",
-                                      style: TextStyle(
-                                        color: Color(0xFF0A2F5A),
-                                      ),
-                                    ),
-                                    Radio<String>(
-                                      value: 'ذكر',
-                                      groupValue: selectedGender,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          selectedGender = value!;
-                                        });
-                                      },
-                                      activeColor: Color(0xFF0A2F5A),
-                                    ),
-                                  ],
+                          Row(
+                            children: [
+                              Text(
+                                "ذكر",
+                                style: TextStyle(
+                                  color: Color(0xFF0A2F5A),
                                 ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      "انثى",
-                                      style: TextStyle(
-                                        color: Color(0xFF0A2F5A),
-                                      ),
-                                    ),
-                                    Radio<String>(
-                                      value: 'انثى',
-                                      groupValue: selectedGender,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          selectedGender = value!;
-                                        });
-                                      },
-                                      activeColor: Color(0xFF0A2F5A),
-                                    ),
-                                  ],
+                              ),
+                              Radio<String>(
+                                value: 'ذكر',
+                                groupValue: selectedGender,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedGender = value!;
+                                  });
+                                },
+                                activeColor: Color(0xFF0A2F5A),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                "انثى",
+                                style: TextStyle(
+                                  color: Color(0xFF0A2F5A),
                                 ),
-                              ],
-                            ),
+                              ),
+                              Radio<String>(
+                                value: 'انثى',
+                                groupValue: selectedGender,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedGender = value!;
+                                  });
+                                },
+                                activeColor: Color(0xFF0A2F5A),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(left: 190, bottom: 10),
+                      margin: EdgeInsets.only(left: 185, bottom: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -460,26 +451,6 @@ class _HomePageState extends State<HomePageStudent> {
                           ),
                         ],
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "كلاهما",
-                          style: TextStyle(
-                            color: Color(0xFF0A2F5A),
-                          ),
-                        ),
-                        Radio<String>(
-                          value: 'كلاهما',
-                          groupValue: selectedGender,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedGender = value!;
-                            });
-                          },
-                          activeColor: Color(0xFF0A2F5A),
-                        ),
-                      ],
                     ),
                     Container(
                       //margin: EdgeInsets.only(left: 10, right: 10),

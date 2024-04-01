@@ -391,7 +391,7 @@ class _HomePageState extends State<homePageCoordinator> {
                                 style: TextStyle(color: Color(0xFF0A2F5A))),
                           ),
                           SizedBox(
-                            width: 4,
+                            width: 2,
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -413,7 +413,7 @@ class _HomePageState extends State<homePageCoordinator> {
                                 style: TextStyle(color: Color(0xFF0A2F5A))),
                           ),
                           SizedBox(
-                            width: 4,
+                            width: 2,
                           ),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(

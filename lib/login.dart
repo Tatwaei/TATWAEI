@@ -55,8 +55,17 @@ class _LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
       );*/
-    } catch (e) {
-      print('Error signing in: $e');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('كلمة المرور غير صحيحة. يرجى المحاولة مجددًا.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message ?? 'حدث خطأ أثناء تسجيل الدخول.')),
+        );
+      }
     }
   }
 

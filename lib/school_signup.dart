@@ -85,6 +85,36 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
       );
       return;
     }
+    // Check if email exists
+    bool emailExists = false;
+
+// Check if email exists in 'student' collection
+    QuerySnapshot studentSnapshot = await FirebaseFirestore.instance
+        .collection('student')
+        .where('email', isEqualTo: _emailController.text.trim())
+        .get();
+
+    if (studentSnapshot.docs.isNotEmpty) {
+      emailExists = true;
+    }
+
+// Check if email exists in 'coordinator' collection
+    QuerySnapshot coordinatorSnapshot = await FirebaseFirestore.instance
+        .collection('coordinator')
+        .where('email', isEqualTo: _emailController.text.trim())
+        .get();
+
+    if (coordinatorSnapshot.docs.isNotEmpty) {
+      emailExists = true;
+    }
+    if (emailExists) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'هذا البريد الإلكتروني مستخدم بالفعل، يرجى استخدام بريد إلكتروني آخر')),
+      );
+      return;
+    }
     if (_passwordController.text.isEmpty ||
         _passwordController.text.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(

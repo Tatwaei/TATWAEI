@@ -83,6 +83,7 @@ class _ConfirmStudentPage extends State<ConfirmStudentPage> {
     }
   }
 
+  //change student's account status to true after the school coordinator verifies their identity
   Future<void> acceptStudent(String studentId) async {
     try {
       await FirebaseFirestore.instance
@@ -96,6 +97,7 @@ class _ConfirmStudentPage extends State<ConfirmStudentPage> {
     }
   }
 
+  //delete student's account after the school coordinator denies their identity
   Future<void> denyStudent(String studentId) async {
     try {
       await FirebaseFirestore.instance

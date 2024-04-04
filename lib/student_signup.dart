@@ -107,7 +107,7 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
     // Check if email exists
     bool emailExists = false;
 
-// Check if email exists in 'student' collection
+// Check if email exists in 'student' collection so the same email can't be used twice
     QuerySnapshot studentSnapshot = await FirebaseFirestore.instance
         .collection('student')
         .where('email', isEqualTo: _emailController.text.trim())
@@ -117,7 +117,7 @@ class _StudentSignUpPageState extends State<StudentSignUpPage> {
       emailExists = true;
     }
 
-// Check if email exists in 'coordinator' collection
+// Check if email exists in 'coordinator' collection so the same email can't be used twice
     QuerySnapshot coordinatorSnapshot = await FirebaseFirestore.instance
         .collection('coordinator')
         .where('email', isEqualTo: _emailController.text.trim())

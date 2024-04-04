@@ -673,98 +673,19 @@ class _OpportunityPageState extends State<cDelete> {
 ),
 floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
 
-     /* floatingActionButton: Stack(
-        children: [
-          Positioned(
-            bottom: 16.0,
-            left: 16.0,
-            child: FloatingActionButton(
-              onPressed: () {
-                // Show message and navigate to homePageCoordinator
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text(
-                        "تم إلغاء الحذف بنجاح",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Color(0xFF0A2F5A),
-                        ),
-                      ),
-                    );
-                  },
-                );
-                /*Future.delayed(Duration(seconds: 5), () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => homePageCoordinator()),
-                  );
-                });*/
-              },
-              child: Text(
-                "إلغاء",
-                style: TextStyle(color: Colors.white),
-              ),
-              backgroundColor: Color.fromARGB(115, 127, 179, 71),
-              elevation: 0,
-            ),
-          ),
-          Positioned(
-            bottom: 16.0,
-            right: 16.0,
-            child: FloatingActionButton(
-              onPressed: () {
-                // Show message and delete opportunity after 5 seconds
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text(
-                        "تم الحذف بنجاح",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Color(0xFF0A2F5A),
-                        ),
-                      ),
-                    );
-                  },
-                );
-               // Future.delayed(Duration(seconds: 5), () {
-                  // Delete opportunity from database
-                  deleteOpportunityFromDatabase(widget.oppId);
-                  // Navigate to homePageCoordinator
-                 /* Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => homePageCoordinator()),
-                  );
-                });*/
-              },
-              child: Text(
-                "حذف",
-                style: TextStyle(color: Colors.white),
-              ),
-              backgroundColor: Color.fromARGB(115, 127, 179, 71),
-              elevation: 0,
-            ),
-          ),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,*/
+  
     );
   }
 
-  // Function to delete opportunity from database
+  // Function  delete 
   void deleteOpportunityFromDatabase(String oppId) async {
     try {
       String collectionName;
 
-      // Assuming oppId is a unique identifier for opportunities
+      
       DocumentSnapshot<Map<String, dynamic>> oppDocumentInternal =
           await FirebaseFirestore.instance
-              .collection('internalOpportunity')
+            .collection('internalOpportunity')
               .doc(oppId)
               .get();
 
@@ -775,14 +696,13 @@ floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
               .get();
 
       if (oppDocumentInternal.exists) {
-        // The opportunity belongs to internalOpportunity collection
+       
         collectionName = 'internalOpportunity';
       } else if (oppDocumentExternal.exists) {
-        // The opportunity belongs to externalOpportunity collection
+      
         collectionName = 'externalOpportunity';
       } else {
-        // Handle the case where neither document exists
-        // You can show an error message or take appropriate action
+        
         print('Opportunity not found in any collection');
         return;
       }
@@ -796,7 +716,7 @@ floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       print('internal Opportunity deleted successfully');
     } catch (e) {
       print('Error deleting opportunity: $e');
-      // Handle the error, show an error message or take appropriate action
+     
     }
   }
 }

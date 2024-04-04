@@ -52,7 +52,6 @@ class _StudentMyhours extends State<StudentMyhours> {
       for (var seatDoc in seatSnapshot.docs) {
         String opportunityId = seatDoc.data()['opportunityId'];
 
-        // Retrieve internal opportunity
         DocumentSnapshot<Map<String, dynamic>> internalOpportunitySnapshot =
             await FirebaseFirestore.instance
                 .collection('internalOpportunity')
@@ -61,12 +60,10 @@ class _StudentMyhours extends State<StudentMyhours> {
 
         if (internalOpportunitySnapshot.exists) {
           String name = internalOpportunitySnapshot.get('name');
-          Opportunity opportunity =
-              Opportunity(name, opportunityId); // Set source as internal
+          Opportunity opportunity = Opportunity(name, opportunityId);
           verifiedOpp.add(opportunity);
         }
 
-        // Retrieve external opportunity
         DocumentSnapshot<Map<String, dynamic>> externalOpportunitySnapshot =
             await FirebaseFirestore.instance
                 .collection('externalOpportunity')
@@ -75,8 +72,7 @@ class _StudentMyhours extends State<StudentMyhours> {
 
         if (externalOpportunitySnapshot.exists) {
           String name = externalOpportunitySnapshot.get('name');
-          Opportunity opportunity =
-              Opportunity(name, opportunityId); // Set source as internal
+          Opportunity opportunity = Opportunity(name, opportunityId);
           verifiedOpp.add(opportunity);
         }
       }
@@ -113,15 +109,12 @@ class _StudentMyhours extends State<StudentMyhours> {
           builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              // While waiting for the data to load, you can show a loading indicator
               return CircularProgressIndicator();
             }
             if (snapshot.hasError) {
-              // If there's an error, you can show an error message
               return Text('Error: ${snapshot.error}');
             }
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              // If the document doesn't exist or there's no data, you can show a message
               return Text('No Data Found');
             }
 
@@ -129,7 +122,6 @@ class _StudentMyhours extends State<StudentMyhours> {
             DocumentSnapshot<Map<String, dynamic>> document =
                 snapshot.data!.docs[0];
 
-            // Access the image URL from the document snapshot
             String imageUrl = document.get('certificate');
             String documentId = document.id;
             print('Document Snapshot: $documentId');
@@ -160,10 +152,10 @@ class _StudentMyhours extends State<StudentMyhours> {
                         'No Image Uploaded',
                         style: TextStyle(fontSize: 20),
                       ),
-                    SizedBox(height: 20), // Added space
+                    SizedBox(height: 20),
                     ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
+                          Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 187, 213, 159),
@@ -257,8 +249,7 @@ class _StudentMyhours extends State<StudentMyhours> {
                       color: Color.fromARGB(115, 127, 179, 71),
                       borderRadius: BorderRadius.circular(8)),
                   child: Text(
-                    textAlign: TextAlign
-                        .start, // This sets the text alignment to the start (right for RTL languages)
+                    textAlign: TextAlign.start,
                     textDirection: TextDirection.rtl,
                     "الساعات التي تم اكمالها",
                     style: TextStyle(color: Color(0xFF0A2F5A), fontSize: 16),
@@ -312,8 +303,7 @@ class _StudentMyhours extends State<StudentMyhours> {
                                 color: Color.fromARGB(115, 127, 179, 71),
                                 value: (hours >= 40) ? 100 : (hours / 40 * 100),
                                 title:
-                                    '${(hours >= 40) ? 100 : (hours / 40 * 100).toStringAsFixed(2)}%', // Display percentage
-
+                                    '${(hours >= 40) ? 100 : (hours / 40 * 100).toStringAsFixed(2)}%',
                                 radius: 70,
                                 titleStyle: TextStyle(
                                   fontSize: 16,
@@ -381,8 +371,7 @@ class _StudentMyhours extends State<StudentMyhours> {
                                       color: Colors.white,
                                       spreadRadius: 5,
                                       blurRadius: 7,
-                                      offset: Offset(
-                                          0, 3), // changes position of shadow
+                                      offset: Offset(0, 3),
                                     ),
                                   ],
                                   shape: BoxShape.circle,
@@ -418,16 +407,12 @@ class _StudentMyhours extends State<StudentMyhours> {
                                     left: 0,
                                     child: ElevatedButton.icon(
                                       onPressed: () {
-                                        _showCertificatePopup(
-                                            context,
-                                            verifiedOpp[index]
-                                                .opportunityId); // Handle button press
+                                        _showCertificatePopup(context,
+                                            verifiedOpp[index].opportunityId);
                                       },
                                       icon: IconTheme(
                                         data: IconThemeData(
-                                            size: 10,
-                                            color: Color(
-                                                0xFF0A2F5A)), // Set your desired icon size
+                                            size: 10, color: Color(0xFF0A2F5A)),
                                         child:
                                             Icon(Icons.remove_red_eye_rounded),
                                       ),

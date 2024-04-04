@@ -310,7 +310,7 @@ Future<String> getCertificateFromFirestore(BuildContext context, int index) asyn
                     ),
                   if (image == null)
                     Text(
-                      'No Image Uploaded',
+                      'لايوجد شهادة مرفوعة',
                       style: TextStyle(fontSize: 20),
                     ),
                   ElevatedButton(
@@ -445,7 +445,7 @@ Future<String> getCertificateFromFirestore(BuildContext context, int index) asyn
                       ),
                     if (imageUrl == null || imageUrl.isEmpty)
                       Text(
-                        'No Image Uploaded',
+                        'لايوجد شهادة مرفوعة',
                         style: TextStyle(fontSize: 20),
                       ),
                   ],

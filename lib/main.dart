@@ -22,7 +22,6 @@ import 'package:tatwaei/login.dart';
 import 'package:tatwaei/studentAccount.dart';
 import 'package:tatwaei/aEditDelete.dart';
 
-
 import 'user_state.dart';
 //import 'login.dart';
 //import 'homePageStudent.dart';
@@ -38,9 +37,7 @@ Future main() async {
       create: (context) => UserState(),
       child: MaterialApp(
         theme: ThemeData(scaffoldBackgroundColor: const Color(0xFFfbfae9)),
-       home:HomePageStudent(),
-       
-
+        home: LoginPage(),
       ),
     ),
   );

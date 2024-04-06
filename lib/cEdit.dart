@@ -1,4 +1,4 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tatwaei/homePageCoordinator.dart';
 import 'dart:math';
@@ -16,13 +16,13 @@ class cEdit extends StatefulWidget {
 class _OpportunityPageState extends State<cEdit> {
   late String oppname = '';
   late String oppdesc = '';
-  late String gender = '';
+  //late String gender = '';
   late String startdate = '';
   late String enddate = '';
   late int numberOfDays = 0;
   late int numofseats = 0;
   late int numofhrs = 0;
-  late String interest = '';
+  //late String interest = '';
   late String place = '';
   late String loc = '';
   late bool isInternalOpportunity = true;
@@ -79,7 +79,7 @@ class _OpportunityPageState extends State<cEdit> {
       setState(() {
         oppname = opportunityDocument['name'];
         oppdesc = opportunityDocument['description'];
-        gender = opportunityDocument['gender'];
+       // gender = opportunityDocument['gender'];
 
         // Convert 'startDate' and 'endDate' to DateTime objects
         DateTime startDate =
@@ -97,7 +97,7 @@ class _OpportunityPageState extends State<cEdit> {
 
         numofseats = opportunityDocument['numOfSeats'];
         numofhrs = opportunityDocument['numOfHours'];
-        interest = opportunityDocument['interest'];
+       // interest = opportunityDocument['interest'];
 
         if (collectionName == 'externalOpportunity') {
           place = opportunityDocument['opportunityProvider'];
@@ -131,10 +131,10 @@ class _OpportunityPageState extends State<cEdit> {
           .update({
         // Update the fields with the new values
         'description': oppdesc,
-         'gender': gender,
+         //'gender': gender,
         'startDate': startDate,
         'endDate': endDate,
-        'interest': interest,
+        //'interest': interest,
         'numOfHours': numofhrs,
         // 'opportunityProvider': place,
        // 'location': loc,
@@ -287,16 +287,16 @@ _buildEditableDate('تاريخ الانتهاء', endDate, (pickedDate) {
                                 numofseats = int.parse(value);
                               });
                             }),
-                            _buildEditableText('المجال التطوعي', interest, (value) {
+                            /*_buildEditableText('المجال التطوعي', interest, (value) {
                               setState(() {
                                 interest = value;
                               });
-                            }),
-                             _buildEditableText('الجنس', gender, (value) {
+                            }),*/
+                            /* _buildEditableText('الجنس', gender, (value) {
                               setState(() {
                                 gender = value;
                               });
-                            }),
+                            }),*/
                             _buildEditableText('عدد الساعات المكتسبة', numofhrs.toString(), (value) {
                               setState(() {
                                 numofhrs = int.parse(value);
@@ -314,97 +314,100 @@ _buildEditableDate('تاريخ الانتهاء', endDate, (pickedDate) {
           ),
         ),
       ),
-      floatingActionButton: Stack(
-  children: [
-    Positioned(
-      bottom: 16.0,
-      left: 16.0,
-      child: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Icon(
-                  Icons.check_circle,
-                  color: Colors.green,
-                  size: 50,
-                ),
-                content: Text(
-                  "تم إلغاء التعديل بنجاح",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Color(0xFF0A2F5A),
+       floatingActionButton: Padding(
+  padding: const EdgeInsets.only(bottom: 40.0),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(left: 15.0),
+        child: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 50,
                   ),
-                ),
-              );
-            },
-          );
-          // Move to HomePageAdmin after 5 seconds
-          /*Future.delayed(Duration(seconds: 5), () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => homePageCoordinator()),
+                  content: Text(
+                    "تم إلغاء التعديل بنجاح",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Color(0xFF0A2F5A),
+                    ),
+                  ),
+                );
+              },
             );
-          });*/
-        },
-        child: Text(
-          "إلغاء",
-          style: TextStyle(color: Colors.white),
+            // Move to HomePageAdmin after 5 seconds
+            /* Future.delayed(Duration(seconds: 5), () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => homePageAdmin()),
+              );
+            });*/
+          },
+          child: Text(
+            "إلغاء",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Color.fromARGB(115, 127, 179, 71),
+          elevation: 0,
         ),
-        backgroundColor: Color.fromARGB(115, 127, 179, 71),
-        elevation: 0,
       ),
-    ),
-   Positioned(
-  bottom: 16.0,
-  right: 16.0,
-  child: FloatingActionButton(
-    onPressed: () {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: 50,
-            ),
-            content: Text(
-              "تم تعديل التفاصيل بنجاح",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                color: Color(0xFF0A2F5A),
-              ),
-            ),
-          );
-        },
-      );
-      // Call the function to update the opportunity details
-      updateOpportunityDetails().then((_) {
-        // Move to HomePageAdmin after 5 seconds
-        /*Future.delayed(Duration(seconds: 5), () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => homePageCoordinator()),
-          );
-        });*/
-      });
-    },
-    child: Text(
-      "تعديل",
-      style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
-    ),
-    backgroundColor: Color.fromARGB(115, 127, 179, 71),
-    elevation: 0,
+      Padding(
+        padding: const EdgeInsets.only(right: 15.0),
+        child: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 50,
+                  ),
+                  content: Text(
+                    "تم تعديل التفاصيل بنجاح",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Color(0xFF0A2F5A),
+                    ),
+                  ),
+                );
+              },
+            );
+            // Call the function to update the opportunity details
+            updateOpportunityDetails().then((_) {
+              // Move to HomePageAdmin after 5 seconds
+              /* Future.delayed(Duration(seconds: 5), () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => homePageAdmin()),
+                );
+              });*/
+            });
+          },
+          child: Text(
+            "تعديل",
+            style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+          ),
+          backgroundColor: Color.fromARGB(115, 127, 179, 71),
+          elevation: 0,
+        ),
+      ),
+    ],
   ),
 ),
+floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
 
-  ],
-),
-floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
 
     );
   }
@@ -503,7 +506,8 @@ floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
   }
-}*/import 'package:flutter/material.dart';
+}
+/*import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
@@ -911,96 +915,7 @@ class _OpportunityPageState extends State<cEdit> {
 floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
 
 
-/*floatingActionButton: Stack(
-        children: [
-          Positioned(
-            bottom: 16.0,
-            left: 16.0,
-            child: FloatingActionButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Icon(
-                        Icons.check_circle,
-                        color: Colors.green,
-                        size: 50,
-                      ),
-                      content: Text(
-                        "تم إلغاء التعديل بنجاح",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Color(0xFF0A2F5A),
-                        ),
-                      ),
-                    );
-                  },
-                );
-                // Move to HomePageAdmin after 5 seconds
-                /*Future.delayed(Duration(seconds: 5), () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => homePageCoordinator()),
-                  );
-                });*/
-              },
-              child: Text(
-                "إلغاء",
-                style: TextStyle(color: Colors.white),
-              ),
-              backgroundColor: Color.fromARGB(115, 127, 179, 71),
-              elevation: 0,
-            ),
-          ),
-          Positioned(
-            bottom: 16.0,
-            right: 16.0,
-            child: FloatingActionButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Icon(
-                        Icons.check_circle,
-                        color: Colors.green,
-                        size: 50,
-                      ),
-                      content: Text(
-                        "تم تعديل التفاصيل بنجاح",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Color(0xFF0A2F5A),
-                        ),
-                      ),
-                    );
-                  },
-                );
-                // Call the function to update the opportunity details
-                updateOpportunityDetails().then((_) {
-                  // Move to HomePageAdmin after 5 seconds
-                  /*Future.delayed(Duration(seconds: 5), () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => homePageCoordinator()),
-                    );
-                  });*/
-                });
-              },
-              child: Text(
-                "تعديل",
-                style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
-              ),
-              backgroundColor: Color.fromARGB(115, 127, 179, 71),
-              elevation: 0,
-            ),
-          ),
-        ],
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,*/
+
     );
   }
 
@@ -1136,4 +1051,4 @@ floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
-}
+}*/

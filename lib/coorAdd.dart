@@ -136,7 +136,7 @@ class _coorAddState extends State<coorAdd> {
     ),
     Positioned(
       bottom: 16.0,
-      right: 20.0, // Adjusted right position for the second button
+      right: 10.0, // Adjusted right position for the second button
       child: FloatingActionButton(
         onPressed: () async {
           await addOpportunity();

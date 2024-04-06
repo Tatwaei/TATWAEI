@@ -647,39 +647,29 @@ class _OpportunityPageState extends State<OpportunityDetails> {
   void _showDialog() async {
     String opportunityId = widget.oppId;
     String studentId = Provider.of<UserState>(context, listen: false).userId;
-
     if (numofseats > 0) {
       // Check if the student has already registered for this opportunity
       bool isAlreadyRegistered =
           await checkIfAlreadyRegistered(opportunityId, studentId);
-
       if (!isAlreadyRegistered) {
-        // Decrement available seats
         numofseats--;
-
-        // Determine the next seatNum based on the current numOfSeats
         int nextSeatNum = numofseats;
-
-        // Update 'numOfSeats' in Firestore
         try {
           await FirebaseFirestore.instance
-              .collection(collectionName) // Update with your collection name
+              .collection(collectionName)
               .doc(opportunityId)
               .update({
             'numOfSeats': numofseats,
           });
 
-          // Create a new record in the 'seats' collection
           await FirebaseFirestore.instance.collection('seat').add({
             'opportunityId': opportunityId,
             'studentId': studentId,
             'certificateStatus': false,
             'availability': true,
-            'certificate': '', // Empty string at the beginning
+            'certificate': '',
             'seatNum': nextSeatNum,
           });
-
-          // Show success dialog
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -713,11 +703,9 @@ class _OpportunityPageState extends State<OpportunityDetails> {
           setState(() {});
         } catch (e) {
           print('Error updating numOfSeats: $e');
-          // Handle the error, show an error message, or take appropriate action
         }
       } else {
-        // Student is already registered for this opportunity, show a message or handle accordingly
-        // ...
+        // Student is already registered for this opportunity
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -749,7 +737,7 @@ class _OpportunityPageState extends State<OpportunityDetails> {
         );
       }
     } else {
-      // No available seats, show a message or handle accordingly
+      // No available seats
       showDialog(
         context: context,
         builder: (BuildContext context) {

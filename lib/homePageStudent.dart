@@ -530,7 +530,7 @@ class _HomePageState extends State<HomePageStudent> {
               (filbusns && interests == "ادارية") ||
               (filhealth && interests == "صحية") ||
               (filother && interests == "أخرى") ||
-              (filsocial && interests == "خدمية")) {
+              (filservice && interests == "خدمية")) {
             typeMatch = true;
           }
         } //if nothing is chosen from interest, then consider it

@@ -52,6 +52,7 @@ class _CordinatorMyStudent extends State<CordinatorMyStudent> {
         await FirebaseFirestore.instance
             .collection('student')
             .where('schoolId', isEqualTo: schoolId)
+            .where('accountStatus', isEqualTo: true)
             .get();
 
     if (studentSnapshot.size > 0) {

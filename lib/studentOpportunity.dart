@@ -771,7 +771,7 @@ Future<String> getCertificateFromFirestore(BuildContext context, int index) asyn
                                 children: [
                                   Positioned(
                                     top: 55,
-                                    right: 195,
+                                    right: 180,
                                     child: Column(
                                       children: [
                                         SizedBox(

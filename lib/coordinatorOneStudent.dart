@@ -668,7 +668,7 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                                 children: [
                                   Positioned(
                                     top: 55,
-                                    right: 190,
+                                    right: 180,
                                     child: Column(
                                       children: [
                                         SizedBox(

@@ -55,9 +55,6 @@ class _SchoolSignUpPageState extends State<SchoolSignUpPage> {
         );
       },
     );
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.of(context).pop();
-    });
   }
 
   Future<void> signUp() async {

@@ -161,7 +161,7 @@ class _StudentMyhours extends State<StudentMyhours> {
                           backgroundColor: Color.fromARGB(255, 187, 213, 159),
                         ),
                         child: Text(
-                          'Close',
+                          'اغلاق',
                           style: TextStyle(
                             color: Color(0xFF0A2F5A),
                           ),

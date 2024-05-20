@@ -542,7 +542,8 @@ class _HomePageState extends State<HomePageStudent> {
       if (selectedGender != '') {
         if (gender != null) {
           if ((selectedGender == 'ذكر' && gender == 'ذكر') ||
-              (selectedGender == 'انثى' && gender == 'انثى') ||
+              (selectedGender == 'انثى' &&
+                  (gender == 'انثى' || gender == 'أنثى')) ||
               (selectedGender == 'كلاهما' && gender == 'كلاهما')) {
             genderMatch = true;
           }

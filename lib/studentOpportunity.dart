@@ -99,16 +99,14 @@ Future<String> getCertificateFromFirestore(BuildContext context, int index) asyn
         .get();
 
     if (querySnapshot.docs.isNotEmpty) {
-      // Assuming there's only one document for this studentId and opportunityId
       DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
-      return documentSnapshot['certificate'] ?? ''; // Return certificate if exists
+      return documentSnapshot['certificate'] ?? ''; 
     } else {
-      print('No document found for studentId $studentId and opportunityId $opportunityId');
-      return ''; // Return empty string if document not found
+      return ''; 
     }
   } catch (error) {
     print('Error retrieving certificate from Firestore: $error');
-    return ''; // Return empty string in case of error
+    return ''; 
   }
 }
 

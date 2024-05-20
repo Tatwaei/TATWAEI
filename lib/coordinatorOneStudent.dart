@@ -173,6 +173,31 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
     }
   }
 
+  Future<Map<String, dynamic>> getCertificateFromFirestore(BuildContext context, int index) async {
+  String opportunityId = compList[index].opportunityId;
+
+  try {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('seat')
+        .where('studentId', isEqualTo: widget.studentId)
+        .where('opportunityId', isEqualTo: opportunityId)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+     DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+      String certificate = documentSnapshot['certificate'] ?? '';
+      bool  certificateStatus = documentSnapshot['certificateStatus'] ?? false;
+      return {'certificate': certificate, 'certificateStatus': certificateStatus};
+    } else {
+      return {'certificate': '', 'certificateStatus': false};
+    }
+  } catch (error) {
+    print('Error retrieving certificate from Firestore: $error');
+    return {'certificate': '',
+      'certificateStatus': false}; 
+  }
+}
+
   void myAlert(BuildContext context, String opportunityId) {
     showDialog(
       context: context,
@@ -674,12 +699,33 @@ class _coordinatorOneStudent extends State<coordinatorOneStudent> {
                                         SizedBox(
                                           height: 20,
                                           child: ElevatedButton.icon(
-                                            onPressed: () {
-                                              myAlert(
+                                            onPressed: () async {
+    Map<String, dynamic> result = await getCertificateFromFirestore(context, index);
+String certificate = result['certificate'];
+    bool certificateStatus = result['certificateStatus'];
+ if (certificate.isNotEmpty && certificateStatus) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('يوجد شهادة مرفوعة وتم الموافقة عليها'),
+          ),
+        );
+         } else if (certificate.isNotEmpty && !certificateStatus) {
+      myAlert(
                                                   context,
                                                   compList[index]
                                                       .opportunityId);
-                                            },
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('لا توجد شهادة مرفوعة'),
+        ),
+      );
+      }
+   ;
+    
+  },
+                                              
+                                            
                                             icon: IconTheme(
                                               data: IconThemeData(
                                                   size: 10,

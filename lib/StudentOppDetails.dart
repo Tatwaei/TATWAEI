@@ -626,7 +626,7 @@ class _OpportunityPageState extends State<OpportunityDetails> {
           ? null // Hide the button if startdate is before the current date
           : Padding(
               padding: EdgeInsets.only(
-                  bottom: 16.0), // Adjust the bottom padding to move it up
+                  bottom: 40.0), // Adjust the bottom padding to move it up
               child: FloatingActionButton(
                 onPressed: () {
                   _showDialog();

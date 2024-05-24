@@ -638,7 +638,13 @@ class _OpportunityPageState extends State<aEdit> {
        // gender = opportunityDocument['gender'];
 
         // Convert 'startDate' and 'endDate' to DateTime objects
-        DateTime startDate =
+        startDate = (opportunityDocument['startDate'] as Timestamp).toDate();
+endDate = (opportunityDocument['endDate'] as Timestamp).toDate();
+// Format 'startDate' and 'endDate' to display only the date
+startdate = "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
+enddate = "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+
+       /* DateTime startDate =
             (opportunityDocument['startDate'] as Timestamp).toDate();
         DateTime endDate =
             (opportunityDocument['endDate'] as Timestamp).toDate();
@@ -646,7 +652,7 @@ class _OpportunityPageState extends State<aEdit> {
         startdate =
             "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
         enddate =
-            "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+            "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";*/
 
         Duration duration = endDate.difference(startDate);
         numberOfDays = duration.inDays;
@@ -1001,7 +1007,7 @@ _buildEditableDate('تاريخ الانتهاء', endDate, (pickedDate) {
             ),
             onPressed: () {
               // Show date picker and call onChanged with the picked date
-              showDatePicker(
+             /* showDatePicker(
                 context: context,
                 initialDate: date,
                 firstDate: DateTime(2000),
@@ -1010,7 +1016,18 @@ _buildEditableDate('تاريخ الانتهاء', endDate, (pickedDate) {
                 if (pickedDate != null) {
                   onChanged(pickedDate);
                 }
-              });
+              });*/
+              showDatePicker(
+  context: context,
+  initialDate: date,
+  firstDate: DateTime(2000),
+  lastDate: DateTime(2100),
+).then((pickedDate) {
+  if (pickedDate != null) {
+    onChanged(pickedDate);
+  }
+});
+
             },
           ),
         ],

@@ -61,152 +61,192 @@ class _coorAddState extends State<coorAdd> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 40),
-          child: Column(
-            children: [
-              SizedBox(height: 20.0),
-              Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  color: Color(0xFFD3CA25),
-                  padding: EdgeInsets.only(bottom: 10, left: 310),
-                  icon: Transform(
-                    alignment: Alignment.topRight,
-                    transform: Matrix4.rotationY(pi),
-                    child: Icon(Icons.arrow_back),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-              SizedBox(height: 20.0),
-              buildRow(" الفرصة التطوعية", _opportunityController),
-              buildRow("تفاصيل الفرصة التطوعية", _detailsController),
-              buildDateRow("تاريخ البداية", _startDate, () {
-                _selectStartDate(context);
-              }),
-              buildDateRow("تاريخ النهاية", _endDate, () {
-                _selectEndDate(context);
-              }),
-              buildDropdownRow(" الجنس ", _selectedGender, _updateSelectedGender, ["ذكر", "انثى", "كلاهما"]),
-              buildDropdownRow(" المجال التطوعي ", _selectedInterest, _updateSelectedInterest, ["ادارية", "خدمية", "صحية", "اجتماعية", "اخرى"]),
-              buildRow(" المقاعد ", _seatsController),
-              buildRow("عدد ساعات ", _hoursController),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: Stack(
-  children: [
-    Positioned(
-      bottom: 16.0,
-      left: 30.0, // Adjusted left position for the first button
-      child: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Icon(
-                  Icons.check_circle,
-                  color: Colors.green,
-                  size: 50,
-                ),
-                content: Text(
-                  "تم إلغاء الإضافة بنجاح",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Color(0xFF0A2F5A),
-                  ),
-                ),
-              );
-            },
-          );
-        },
-        child: Text(
-          "إلغاء",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Color.fromARGB(115, 127, 179, 71),
-        elevation: 0,
-      ),
-    ),
-    Positioned(
-      bottom: 16.0,
-      right: 10.0, // Adjusted right position for the second button
-      child: FloatingActionButton(
-        onPressed: () async {
-          await addOpportunity();
-        },
-        child: Text(
-          "إضافة",
-          style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
-        ),
-        backgroundColor: Color.fromARGB(115, 127, 179, 71),
-        elevation: 0,
-      ),
-    ),
-  ],
-),
-floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
-      /*floatingActionButton: Stack(
-        children: [
-          Positioned(
-            bottom: 16.0,
-            left: 16.0,
-            child: FloatingActionButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Icon(
-                        Icons.check_circle,
-                        color: Colors.green,
-                        size: 50,
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 40),
+              child: Column(
+                children: [
+                  SizedBox(height: 20.0),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      color: Color(0xFFD3CA25),
+                      padding: EdgeInsets.only(bottom: 10, left: 310),
+                      icon: Transform(
+                        alignment: Alignment.topRight,
+                        transform: Matrix4.rotationY(pi),
+                        child: Icon(Icons.arrow_back),
                       ),
-                      content: Text(
-                        "تم إلغاء الإضافة بنجاح",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Color(0xFF0A2F5A),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
+                  buildRow(" الفرصة التطوعية", _opportunityController),
+                  buildRow("تفاصيل الفرصة التطوعية", _detailsController),
+                  buildDateRow("تاريخ البداية", _startDate, () {
+                    _selectStartDate(context);
+                  }),
+                  buildDateRow("تاريخ النهاية", _endDate, () {
+                    _selectEndDate(context);
+                  }),
+                  buildDropdownRow(" الجنس ", _selectedGender, _updateSelectedGender, ["ذكر", "انثى", "كلاهما"]),
+                  buildDropdownRow(" المجال التطوعي ", _selectedInterest, _updateSelectedInterest, ["ادارية", "خدمية", "صحية", "اجتماعية", "اخرى"]),
+                  buildRow(" المقاعد ", _seatsController),
+                  buildRow("عدد ساعات ", _hoursController),
+                         ],
+              ),
+            ),
+               
+                Container(
+                  child: Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                          padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: ElevatedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: 50,
+                          ),
+                          content: Text(
+                            "تم إلغاء الإضافة بنجاح",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Color(0xFF0A2F5A),
+                            ),
+                          ),
+                        );
+                                          },
+                                    );
+                                  },
+                                  child: Text(
+                                    "إلغاء",
+                                                  style: TextStyle(
+                                            fontSize: 20,
+                                            color: Color(0xFF0A2F5A)),
+                                  ),
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                Color(0xFFb4d392)),
+                                        shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            side: BorderSide(
+                                              color: Color(0xFFb4d392),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                         ),
                       ),
+                  
+                Container(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                  child: ElevatedButton(
+                              onPressed: () async {
+                                await addOpportunity();
+                              },
+                              child: Text(
+                                "إضافة",
+                                              style: TextStyle(
+                                            fontSize: 20,
+                                            color: Color(0xFF0A2F5A)),
+                              ),
+                                 style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                Color(0xFFb4d392)),
+                                        shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            side: BorderSide(
+                                              color: Color(0xFFb4d392),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                  ),
+                ),
+            
+            
+          // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+            
+                  /*floatingActionButton: Stack(
+            children: [
+              Positioned(
+                bottom: 16.0,
+                left: 16.0,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: 50,
+                          ),
+                          content: Text(
+                            "تم إلغاء الإضافة بنجاح",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Color(0xFF0A2F5A),
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              },
-              child: Text(
-                "إلغاء",
-                style: TextStyle(color: Colors.white),
+                  child: Text(
+                    "إلغاء",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Color.fromARGB(115, 127, 179, 71),
+                  elevation: 0,
+                ),
               ),
-              backgroundColor: Color.fromARGB(115, 127, 179, 71),
-              elevation: 0,
-            ),
-          ),
-          Positioned(
-            bottom: 16.0,
-            right: 16.0,
-            child: FloatingActionButton(
-              onPressed: () async {
-                await addOpportunity();
-              },
-              child: Text(
-                "إضافة",
-                style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+              Positioned(
+                bottom: 16.0,
+                right: 16.0,
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    await addOpportunity();
+                  },
+                  child: Text(
+                    "إضافة",
+                    style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
+                  ),
+                  backgroundColor: Color.fromARGB(115, 127, 179, 71),
+                  elevation: 0,
+                ),
               ),
-              backgroundColor: Color.fromARGB(115, 127, 179, 71),
-              elevation: 0,
-            ),
-          ),
-        ],
+            ],
+                  ),
+                  floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,*/
+              ],
+                  ),
+                ),
+          ],
+        ),
+
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,*/
     );
   }
 

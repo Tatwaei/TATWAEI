@@ -39,7 +39,7 @@ class _OpportunityPageState extends State<aEditDelete> {
     try {
       String collectionName;
 
-      // Assuming oppId is a unique identifier for opportunities
+      
       DocumentSnapshot<Map<String, dynamic>> oppDocumentInternal =
           await FirebaseFirestore.instance
               .collection('internalOpportunity')
@@ -59,21 +59,20 @@ class _OpportunityPageState extends State<aEditDelete> {
         // The opportunity belongs to externalOpportunity collection
         collectionName = 'externalOpportunity';
       } else {
-        // Handle the case where neither document exists
-        // You can show an error message or take appropriate action
+       
         print('Opportunity not found in any collection');
         return;
       }
       isExternalOpportunity = collectionName == 'externalOpportunity';
 
-      // Now you know the collection, you can fetch the specific fields
+     
       DocumentSnapshot<Map<String, dynamic>> opportunityDocument =
           await FirebaseFirestore.instance
               .collection(collectionName)
               .doc(oppId)
               .get();
 
-      // Access specific fields from the opportunityDocument
+    
       setState(() {
         oppname = opportunityDocument['name'];
         oppdesc = opportunityDocument['description'];
@@ -106,14 +105,14 @@ class _OpportunityPageState extends State<aEditDelete> {
         }
       });
       ;
-      // Add more fields as needed
+      
     } catch (e) {
       print('Error fetching data: $e');
-      // Handle the error, show an error message or take appropriate action
+     
     }
   }
 
-// Call the function with the oppId you received
+
 
   @override
   Widget build(BuildContext context) {
@@ -533,7 +532,7 @@ class _OpportunityPageState extends State<aEditDelete> {
                             ),
                             Visibility(
                               visible: loc
-                                  .isNotEmpty, // Show only if place is not empty
+                                  .isNotEmpty, 
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
@@ -572,7 +571,7 @@ class _OpportunityPageState extends State<aEditDelete> {
                                             onTap: () {
                                               launch(loc);
                                               print('Opening link: $loc');
-                                              // You can replace the print statement with the logic to open the link
+                                              
                                             },
                                             child: Text(
                                               "$loc",

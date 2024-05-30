@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'adminAdd.dart';
-import 'AdminOppDetails.dart'; // Assuming this is where OpportunityDetails widget is defined
+import 'AdminOppDetails.dart'; 
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 CollectionReference externalOpportunity =

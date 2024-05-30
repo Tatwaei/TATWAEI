@@ -82,15 +82,12 @@ class _OpportunityPageState extends State<cEdit> {
        // gender = opportunityDocument['gender'];
 
         // Convert 'startDate' and 'endDate' to DateTime objects
-        DateTime startDate =
-            (opportunityDocument['startDate'] as Timestamp).toDate();
-        DateTime endDate =
-            (opportunityDocument['endDate'] as Timestamp).toDate();
-        // Format 'startDate' and 'endDate' to display only the date
-        startdate =
-            "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
-        enddate =
-            "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+       startDate = (opportunityDocument['startDate'] as Timestamp).toDate();
+endDate = (opportunityDocument['endDate'] as Timestamp).toDate();
+// Format 'startDate' and 'endDate' to display only the date
+startdate = "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
+enddate = "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+
 
         Duration duration = endDate.difference(startDate);
         numberOfDays = duration.inDays;
@@ -436,16 +433,17 @@ floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             ),
             onPressed: () {
               // Show date picker and call onChanged with the picked date
-              showDatePicker(
-                context: context,
-                initialDate: date,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-              ).then((pickedDate) {
-                if (pickedDate != null) {
-                  onChanged(pickedDate);
-                }
-              });
+             showDatePicker(
+  context: context,
+  initialDate: date,
+  firstDate: DateTime(2000),
+  lastDate: DateTime(2100),
+).then((pickedDate) {
+  if (pickedDate != null) {
+    onChanged(pickedDate);
+  }
+});
+
             },
           ),
         ],

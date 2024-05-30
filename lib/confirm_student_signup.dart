@@ -247,7 +247,7 @@ class _ConfirmStudentPage extends State<ConfirmStudentPage> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 119),
+                                  SizedBox(width: 110),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 3, horizontal: 8),

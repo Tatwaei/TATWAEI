@@ -3,8 +3,8 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tatwaei/coorAdd.dart';
-//import 'coorAdd.dart';
-import 'CoordinatorOppDetails.dart'; // Assuming this is where OpportunityDetails widget is defined
+
+import 'CoordinatorOppDetails.dart';
 
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -40,11 +40,11 @@ class _OpportunityPageState extends State<coordinatorOppo> {
   }
 
   Future<void> fetchInternalOpportunities() async {
-    // Get current user's email
+   
     User? user = _auth.currentUser;
     String? email = user?.email;
 
-    // Fetch opportunities where coordinator_email matches the current user's email
+    
     QuerySnapshot snapshot = await internalOpportunity
         .where('coordinator_email', isEqualTo: email)
         .get();

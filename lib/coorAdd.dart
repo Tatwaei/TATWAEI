@@ -184,62 +184,7 @@ class _coorAddState extends State<coorAdd> {
                 ),
             
             
-          // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-            
-                  /*floatingActionButton: Stack(
-            children: [
-              Positioned(
-                bottom: 16.0,
-                left: 16.0,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
-                            size: 50,
-                          ),
-                          content: Text(
-                            "تم إلغاء الإضافة بنجاح",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Color(0xFF0A2F5A),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: Text(
-                    "إلغاء",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  backgroundColor: Color.fromARGB(115, 127, 179, 71),
-                  elevation: 0,
-                ),
-              ),
-              Positioned(
-                bottom: 16.0,
-                right: 16.0,
-                child: FloatingActionButton(
-                  onPressed: () async {
-                    await addOpportunity();
-                  },
-                  child: Text(
-                    "إضافة",
-                    style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
-                  ),
-                  backgroundColor: Color.fromARGB(115, 127, 179, 71),
-                  elevation: 0,
-                ),
-              ),
-            ],
-                  ),
-                  floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,*/
+         
               ],
                   ),
                 ),
@@ -281,7 +226,7 @@ class _coorAddState extends State<coorAdd> {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    // Add onPressed logic for editing
+                   
                   },
                   child: Icon(
                     Icons.edit,
@@ -449,8 +394,8 @@ class _coorAddState extends State<coorAdd> {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
-              primary: Color.fromARGB(115, 127, 179, 71), // Head background color
-              onPrimary: Colors.white, // Head text color
+              primary: Color.fromARGB(115, 127, 179, 71), //  background color
+              onPrimary: Colors.white, //  text color
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(

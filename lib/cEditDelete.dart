@@ -41,7 +41,7 @@ class _OpportunityPageState extends State<cEditDelete> {
     try {
       String collectionName;
 
-      // Assuming oppId is a unique identifier for opportunities
+      
       DocumentSnapshot<Map<String, dynamic>> oppDocumentInternal =
           await FirebaseFirestore.instance
               .collection('internalOpportunity')
@@ -55,27 +55,25 @@ class _OpportunityPageState extends State<cEditDelete> {
               .get();
 
       if (oppDocumentInternal.exists) {
-        // The opportunity belongs to internalOpportunity collection
+       
         collectionName = 'internalOpportunity';
       } else if (oppDocumentExternal.exists) {
-        // The opportunity belongs to externalOpportunity collection
+       
         collectionName = 'externalOpportunity';
       } else {
-        // Handle the case where neither document exists
-        // You can show an error message or take appropriate action
+       
         print('Opportunity not found in any collection');
         return;
       }
       isInternalOpportunity = collectionName == 'internalOpportunity';
-
-      // Now you know the collection, you can fetch the specific fields
+ 
       DocumentSnapshot<Map<String, dynamic>> opportunityDocument =
           await FirebaseFirestore.instance
               .collection(collectionName)
               .doc(oppId)
               .get();
 
-      // Access specific fields from the opportunityDocument
+      
       setState(() {
         oppname = opportunityDocument['name'];
         oppdesc = opportunityDocument['description'];
@@ -108,14 +106,14 @@ class _OpportunityPageState extends State<cEditDelete> {
         }
       });
       ;
-      // Add more fields as needed
+     
     } catch (e) {
       print('Error fetching data: $e');
-      // Handle the error, show an error message or take appropriate action
+     
     }
   }
 
-// Call the function with the oppId you received
+
 
   @override
   Widget build(BuildContext context) {
@@ -535,7 +533,7 @@ class _OpportunityPageState extends State<cEditDelete> {
                             ),
                             Visibility(
                               visible: loc
-                                  .isNotEmpty, // Show only if place is not empty
+                                  .isNotEmpty, 
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
@@ -574,7 +572,7 @@ class _OpportunityPageState extends State<cEditDelete> {
                                             onTap: () {
                                               launch(loc);
                                               print('Opening link: $loc');
-                                              // You can replace the print statement with the logic to open the link
+                                            
                                             },
                                             child: Text(
                                               "$loc",
@@ -606,47 +604,7 @@ class _OpportunityPageState extends State<cEditDelete> {
           ),
         ),
       ),
-      /*floatingActionButton: Stack(
-  children: [
-    Positioned(
-      bottom: 16.0,
-      left: 16.0,
-      child: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => cDelete(oppId: widget.oppId)),
-          );
-        },
-        child: Text(
-          "حذف",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Color.fromARGB(115, 127, 179, 71),
-        elevation: 0,
-      ),
-    ),
-    Positioned(
-      bottom: 16.0,
-      right: 16.0,
-      child: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => cEdit(oppId: widget.oppId)),
-          );
-        },
-        child: Text(
-          "تعديل",
-          style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),
-        ),
-        backgroundColor: Color.fromARGB(115, 127, 179, 71),
-        elevation: 0,
-      ),
-    ),
-  ],
-),
-floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,*/floatingActionButton: Padding(
+     floatingActionButton: Padding(
   padding: const EdgeInsets.only(bottom: 40.0),
   child: Container(
     width: MediaQuery.of(context).size.width - 30,

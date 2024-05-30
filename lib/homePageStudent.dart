@@ -574,6 +574,7 @@ class _HomePageState extends State<HomePageStudent> {
         !filbusns &&
         !filhealth &&
         !filother &&
+        !filservice &&
         selectedGender.isEmpty &&
         placeSelected.isEmpty) {
       filteredOpportunities = opp;

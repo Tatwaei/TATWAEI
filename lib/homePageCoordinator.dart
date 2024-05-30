@@ -503,6 +503,7 @@ class _HomePageState extends State<homePageCoordinator> {
         !filbusns &&
         !filhealth &&
         !filother &&
+        !filservice &&
         selectedGender.isEmpty &&
         placeSelected.isEmpty) {
       filteredOpportunities = opp;
